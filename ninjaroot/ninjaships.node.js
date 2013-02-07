@@ -44,6 +44,28 @@ module.exports.shipGet = function(id){
     return _ships;
   }
 }
+/**
+ *  Exported Getter for all projectile positions
+ */
+module.exports.getAllProjectiles = function(){
+  var out = {};
+
+  // Pile all the projectile positions from every ship together into a clean list
+  for (var s in _ships){
+    for (var p in _ships[s].projectiles) {
+      var proj = _ships[s].projectiles[p];
+      if (proj.active){
+        out[s + '_' + p] = {
+          x: Math.round(proj.pos.x, 1),
+          y: Math.round(proj.pos.y, 1),
+          d: proj.pos.d
+        };
+      }
+    }
+  }
+
+  return out;
+}
 
 /**
  *  Exported Getter for all ship positions
@@ -109,9 +131,9 @@ module.exports.shipSetTurn = function(id, direction){
 /**
  *  Exported Setter for triggering Fire command
  */
-module.exports.shipSetFire = function(id){
+module.exports.shipSetFire = function(id, createCallback, destroyCallback){
   if (_ships[id]){
-      _ships[id].fire();
+      _ships[id].fire(createCallback, destroyCallback);
     return true;
   }else {
     return false;
@@ -185,15 +207,32 @@ function _shipObject(options){
   };
 
   // FUNCTION Send out a projectile
-  this.fire = function(){
+  this.fire = function(createCallback, destroyCallback){
     // Add to the projectile array for the ship object
-    this.projectiles.push(
-      new _projectileObject(
-        this.projectile_defaults.type,
-        this.projectile_defaults.style,
-        {x: this.pos.x+25, y: this.pos.y, d: this.pos.d}
-      )
-    );
+    var index = -1;
+
+    // Cull the array position of the first non-active projectile
+    for (var i in this.projectiles){
+      if (!this.projectiles[i].active){
+        index = i;
+        break;
+      }
+    }
+
+    // If there are nor projectiles, or they're all active, then
+    // index should be added to the end (AKA, array length!)
+    if (index == -1) {
+      index = this.projectiles.length;
+    }
+
+    this.projectiles[index] = new _projectileObject({
+      id: index,
+      type: this.projectile_defaults.type,
+      style: this.projectile_defaults.style,
+      pos: {x: this.pos.x+25, y: this.pos.y, d: this.pos.d},
+      create: createCallback,
+      destroy: destroyCallback
+    });
   }
 
   // FUNCTION remove velocity helper
@@ -228,23 +267,31 @@ function _shipObject(options){
  * @returns {object} instantiated projectile object
  * @see _shipObject.fire
  */
-function _projectileObject(type, style, pos){
-  this.pos = pos;
-  this.style = style;
+function _projectileObject(options){
+  this.pos = options.pos;
+  this.style = options.style;
+  this.id = options.id;
+  this.age = 0;
+  this.type = options.type;
 
-  switch(type){
+  switch(options.type){
     case 'laser':
       this.speed = 20;
-      this.life = 2;
+      this.life = 60;
       break;
     case 'energy':
       this.speed = 10;
-      this.life = 20;
+      this.life = 90;
       break;
   }
 
-  // TODO: Send "start" for projectile
+  this.destroy = function(){
+    this.active = false;
+    options.destroy(this);
+  }
+
   this.active = true;
+  options.create(this);
 }
 
 /**
@@ -256,11 +303,19 @@ function _updateProjectileMovement(){
     for(var p in _ships[s].projectiles) {
       var proj = _ships[s].projectiles[p];
 
-      var theta = proj.pos.d * (Math.PI / 180);
-      proj.pos.x+= Math.sin(theta) * proj.speed;
-      proj.pos.y+= Math.cos(theta) * -proj.speed;
-      // TODO: Pay attention to projectile "life"
-      //console.log(proj.pos);
+      if (proj.active){
+        var theta = proj.pos.d * (Math.PI / 180);
+        proj.pos.x+= Math.sin(theta) * proj.speed;
+        proj.pos.y+= Math.cos(theta) * -proj.speed;
+
+        // Age the projectile
+        proj.age++;
+
+        // Projectile is to old! Kill it.
+        if (proj.age > proj.life) {
+          proj.destroy();
+        }
+      }
     }
   }
 }

@@ -20,11 +20,14 @@
 
       // Object array of ships and their elements
       this.dummyShips = {};
+      this.projectiles = {};
 
       // Bind functions to incoming data
       this.socket.on('chat', this.chat);
       this.socket.on('pos', this.updatePos);
       this.socket.on('shipstat', this.shipStatus);
+      this.socket.on('projstat', this.projectileStatus);
+      this.socket.on('projpos', this.updateProjectilePos);
     },
 
     // Actually join the game! Happens once connection screen is submitted
@@ -113,7 +116,63 @@
       }
     },
 
-    // Handle ship position data (comes in as [id] : x, y, d)
+    // Create / remove local projectile objects, id is ship ID plus serial
+    projectileStatus: function(data){
+      for (var id in data){
+        var d = data[id];
+        if (d.status == 'create'){
+          // Only create locally if it doesn't exist.
+          if (!ShipSocket.projectiles[id]){
+            console.log('Create projectile: ', id);
+            $('body').append('<projectile id="proj_' + id + '" class="overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
+            ShipSocket.projectiles[id] = {
+              element: $('#proj_' + id),
+              pos: d.pos
+            }
+
+            // Send to update to ensure it gets drawn
+            var u = {};
+            u[id] = d.pos;
+            ShipSocket.updateProjectilePos(u);
+          } else {
+            console.log('Ignore Create Ship: ', id);
+          }
+        } else { // Destroy!
+          console.log('Remove Projectile: ', id);
+          // Remove element and data
+          if (ShipSocket.projectiles[id]){
+            ShipSocket.projectiles[id].element.remove();
+            delete ShipSocket.projectiles[id];
+          }
+        }
+      }
+    },
+
+    // Handle projectile position data (comes in as [id] : x, y, d)
+    updateProjectilePos : function(data) {
+      // DEBUG
+      updateCount++;
+
+      // Update each projectile position in data
+      for (var id in data){
+        if (ShipSocket.projectiles[id]){
+          var d = data[id];
+          var s = ShipSocket.projectiles[id];
+          s.pos = {x: d.x, y: d.y, d: d.d};
+
+          // Set ship element position and rotation
+          s.element.removeClass('init');
+          s.element.css('transform', 'rotate(' + s.pos.d + 'deg)');
+          s.element.css('WebkitTransform', 'rotate(' + s.pos.d + 'deg)');
+          s.element.css({
+            left: s.pos.x,
+            top: s.pos.y
+          });
+        }
+      }
+    },
+
+    // Handle ship position data (comes in as [id] : x, y, t, d)
     updatePos : function(data) {
       // DEBUG
       updateCount++;

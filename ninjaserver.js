@@ -68,9 +68,33 @@ io.sockets.on('connection', function (clientSocket) {
       case 'r':
         ships.shipSetTurn(id, data.s ? data.c : false); break;
       case 'f':
-        //ships.shipSetFire(id);
+        if (data.s) {
+          ships.shipSetFire(id, projectileCreate, projectileDestroy);
+        }
     }
   });
+
+  // Handle projectile creation emit
+  function projectileCreate(data){
+    var p = {};
+    p[id + '_' + data.id] = {
+      status: 'create',
+      pos: data.pos,
+      style: data.style,
+      type: data.type
+    };
+    io.sockets.emit('projstat', p);
+  }
+
+  // Handle projectile destruction emit
+  function projectileDestroy(data){
+    var p = {};
+    p[id + '_' + data.id] = {
+      status: 'destroy'
+    };
+    io.sockets.emit('projstat', p);
+  }
+
 });
 
 // Send out shipstat for every ship to everyone
@@ -98,28 +122,39 @@ function emitAllShips(targetID){
   }
 }
 
-// Main loop to run processing for all ship positions, collisions, projectiles
-// Also compiles changed positions and sends out to all clients
-setInterval(function(){
-  ships.processShipFrame();
+// Send out positions for every new ship position to everyone
+function emitShipPositionUpdates(){
   var positions = ships.getAllPos();
   var out = {};
-  var usefulCount = 0;
 
   // Only add to the output json that has changed since last send
   for (var id in positions){
     if (lastData[id] != positions[id].str) {
       lastData[id] = positions[id].str;
       out[id] = positions[id].pos;
-      usefulCount++;
     }
   }
 
   // Only *if* there's useful data to be sent, send only that pos data to all clients
-  if (usefulCount) {
+  if (Object.keys(out).length) {
     io.sockets.emit('pos', out);
   }
+}
 
+// Send out positions for every projectile position to everyone
+function emitProjectilePositionUpdates(){
+  var out = ships.getAllProjectiles();
+  if (Object.keys(out).length) {
+    io.sockets.emit('projpos', out);
+  }
+}
+
+// Main loop to run processing for all ship positions, collisions, projectiles
+// Also compiles changed positions and sends out to all clients
+setInterval(function(){
+  ships.processShipFrame();
+  emitShipPositionUpdates();
+  emitProjectilePositionUpdates();
 }, 60);
 
 
