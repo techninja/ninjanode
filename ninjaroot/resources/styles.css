@@ -93,6 +93,7 @@ ship {
   display: block;
   width: 64px;
   height: 64px;
+  background-size: 64px 64px;
 }
 
 label.username {
@@ -115,6 +116,9 @@ boom {
 ship.ship_a { background-image: url('ship_a.png'); }
 ship.ship_b { background-image: url('ship_b.png'); }
 ship.ship_c { background-image: url('ship_c.png'); }
+ship.ship_d { background-image: url('ship_d.png'); }
+ship.ship_e { background-image: url('ship_e.png'); }
+ship.ship_f { background-image: url('ship_f.png'); }
 
 /* Forward thrust */
 ship.thrusting:before, ship.thrusting:after {
@@ -132,6 +136,15 @@ ship.ship_b.thrusting:after { left: 9px; }
 ship.ship_c.thrusting:before { left: 9px; top: 59px; }
 ship.ship_c.thrusting:after { left: 4px; top: 59px; }
 
+ship.ship_d.thrusting:before { left: 4px; top: 62px; }
+ship.ship_d.thrusting:after { left: 8px; top: 62px; }
+
+ship.ship_e.thrusting:before { left: 9px; }
+ship.ship_e.thrusting:after { left: 4px; }
+
+ship.ship_f.thrusting:before { left: 8px; top: 62px; }
+ship.ship_f.thrusting:after { left: 3px; top: 62px; }
+
 /* Backward thrust */
 ship.thrusting_back:before, ship.thrusting_back:after {
   content: url("flame_up.gif");
@@ -147,6 +160,14 @@ ship.ship_b.thrusting_back:after { left: 8px; }
 ship.ship_c.thrusting_back:before { left: -4px; top: 17px; }
 ship.ship_c.thrusting_back:after { left: 13px; top: 17px; }
 
+ship.ship_d.thrusting_back:before { left: -1px; top: 2px; }
+ship.ship_d.thrusting_back:after { left: 12px; top: 2px; }
+
+ship.ship_e.thrusting_back:before { left: -1px; }
+ship.ship_e.thrusting_back:after { left: 13px; }
+
+ship.ship_f.thrusting_back:before { left: 12px; top: -23px; }
+ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
 
 /* Projectiles! */
 
