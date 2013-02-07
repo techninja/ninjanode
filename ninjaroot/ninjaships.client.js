@@ -135,6 +135,15 @@
             top: s.pos.y
           });
 
+          // Show thrust direction
+          if (d.t == 0){
+            s.element.removeClass('thrusting thrusting_back')
+          }else if (d.t == 1){
+            s.element.addClass('thrusting');
+          }else if (d.t == 2){
+            s.element.addClass('thrusting_back');
+          }
+
           // Set label position
           s.label.css({
             left: s.pos.x,

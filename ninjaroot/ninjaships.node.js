@@ -52,11 +52,22 @@ module.exports.getAllPos = function(){
   var out = {};
 
   // Pile all the ship positions together into a clean list with a string version
+
   for (var s in _ships){
+    var thrustNum = 0;
+
+    // Thrust detailing
+    if (_ships[s].thrust > 0) {
+      thrustNum = 1; // Forward
+    } else if (_ships[s].thrust < 0) {
+      thrustNum = 2; // Reverse
+    }
+
     out[s] = {
       pos: {
         x: Math.round(_ships[s].pos.x, 1),
         y: Math.round(_ships[s].pos.y, 1),
+        t: thrustNum,
         d: _ships[s].pos.d
       }
     }
