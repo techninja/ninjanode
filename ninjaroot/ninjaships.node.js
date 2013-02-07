@@ -6,6 +6,17 @@
 // all Ships are held here with the key as the user hash
 var _ships = {};
 
+var projectileTypes = {
+  laser: {
+    speed: 20,
+    life: 30 // Num of cycles before death
+  },
+  energy : {
+    speed: 10,
+    life: 90
+  }
+};
+
 /**
  *  Exported function for creating ships
  */
@@ -165,31 +176,61 @@ function _shipObject(options){
   this.thrust = 0;
   this.width = 64;
   this.height = 64;
-  this.projectiles = [];// TODO: move yoffset to  projectile primitive
-  this.projectile_defaults = {type: 'laser', style: 'red', yoffset: -1};
+  this.projectiles = [];
+
   this.rotation_speed = 5;
   this.exploding = false;
 
   this.style = options.style ? options.style : 'a';
 
   // Set Projectile defaults per ship style
-  if (this.style == 'b'){
-    this.projectile_defaults.type = 'energy';
-    this.projectile_defaults.style = 'blue';
-    this.projectile_defaults.yoffset = 20;
-  }
-  if (this.style == 'c'){
-    this.projectile_defaults.type = 'laser';
-    this.projectile_defaults.style = 'green';
-  }
-  if (this.style == 'd'){
-    this.projectile_defaults.type = 'energy';
-    this.projectile_defaults.style = 'blue';
-    this.projectile_defaults.yoffset = 20;
-  }
-  if (this.style == 'e'){
-    this.projectile_defaults.type = 'laser';
-    this.projectile_defaults.style = 'green';
+  switch (this.style){
+    case 'b':
+      this.projectileDefaults = {
+        type: 'energy',
+        style: 'blue'
+      };
+      this.fireRate = 550; // MS between shots
+      break;
+
+    case 'c':
+      this.projectileDefaults = {
+        type: 'laser',
+        style: 'green'
+      };
+      this.fireRate = 450; // MS between shots
+      break;
+
+    case 'd':
+      this.projectileDefaults = {
+        type: 'energy',
+        style: 'blue'
+      };
+      this.fireRate = 750; // MS between shots
+      break;
+
+    case 'e':
+      this.projectileDefaults = {
+        type: 'laser',
+        style: 'blue'
+      };
+      this.fireRate = 650; // MS between shots
+      break;
+
+    case 'f':
+      this.projectileDefaults = {
+        type: 'laser',
+        style: 'green'
+      };
+      this.fireRate = 850; // MS between shots
+      break;
+
+    default:
+      this.projectileDefaults = {
+        type: 'laser',
+        style: 'red'
+      };
+      this.fireRate = 750; // MS between shots
   }
 
   this.pos = options.pos ? options.pos : {x: 0, y: 0, d: 0};
@@ -206,8 +247,18 @@ function _shipObject(options){
       }
   };
 
+  // Prep the lastFire var for testing
+  this.lastFire = new Date().getTime();
+
   // FUNCTION Send out a projectile
   this.fire = function(createCallback, destroyCallback){
+    // Don't fire too quickly! Respect the fireRate for this ship
+    if (new Date().getTime() - this.lastFire < this.fireRate){
+      return;
+    }
+
+    this.lastFire = new Date().getTime();
+
     // Add to the projectile array for the ship object
     var index = -1;
 
@@ -227,8 +278,8 @@ function _shipObject(options){
 
     this.projectiles[index] = new _projectileObject({
       id: index,
-      type: this.projectile_defaults.type,
-      style: this.projectile_defaults.style,
+      type: this.projectileDefaults.type,
+      style: this.projectileDefaults.style,
       pos: {x: this.pos.x+25, y: this.pos.y, d: this.pos.d},
       create: createCallback,
       destroy: destroyCallback
@@ -258,12 +309,14 @@ function _shipObject(options){
 
 /**
  * Private projectile instantiator function
- * @param {string} type
- *   Type of projectile, currently supports (laser|energy)
- * @param {string} style
- *   Class/Color for projectile
- * @param {object} pos
- *   Position object to start the projectile at
+ * @param {object} options
+ *   Requires the following object keys:
+ *     type {string}: Type of projectile, currently supports (laser|energy)
+ *     style {string}: Class/Color for projectile
+ *     pos {object}: Starting position object (x:[n], y:[n], d:[n])
+ *     id {integer}: The serial index ID for this projectile
+ *     create {func}: Callback called when projectile is created
+ *     destroy {func}: Callback called when projectile is destroyed
  * @returns {object} instantiated projectile object
  * @see _shipObject.fire
  */
@@ -274,16 +327,9 @@ function _projectileObject(options){
   this.age = 0;
   this.type = options.type;
 
-  switch(options.type){
-    case 'laser':
-      this.speed = 20;
-      this.life = 60;
-      break;
-    case 'energy':
-      this.speed = 10;
-      this.life = 90;
-      break;
-  }
+  var typeData = projectileTypes[options.type];
+  this.speed = typeData.speed;
+  this.life = typeData.life;
 
   this.destroy = function(){
     this.active = false;
