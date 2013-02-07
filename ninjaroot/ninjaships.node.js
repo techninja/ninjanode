@@ -428,7 +428,7 @@ function _updateShipMovement(){
       self.velocity_length = self.velocity_length - self.drag;
     }
 
-    if (this.velocity_length < 0) {
+    if (self.velocity_length < 0) {
       self.velocity_length = 0;
     } else {
       if (self.velocity_length > self.max_speed){
