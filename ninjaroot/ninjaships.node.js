@@ -67,8 +67,8 @@ module.exports.getAllProjectiles = function(){
       var proj = _ships[s].projectiles[p];
       if (proj.active){
         out[s + '_' + p] = {
-          x: Math.round(proj.pos.x, 1),
-          y: Math.round(proj.pos.y, 1),
+          x: Math.round(proj.pos.x * 100)/100,
+          y: Math.round(proj.pos.y * 100)/100,
           d: proj.pos.d
         };
       }
@@ -98,8 +98,8 @@ module.exports.getAllPos = function(){
 
     out[s] = {
       pos: {
-        x: Math.round(_ships[s].pos.x, 1),
-        y: Math.round(_ships[s].pos.y, 1),
+        x: Math.round(_ships[s].pos.x * 100)/100,
+        y: Math.round(_ships[s].pos.y * 100)/100,
         t: thrustNum,
         d: _ships[s].pos.d
       }
