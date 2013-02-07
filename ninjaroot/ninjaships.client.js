@@ -14,6 +14,7 @@
   window.ShipSocket = {
     socket : null,
 
+    // Intitalize the socket.io websockets connection, happens on page load
     initialize : function(socketURL) {
       this.socket = io.connect(socketURL);
 
@@ -26,6 +27,7 @@
       this.socket.on('shipstat', this.shipStatus);
     },
 
+    // Actually join the game! Happens once connection screen is submitted
     join : function(shipData) {
       // Send the ship data! User will have to wait for server to relay the
       // new ship back to them before the ship will exist locally
@@ -40,8 +42,9 @@
         f: 32
       };
 
+      // Bind to the window global keyup & keydown events
       var lastKey = '';
-      $(window).bind( 'keyup keydown', function(e) {
+      $(window).bind('keyup keydown', function(e) {
         // Check for each key binding
         for(var name in ShipSocket.keys){
           if (e.which == ShipSocket.keys[name]){
