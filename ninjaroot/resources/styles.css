@@ -1,0 +1,122 @@
+/*!
+ * Ninja Ships! Super-Awesome Spaceship flying "library"
+ * Required base styles (and some not so required)
+ * v0.1
+ */
+
+body.fixed {
+  position: fixed;
+  overflow: hidden;
+}
+
+body.space {
+  background-color: #222;
+  background-image: url('starfield.png');
+}
+
+div.debug {
+  background-color: white;
+  padding: 10px;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.layer0 { z-index: 1; }
+.layer1 { z-index: 2; }
+.layer2 { z-index: 3; }
+.layer3 { z-index: 4; }
+.layer4 { z-index: 5; }
+.layer5 { z-index: 6; }
+
+.preload { /* required for big sprites! */
+  width: 0 !important;
+  display: block;
+}
+
+/* SHIPS */
+ship {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+boom {
+  display: block;
+  width: 256px;
+  height: 256px;
+  background-image: url('explosion_wide.png');
+}
+
+ship.ship_a { background-image: url('ship_a.png'); }
+ship.ship_b { background-image: url('ship_b.png'); }
+ship.ship_c { background-image: url('ship_c.png'); }
+
+/* Forward thrust */
+ship.thrusting:before, ship.thrusting:after {
+  content: url("flame_down.gif");
+  position: relative;
+  top: 60px;
+}
+
+ship.ship_a.thrusting:before { left: 12px; }
+ship.ship_a.thrusting:after { left: 2px; }
+
+ship.ship_b.thrusting:before { left: 3px; }
+ship.ship_b.thrusting:after { left: 9px; }
+
+ship.ship_c.thrusting:before { left: 9px; top: 59px; }
+ship.ship_c.thrusting:after { left: 4px; top: 59px; }
+
+/* Backward thrust */
+ship.thrusting_back:before, ship.thrusting_back:after {
+  content: url("flame_up.gif");
+  position: relative;
+}
+
+ship.ship_a.thrusting_back:before { left: -4px; top: -6px; }
+ship.ship_a.thrusting_back:after { left: 19px; top: -6px; }
+
+ship.ship_b.thrusting_back:before { left: 3px; }
+ship.ship_b.thrusting_back:after { left: 8px; }
+
+ship.ship_c.thrusting_back:before { left: -4px; top: 17px; }
+ship.ship_c.thrusting_back:after { left: 13px; top: 17px; }
+
+
+/* Projectiles! */
+
+projectile.init {
+  display: none;
+  top: 50px;
+}
+
+projectile.laser {
+  height: 70px;
+  width: 5px;
+  border-radius: 5px;
+  background-color:#FFF;
+}
+
+projectile.energy {
+  height: 20px;
+  width: 20px;
+  border-radius: 20px;
+  background-color:#FFF;
+}
+
+projectile.blue {
+  background-color: blue;
+}
+
+projectile.green {
+  background-color: green;
+  width: 2px;
+}
+
+projectile.red {
+  background-color: red;
+}
