@@ -7,7 +7,7 @@
   var updateCount = 0;
 
   setInterval(function(){
-    $('.ups span').html(updateCount * 2);
+    $('#debug .ups span').html(updateCount * 2);
     updateCount = 0;
   }, 500);
 
@@ -17,7 +17,6 @@
     // Intitalize the socket.io websockets connection, happens on page load
     initialize : function(socketURL) {
       this.socket = io.connect(socketURL);
-
       // Object array of ships and their elements
       this.dummyShips = {};
       this.projectiles = {};
@@ -212,6 +211,22 @@
             left: s.pos.x,
             top: s.pos.y
           });
+
+          // Our ship updated its position, move the screen
+          if (id == ShipSocket.socket.socket.sessionid){
+            // DEBUG
+            $('#debug .pos span').html(s.pos.x + ', ' + s.pos.y);
+
+            var x = ($(window).width() / 2) - s.pos.x - 32;
+            var y = ($(window).height() / 2) - s.pos.y - 32;
+
+            $('body').css({
+              margin: y + 'px ' + x + 'px',
+              backgroundPosition: x + 'px ' + y + 'px'
+            });
+          }
+
+
         }
       }
     },

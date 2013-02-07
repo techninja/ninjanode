@@ -21,7 +21,10 @@ body.space {
 
 div#debug {
   background-color: white;
+  left: 20px;
   padding: 10px;
+  position: fixed;
+  top: 20px;
   width: 10em;
 }
 
@@ -47,7 +50,6 @@ div#debug {
 #connection-window {
   left: 50%;
   margin-left: -28%;
-  position: absolute;
   width: 50%;
 }
 
@@ -56,6 +58,7 @@ div#debug {
 }
 
 .window {
+  position: fixed;
   border: 5px dashed #990000;
   padding: 2em;
   background-color: #fff;
