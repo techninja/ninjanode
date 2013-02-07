@@ -217,8 +217,8 @@
             // DEBUG
             $('#debug .pos span').html(s.pos.x + ', ' + s.pos.y);
 
-            var x = ($(window).width() / 2) - s.pos.x - 32;
-            var y = ($(window).height() / 2) - s.pos.y - 32;
+            var x = ($(window).width() / 2) - d.x - 32;
+            var y = ($(window).height() / 2) - d.y - 32;
 
             $('body').css({
               margin: y + 'px ' + x + 'px',

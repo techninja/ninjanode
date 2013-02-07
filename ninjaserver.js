@@ -45,7 +45,7 @@ io.sockets.on('connection', function (clientSocket) {
 
   // Client disconnected! Let everyone else know...
   clientSocket.on('disconnect', function (){
-    console.log('Disconnected ship: ' + id);
+    console.log('Disconnected user: ' + id);
     var shipStat = {};
     shipStat[id] = {status: 'destroy'};
     io.sockets.emit('shipstat', shipStat);
