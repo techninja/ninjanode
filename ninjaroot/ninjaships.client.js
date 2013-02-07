@@ -83,9 +83,10 @@
           // Only create locally if it doesn't exist.
           if (!ShipSocket.dummyShips[id]){
             console.log('Create Ship: ', data[id]);
-            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + data[id].style + '"/>');
+            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + data[id].style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + data[id].name + '</label>');
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
+              label: $('#label_' + id),
               pos: data[id].pos,
               style: data[id].style
             }
@@ -102,6 +103,7 @@
           // Remove element and dummy data
           if (ShipSocket.dummyShips[id]){
             ShipSocket.dummyShips[id].element.remove();
+            ShipSocket.dummyShips[id].label.remove();
             delete ShipSocket.dummyShips[id];
           }
         }
@@ -125,10 +127,16 @@
           }*/
           s.pos = {x: d.x, y: d.y, d: d.d};
 
-          //console.log (data.pos);
+          // Set ship element position and rotation
           s.element.css('transform', 'rotate(' + s.pos.d + 'deg)');
           s.element.css('WebkitTransform', 'rotate(' + s.pos.d + 'deg)');
           s.element.css({
+            left: s.pos.x,
+            top: s.pos.y
+          });
+
+          // Set label position
+          s.label.css({
             left: s.pos.x,
             top: s.pos.y
           });
