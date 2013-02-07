@@ -16,6 +16,22 @@
 
     initialize : function(socketURL) {
       this.socket = io.connect(socketURL);
+
+      // Object array of ships and their elements
+      this.dummyShips = {};
+
+      // Bind functions to incoming data
+      this.socket.on('chat', this.chat);
+      this.socket.on('pos', this.updatePos);
+      this.socket.on('shipstat', this.shipStatus);
+    },
+
+    join : function(shipData) {
+      // Send the ship data! User will have to wait for server to relay the
+      // new ship back to them before the ship will exist locally
+      shipData.status = "create";
+      this.socket.emit('shipstat', shipData);
+
       this.keys = {
         l: 37,
         u: 38,
@@ -23,9 +39,6 @@
         d: 40,
         f: 32
       };
-
-      // Object array of ships and their elements
-      this.dummyShips = {};
 
       var lastKey = '';
       $(window).bind( 'keyup keydown', function(e) {
@@ -43,11 +56,6 @@
           }
         }
       });
-
-      // Bind functions to incoming data
-      this.socket.on('chat', this.chat);
-      this.socket.on('pos', this.updatePos);
-      this.socket.on('shipstat', this.shipStatus);
     },
 
 

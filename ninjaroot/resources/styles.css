@@ -4,6 +4,11 @@
  * v0.1
  */
 
+ body {
+   font-family: sans-serif;
+   width: 100%;
+ }
+
 body.fixed {
   position: fixed;
   overflow: hidden;
@@ -14,9 +19,10 @@ body.space {
   background-image: url('starfield.png');
 }
 
-div.debug {
+div#debug {
   background-color: white;
   padding: 10px;
+  width: 10em;
 }
 
 .overlay {
@@ -35,6 +41,51 @@ div.debug {
 .preload { /* required for big sprites! */
   width: 0 !important;
   display: block;
+}
+
+/* Connection Window */
+#connection-window {
+  left: 50%;
+  margin-left: -28%;
+  position: absolute;
+  width: 50%;
+}
+
+#connection-window button {
+  float: right;
+}
+
+.window {
+  border: 5px dashed #990000;
+  padding: 2em;
+  background-color: #fff;
+}
+
+#connection-window .ship-select {
+  margin: 1em;
+}
+
+#connection-window h1 {
+  margin-top: 0;
+  text-align: center;
+}
+
+#connection-window label.ship {
+  display: block;
+  float: left;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  width: 100px;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 1em;
+  padding: 0.5em;
+  font-family: fantasy;
+  font-style: italic;
+}
+
+#connection-window label ship {
+  margin: 0.5em auto;
 }
 
 /* SHIPS */

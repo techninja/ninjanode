@@ -25,32 +25,23 @@ console.log('ninjanode server listening on localhost:' + port);
 io.sockets.on('connection', function (clientSocket) {
   var id = clientSocket.id;
 
-  // DEBUG Data placeholder
-  var shipData = {
-    id: id,
-    name: 'TESTSHIP',
-    style: 'a',
-    pos: {x:550, y:100, d:135}
-  };
+  // User is expected to 'connect' immediately, but isn't in game until they send
+  // their name, ship type, etc.
+  console.log('New user connected: ' + id);
 
-  console.log('Creating ship: ' + id);
-  ships.addShip(shipData);
+  // Send out list of existing ships for this new client (gets sent to everyone)
+  emitAllShips(id);
 
-  // Send out list of all existing ships (including the new one)
-  var listShips = ships.shipGet();
-  var out = {};
-  var shipCount = 0;
-  for (var id in listShips){
-    shipCount++;
-    out[id] = {
-      status: 'create',
-      name: listShips[id].name,
-      style: listShips[id].style,
-      pos: listShips[id].pos
+  // This client's new ship data recieved! Create it.
+  clientSocket.on('shipstat', function (data) {
+    console.log('Creating ship: ' + data);
+    if (data.status == 'create'){ // New ship!
+      console.log('Creating ship: ' + id);
+      data.id = id;
+      ships.addShip(data);
+      emitAllShips();
     }
-  }
-  console.log('Existing ship update: ', out);
-  io.sockets.emit('shipstat', out);
+  });
 
   // Client disconnected! Let everyone else know...
   clientSocket.on('disconnect', function (){
@@ -81,6 +72,31 @@ io.sockets.on('connection', function (clientSocket) {
     }
   });
 });
+
+// Send out shipstat for every ship to everyone
+function emitAllShips(targetID){
+  var listShips = ships.shipGet();
+  var out = {};
+  var shipCount = 0;
+  for (var id in listShips){
+    shipCount++;
+    out[id] = {
+      status: 'create',
+      name: listShips[id].name,
+      style: listShips[id].style,
+      pos: listShips[id].pos
+    }
+  }
+
+  if (shipCount){
+    console.log('Existing ship update: ', out);
+
+    if (targetID){
+      // TODO: Get targetID to send to JUST that socket.io ID!
+    }
+    io.sockets.emit('shipstat', out);
+  }
+}
 
 // Main loop to run processing for all ship positions, collisions, projectiles
 // Also compiles changed positions and sends out to all clients
