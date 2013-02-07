@@ -1,0 +1,12 @@
+{
+  "name": "ninjanode",
+  "version": "0.1.0",
+  "description": "Node.js version of the ninjaships.js library, made into a complete HTML5 multiplayer game!",
+  "main": "ninjaserver.js",
+  "author": "techninja",
+  "license": "MIT",
+  "dependencies" : {
+    "express": "~3.0.0",
+    "socket.io" : "~0.9.10"
+  }
+}
