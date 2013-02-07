@@ -78,6 +78,7 @@ io.sockets.on('connection', function (clientSocket) {
   function projectileCreate(data){
     var p = {};
     p[id + '_' + data.id] = {
+      shipID: id,
       status: 'create',
       pos: data.pos,
       style: data.style,

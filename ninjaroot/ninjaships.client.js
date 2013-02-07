@@ -106,8 +106,9 @@
           }
         } else { // Destroy!
           console.log('Remove Ship: ', id);//
-          // Remove element and dummy data
+          // Remove element, projectile elements, and data
           if (ShipSocket.dummyShips[id]){
+            $('projectile.ship-id-' + id).remove();
             ShipSocket.dummyShips[id].element.remove();
             ShipSocket.dummyShips[id].label.remove();
             delete ShipSocket.dummyShips[id];
@@ -124,7 +125,7 @@
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
             console.log('Create projectile: ', id);
-            $('body').append('<projectile id="proj_' + id + '" class="overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
+            $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),
               pos: d.pos
