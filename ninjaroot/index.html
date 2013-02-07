@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Ninja Ships ONLINE!</title>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="resources/styles.css">
+    <script src="libs/jquery.js"></script>
+    <script src="libs/jquery.spritely-0.6.js"></script>
+
+    <script type="text/javascript" src="ninjaships.client.js"></script>
+  </head>
+  <body class="fixed space">
+    <div id="debug">
+      <div class="ups">Recvs per sec: <span>0</span></div>
+    </div>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        ShipSocket.initialize('http://' + window.location.host + '/');
+      });
+    </script>
+  </body>
+</html>
