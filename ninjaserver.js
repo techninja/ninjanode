@@ -38,6 +38,11 @@ io.sockets.on('connection', function (clientSocket) {
     if (data.status == 'create'){ // New ship!
       console.log('Creating ship: ' + id);
       data.id = id;
+      data.pos = {
+        x: Math.floor((Math.random()*8)+1)*70,
+        y: Math.floor((Math.random()*8)+1)*70,
+        d: 0
+      };
       ships.addShip(data);
       emitAllShips();
     }

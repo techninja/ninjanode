@@ -67,8 +67,7 @@
           // TODO: Validate form input
           ShipSocket.join({
             name: $('input.name').val(),
-            style: $('input[name=ship]:checked').val(),
-            pos: {x: 100, y: 100, d: 90}
+            style: $('input[name=ship]:checked').val()
           });
 
           $('#connection-window').fadeOut('slow');
