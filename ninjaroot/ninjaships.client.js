@@ -89,7 +89,12 @@
           // Only create locally if it doesn't exist.
           if (!ShipSocket.dummyShips[id]){
             console.log('Create Ship: ', d);
+
+            // Add ship element
             $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + d.name + '</label>');
+
+            // Add player list element
+            $('#players').append('<player class="ship-id-' + id + '"><ship class="ship_' + d.style + '"></ship>' + d.name + '</player>');
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),

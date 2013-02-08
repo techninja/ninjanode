@@ -91,6 +91,41 @@ div#debug {
   margin: 0.5em auto;
 }
 
+/* Players Window */
+#players {
+  background-color: rgba(22, 22, 22, 0.5);
+  border: 1px solid #444444;
+  border-radius: 1em 1em 1em 1em;
+  color: #AAAAFF;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 1em;
+  right: 1em;
+  top: 1em;
+  width: 200px;
+}
+
+#players h3 {
+  border-bottom: 1px solid #2D918B;
+  margin-top: 0;
+  color: #005bce;
+  margin-bottom: 0.2em;
+}
+
+#players ship {
+  float: left;
+  width: 16px;
+  height: 16px;
+  background-size: 16px 16px;
+  margin-right: 1em;
+}
+
+#players player {
+  clear: both;
+  display: block;
+  margin-top: 0.5em;
+}
+
 /* SHIPS */
 ship {
   display: block;
