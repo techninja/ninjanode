@@ -38,6 +38,8 @@ io.sockets.on('connection', function (clientSocket) {
     if (data.status == 'create'){ // New ship!
       console.log('Creating ship: ' + id);
       data.id = id;
+      data.hit = shipHit;
+      data.boom = shipBoom;
       data.pos = {
         x: Math.floor((Math.random()*8)+1)*70,
         y: Math.floor((Math.random()*8)+1)*70,
@@ -99,6 +101,25 @@ io.sockets.on('connection', function (clientSocket) {
       status: 'destroy'
     };
     io.sockets.emit('projstat', p);
+  }
+
+  // Send out ship hit status
+  function shipHit(data){
+    var out = {};
+    out[data.target.id] = {
+      status: 'hit'
+    };
+    io.sockets.emit('shipstat', out);
+  }
+
+  // Send out ship exploding status
+  function shipBoom(data){
+    var out = {};
+    out[data.id] = {
+      status: 'boom',
+      stage: data.stage
+    };
+    io.sockets.emit('shipstat', out);
   }
 
 });

@@ -9,11 +9,13 @@ var _ships = {};
 var projectileTypes = {
   laser: {
     speed: 20,
-    life: 30 // Num of cycles before death
+    life: 30, // Num of cycles before death
+    yOffset: -50
   },
   energy : {
     speed: 10,
-    life: 90
+    life: 90,
+    yOffset: -2
   }
 };
 
@@ -90,10 +92,12 @@ module.exports.getAllPos = function(){
     var thrustNum = 0;
 
     // Thrust detailing
-    if (_ships[s].thrust > 0) {
-      thrustNum = 1; // Forward
-    } else if (_ships[s].thrust < 0) {
-      thrustNum = 2; // Reverse
+    if (!_ships[s].exploding){
+      if (_ships[s].thrust > 0) {
+        thrustNum = 1; // Forward
+      } else if (_ships[s].thrust < 0) {
+        thrustNum = 2; // Reverse
+      }
     }
 
     out[s] = {
@@ -116,6 +120,11 @@ module.exports.getAllPos = function(){
 module.exports.shipSetThrust = function(id, thrust){
   if (_ships[id]){
     _ships[id].thrust = thrust;
+
+    if (_ships[id].exploding) {
+      _ships[id].thrust = 0;
+    }
+
     return true;
   }else {
     return false;
@@ -130,6 +139,10 @@ module.exports.shipSetTurn = function(id, direction){
     if (direction){
       _ships[id].turn = _ships[id].rotation_speed * (direction == 'l' ? -1 : 1);
     } else {
+      _ships[id].turn = 0;
+    }
+
+    if (_ships[id].exploding) {
       _ships[id].turn = 0;
     }
 
@@ -159,6 +172,7 @@ module.exports.shipSetFire = function(id, createCallback, destroyCallback){
  *     name {string}: Name of the user
  *     style {char}: Letter of the ship style to use (a|b|c|d|e|f)
  *     pos {object}: Initial home position object (x:[n], y:[n], d:[n])
+ *     hit {func}: Callback for when the ship gets hit or collides
  * @returns {object} instantiated ship object
  * @see module.exports.addShip
  */
@@ -169,7 +183,8 @@ function _shipObject(options){
   // Velocity (speed + direction)
   this.velocity_x = 0;
   this.velocity_y = 0;
-  this.velocity_length = 0;
+  this.id = options.id;
+  this.velocityLength = 0;
   this.max_speed = 10;
   this.drag = 0.03;
   this.turn = 0;
@@ -290,19 +305,50 @@ function _shipObject(options){
   this.kill_velocity = function(){
     this.velocity_x = 0;
     this.velocity_y = 0;
-    this.velocity_length = 0;
+    this.velocityLength = 0;
+  }
+
+  // FUNCTION projectile hit/collision callback
+  this.hit = function(data){
+    data.target = this;
+
+    if (data.type == 'collision'){
+      // Everyone dies here!
+      data.target.triggerBoom();
+      data.source.triggerBoom();
+    } else if (data.type == 'projectile') {
+      // TODO: Calc damage
+    }
+
+    options.hit(data);
   }
 
   // FUNCTION Trigger ship explosion
-  this.trigger_boom = function(returnhome, midcallback, endcallback){
+  this.triggerBoom = function(){
     if (!this.exploding){
       var ship = this;
-      this.exploding = true;
-      // TODO: Trigger explode
-      // TODO: Trigger after explode
-      /*ship.kill_velocity();
-      ship.pos.x = ship.home.x;
-      ship.pos.y = ship.home.y;*/
+      ship.exploding = true;
+
+      // Trigger first callback
+      options.boom({
+        id: ship.id,
+        stage: 'start'
+      });
+
+      // 5 seconds should be enough time for the explosion and wait
+      setTimeout(function(){
+        ship.kill_velocity();
+        ship.pos.x = ship.home.x;
+        ship.pos.y = ship.home.y;
+        ship.pos.d = 0;
+        ship.exploding = false;
+
+        // Trigger second callback
+        options.boom({
+          id: ship.id,
+          stage: 'complete'
+        });
+      }, 5000)
     }
   }
 }
@@ -330,6 +376,7 @@ function _projectileObject(options){
   var typeData = projectileTypes[options.type];
   this.speed = typeData.speed;
   this.life = typeData.life;
+  this.yOffset = typeData.yOffset;
 
   this.destroy = function(){
     this.active = false;
@@ -372,35 +419,67 @@ function _updateProjectileMovement(){
  * @see module.exports.processShipFrame
  */
 function _detectCollision(){
-  /*
-    * Pseudo:
-    *
-    * ship to ship collision
-    *
-    * ship to projectile collision
-    *
-    *
-    *
-    *
-    */
-   // TODO: REWRITE!
-    /*var lastd = '';
-      for(var s in _ships){
-        var b = _ships[s];
+    // Loop through every ship, to every ship, to every projectile
+    for(var s in _ships){
+      var source = _ships[s];
+      // Check every ship against this projectile
+      for(var t in _ships){
+        var target = _ships[t];
+        if (t != s && !target.exploding && !source.exploding){ // Ships can't hit themselves
 
-        var debug = a.x + ', ' + b.x;
+          // While we're here, check for ship to ship collision
+          if (source.pos.x + source.width > target.pos.x && source.pos.x < target.pos.x + target.width){
+            // Target is within the vertical column! check horizontal
+            if (source.pos.y + source.height > target.pos.y && source.pos.y < target.pos.y + target.height){
+              // Source bounding box is within the target's box!
 
-        if (lastd != debug){
-          //console.log(debug);
-          lastd=debug;
-        }
+              // Trigger hit callback (to simplify things.. both should die
+              if (target.velocityLength > source.velocityLength){
+                console.log(target.name + ' slammed into ' + source.name);
+                target.hit({
+                  type: 'collision',
+                  source: source // Include source to find out who's hitting who
+                });
+              } else {
+                console.log(source.name + ' slammed into ' + target.name);
+                source.hit({
+                  type: 'collision',
+                  source: target // Include source to find out who's hitting who
+                });
+              }
+            } // End Check Y bounds
+          } // End Check X bounds
 
-        if (a.x > b.x && a.x < b.x + b.width){
-          // Ship a is within the vert column!
-          a.trigger_boom(true);
-        }
-      }
-      */
+          // Loop through projectiles on source ship
+          for (var i in source.projectiles){
+            var p = source.projectiles[i];
+            if (p.active){ // Skip inactive projectiles
+              if (p.pos.x > target.pos.x && p.pos.x < target.pos.x + target.width){
+                // Target is within the vertical column! check horizontal
+                if (p.pos.y - p.yOffset > target.pos.y && p.pos.y - p.yOffset < target.pos.y + target.height){
+                  // Projectile X & Y is within the target's box!
+                  console.log(source.name + ' shot ' + target.name);
+
+                  // Run callback
+                  target.hit({
+                    type: 'projectile',
+                    source: source
+                  });
+
+                  // Register knockback on the target on next move
+                  target.knockback = {
+                    angle: p.pos.d,
+                    type: p.type
+                  };
+                  p.destroy();
+                } // End Check Y bounds
+              } // End Check X bounds
+            } // End if projectile active
+          } // End each projectile in source ship
+        } // End if source != target
+      } // End each target ship
+    } // End Each source ship
+
 }
 
 /**
@@ -411,55 +490,53 @@ function _updateShipMovement(){
   for (s in _ships){
     var self = _ships[s];
 
-    if (self.turn != 0){
+    if (self.turn != 0 && !self.exploding){
       self.rot(self.turn);
     }
 
-    if (self.exploding){
-      //$(this.element_id).removeClass('thrusting thrusting_back')
-      //return;
+    // Apply thrust vector
+    if (self.thrust != 0 || self.hit){
+      var angle = self.pos.d;
+      var amount = self.thrust;
+
+      // For knockback hit, only run once..
+      if (self.knockback){
+        angle = self.knockback.angle;
+        amount = 2;
+        delete self.knockback;
+      }
+
+      theta = angle * (Math.PI / 180);
+      self.velocity_x += Math.cos(theta) * -amount;
+      self.velocity_y += Math.sin(theta) * amount;
     }
 
     // find the overall velocity length
-    self.velocity_length = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.drag;
+    self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.drag;
 
-    // if exploding, double the drag!
+    // if exploding, exponential drag!
     if (self.exploding){
-      self.velocity_length = self.velocity_length - self.drag;
+      self.velocityLength = self.velocityLength / 1.1;
     }
 
-    if (self.velocity_length < 0) {
-      self.velocity_length = 0;
+    if (self.velocityLength < 0) {
+      self.velocityLength = 0;
     } else {
-      if (self.velocity_length > self.max_speed){
-        self.velocity_length = self.max_speed;
+      if (self.velocityLength > self.max_speed){
+        self.velocityLength = self.max_speed;
       }
 
       // find the current velocity rotation
       var rot = Math.atan2(self.velocity_y, self.velocity_x) * (180 / Math.PI);
 
-      // recalculate the vVelelocities by multiplying the new rotation by the overall velocity length
+      // recalculate the velocities by multiplying the new rotation by the overall velocity length
       var theta = rot * (Math.PI / 180);
-      self.velocity_x = Math.cos(theta) * self.velocity_length;
-      self.velocity_y = Math.sin(theta) * self.velocity_length;
+      self.velocity_x = Math.cos(theta) * self.velocityLength;
+      self.velocity_y = Math.sin(theta) * self.velocityLength;
 
       // update position
       self.pos.y += self.velocity_x;
       self.pos.x += self.velocity_y;
-    }
-
-    if (self.thrust != 0){
-      theta = self.pos.d * (Math.PI / 180);
-      self.velocity_x += Math.cos(theta) * -self.thrust;
-      self.velocity_y += Math.sin(theta) * self.thrust;
-    }
-
-    if (self.thrust > 0){
-      //this.element.addClass('thrusting');
-    }else if (self.thrust < 0){
-      //this.element.addClass('thrusting_back');
-    }else if (self.thrust == 0){
-      //this.element.removeClass('thrusting thrusting_back')
     }
   }
 }

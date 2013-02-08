@@ -84,26 +84,25 @@
     // Create / remove local dummy ships
     shipStatus: function(data){
       for (var id in data){
-        if (data[id].status == 'create'){
+        var d = data[id];
+        if (d.status == 'create'){ // Create new ship object
           // Only create locally if it doesn't exist.
           if (!ShipSocket.dummyShips[id]){
-            console.log('Create Ship: ', data[id]);
-            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + data[id].style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + data[id].name + '</label>');
+            console.log('Create Ship: ', d);
+            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + d.name + '</label>');
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
-              pos: data[id].pos,
-              style: data[id].style
+              pos: d.pos,
+              style: d.style
             }
 
             // Send to update to ensure it gets drawn
             var u = {};
-            u[id] = data[id].pos;
+            u[id] = d.pos;
             ShipSocket.updatePos(u);
-          } else {
-            console.log('Ignore Create Ship: ', id);
           }
-        } else { // Destroy!
+        } else if (d.status == 'destroy'){ // Destroy!
           console.log('Remove Ship: ', id);//
           // Remove element, projectile elements, and data
           if (ShipSocket.dummyShips[id]){
@@ -111,6 +110,17 @@
             ShipSocket.dummyShips[id].element.remove();
             ShipSocket.dummyShips[id].label.remove();
             delete ShipSocket.dummyShips[id];
+          }
+        } else if (d.status == 'hit'){ // Hit
+          // TODO: Add sound effect, with volume based on distance away from user?
+          console.log(id + ' was hit');
+        } else if (d.status == 'boom'){ // BOOM!
+          if (d.stage == 'start'){
+            // TODO: Add sound, fade out
+            console.log(id + ' exploded!');
+          } else { // Complete
+            // Fade back in
+            console.log(id + ' came back from being dead');
           }
         }
       }
@@ -123,6 +133,7 @@
         if (d.status == 'create'){
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
+            // TODO: Add sound effect
             console.log('Create projectile: ', id);
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
