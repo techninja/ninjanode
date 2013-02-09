@@ -47,6 +47,7 @@ io.sockets.on('connection', function (clientSocket) {
       };
       ships.addShip(data);
       emitAllShips();
+      emitSystemMessage(id, 'join'); // Must send after create...
     }
   });
 
@@ -55,13 +56,18 @@ io.sockets.on('connection', function (clientSocket) {
     console.log('Disconnected user: ' + id);
     var shipStat = {};
     shipStat[id] = {status: 'destroy'};
+    emitSystemMessage(id, 'disconnect'); // Must send before delete...
     io.sockets.emit('shipstat', shipStat);
     ships.shipRemove(id);
   });
 
   // Broadcast incoming chats to all clients
   clientSocket.on('chat', function (data) {
-    io.sockets.emit('chat', data);
+    io.sockets.emit('chat', {
+      type: 'chat',
+      msg: data.msg,
+      id: id
+    });
   });
 
   // Keypresses from individual clients
@@ -174,6 +180,17 @@ function emitProjectilePositionUpdates(){
   if (Object.keys(out).length) {
     io.sockets.emit('projpos', out);
   }
+}
+
+// Send out system messages
+function emitSystemMessage(id, action, target){
+  var out = {
+    type: 'system',
+    action: action,
+    id: id,
+    target: target
+  }
+  io.sockets.emit('chat', out);
 }
 
 // Main loop to run processing for all ship positions, collisions, projectiles

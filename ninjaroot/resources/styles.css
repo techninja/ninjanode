@@ -28,6 +28,10 @@ div#debug {
   width: 10em;
 }
 
+.hidden {
+  display: none;
+}
+
 .overlay {
   position: absolute;
   left: 0;
@@ -124,6 +128,75 @@ div#debug {
   clear: both;
   display: block;
   margin-top: 0.5em;
+}
+
+
+/* Chat Windows */
+.chat {
+  bottom: 1em;
+  left: 1em;
+  width: 70%;
+  background-color: rgba(0, 0, 25, 0.5);
+  border: 1px solid #444444;
+  border-radius: 0em 1em;
+  color: #FFF;
+  font-family: monospace;
+  font-size: 16px;
+  padding: 1em;
+}
+
+.chat ol {
+  display: block;
+  height: 90%;
+  list-style: none outside none;
+  margin: 0;
+  overflow-y: scroll;
+  padding: 0;
+}
+
+.chat li {
+  font-size: 1.2em;
+  color: #6CE26C;
+}
+
+.chat li span {
+  font-weight: bold;
+}
+
+.chat li.sys {
+  color: red;
+}
+
+.chat li.self {
+  color: yellow;
+}
+
+#chat-main {
+  height: 80%;
+}
+
+#chat-main input {
+  background: none repeat scroll 0 0 transparent;
+  border-color: #444444 -moz-use-text-color;
+  border-image: none;
+  border-style: solid none;
+  border-width: 1px 0;
+  bottom: 0.5em;
+  color: #AAFFFF;
+  font-family: monospace;
+  font-size: 1.1em;
+  height: 35px;
+  position: absolute;
+  width: 96%;
+}
+
+#chat-notify {
+  min-height: 22px;
+}
+
+#chat-notify ol {
+  height: auto;
+  overflow: auto;
 }
 
 /* SHIPS */
