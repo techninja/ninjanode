@@ -144,7 +144,8 @@
             // Add player list element
             $('#players').append('<player class="ship-id-' + id +
               '"><ship class="ship_' + d.style + '"></ship>' + d.name +
-              '<span class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span></player>');
+              '<span title="' + (id == ShipSocket.id ? 'It\'s you!' : 'Follow me!') +
+              '" class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span></player>');
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
