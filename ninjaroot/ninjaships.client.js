@@ -216,8 +216,7 @@
 
           // Set ship element position and rotation
           s.element.removeClass('init');
-          s.element.css('transform', 'rotate(' + s.pos.d + 'deg)');
-          s.element.css('WebkitTransform', 'rotate(' + s.pos.d + 'deg)');
+          s.element.rotate(s.pos.d);
           s.element.css({
             left: s.pos.x,
             top: s.pos.y
@@ -244,8 +243,7 @@
           s.pos = {x: d.x, y: d.y, d: d.d};
 
           // Set ship element position and rotation
-          s.element.css('transform', 'rotate(' + s.pos.d + 'deg)');
-          s.element.css('WebkitTransform', 'rotate(' + s.pos.d + 'deg)');
+          s.element.rotate(s.pos.d);
           s.element.css({
             left: s.pos.x,
             top: s.pos.y
