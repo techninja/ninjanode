@@ -304,13 +304,15 @@
 
       var sysMsgActions = {
         join: 'joined the game',
-        disconnect: 'disconnected'
+        disconnect: 'disconnected',
+        collision: 'slammed into'
       }
 
       if (data.type == 'system'){
         classType = 'sys';
-        data.msg = '<span>' + name + '</span> ' +
-          sysMsgActions[data.action];
+        data.msg = '<span>' + name + '</span> '
+        data.msg+= sysMsgActions[data.action]
+        data.msg+= (!data.target ? '' :' <span>' + ShipSocket.dummyShips[data.target].name + '</span>');
       } else if (data.type == 'chat') {
         data.msg = '<span>' + name + ':</span> ' + data.msg;
         if (data.id == ShipSocket.id) {

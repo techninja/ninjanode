@@ -116,6 +116,11 @@ io.sockets.on('connection', function (clientSocket) {
       status: 'hit'
     };
     io.sockets.emit('shipstat', out);
+
+    // Also.. if it's a collision, then they're dead!
+    if (data.type == 'collision'){
+      emitSystemMessage(data.target.id, data.type, data.source.id);
+    }
   }
 
   // Send out ship exploding status
