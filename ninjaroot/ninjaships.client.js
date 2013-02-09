@@ -71,6 +71,12 @@
           }
         }
 
+        // Show/hide debug box
+        if (e.type == 'keyup' && e.which == 115){
+          $('#debug').toggle();
+          return false;
+        }
+
         // Text chat enable/disable bindings
         if (e.type == 'keyup' && e.which == 84 && chatHidden) { // 't' pressed
           $('#chat-main').show();
