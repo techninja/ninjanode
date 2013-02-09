@@ -438,15 +438,15 @@ function _detectCollision(){
               // Trigger hit callback (to simplify things.. both should die
               if (target.velocityLength > source.velocityLength){
                 console.log(target.name + ' slammed into ' + source.name);
-                target.hit({
-                  type: 'collision',
-                  source: source // Include source to find out who's hitting who
-                });
-              } else {
-                console.log(source.name + ' slammed into ' + target.name);
                 source.hit({
                   type: 'collision',
                   source: target // Include source to find out who's hitting who
+                });
+              } else {
+                console.log(source.name + ' slammed into ' + target.name);
+                target.hit({
+                  type: 'collision',
+                  source: source // Include source to find out who's hitting who
                 });
               }
             } // End Check Y bounds
