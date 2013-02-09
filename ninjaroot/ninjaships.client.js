@@ -21,6 +21,7 @@
         // Shortcut to our session id
         ShipSocket.id = ShipSocket.socket.socket.sessionid;
         $('#connection-window').fadeIn('slow');
+        $('#connection-window input')[0].focus();
       })
 
       // Object array of ships and their elements
