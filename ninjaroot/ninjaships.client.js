@@ -76,6 +76,7 @@
         // Leave text chat
         if (e.which == 27) { // 'esc' pressed
           $('#chat-main').fadeOut('slow');
+          $('#chat-main input').val(''); // Counteract text coming back...
           if ($('#chat-notify li').length){
             $('#chat-notify').fadeOut('slow');
           }
