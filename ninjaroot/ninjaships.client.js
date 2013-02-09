@@ -17,6 +17,12 @@
     // Intitalize the socket.io websockets connection, happens on page load
     initialize : function(socketURL) {
       this.socket = io.connect(socketURL);
+      this.socket.on('connect', function(){
+        // Shortcut to our session id
+        ShipSocket.id = ShipSocket.socket.socket.sessionid;
+        $('#connection-window').fadeIn('slow');
+      })
+
       // Object array of ships and their elements
       this.dummyShips = {};
       this.projectiles = {};
@@ -265,7 +271,7 @@
           });
 
           // Our ship updated its position, move the screen
-          if (id == ShipSocket.socket.socket.sessionid){
+          if (id == ShipSocket.id){
             // DEBUG
             $('#debug .pos span').html(s.pos.x + ', ' + s.pos.y);
 
@@ -314,7 +320,7 @@
           sysMsgActions[data.action];
       } else if (data.type == 'chat') {
         data.msg = '<span>' + name + ':</span> ' + data.msg;
-        if (data.id == ShipSocket.socket.socket.sessionid) {
+        if (data.id == ShipSocket.id) {
           classType = 'self';
         }
       }
