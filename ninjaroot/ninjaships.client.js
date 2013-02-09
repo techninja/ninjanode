@@ -284,13 +284,19 @@
             top: s.pos.y
           });
 
+          s.sound.thrust.loop = true;
+          s.sound.thrust.volume = 0.2;
+
           // Show thrust direction
           if (d.t == 0){
             s.element.removeClass('thrusting thrusting_back')
+            s.sound.thrust.pause();
           }else if (d.t == 1){
             s.element.addClass('thrusting');
+            s.sound.thrust.play();
           }else if (d.t == 2){
             s.element.addClass('thrusting_back');
+            s.sound.thrust.play();
           }
 
           // Set label position
