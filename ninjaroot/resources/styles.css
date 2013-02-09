@@ -130,6 +130,23 @@ div#debug {
   margin-top: 0.5em;
 }
 
+#players player .arrow {
+  border-bottom: 14px solid #FF0000;
+  border-left: 5px solid transparent;
+  border-right: 6px solid transparent;
+  float: right;
+  height: 0;
+  width: 0;
+}
+
+#players player .circle {
+  border: 6px solid #00FF00;
+  border-radius: 6px;
+  float: right;
+  height: 0;
+  width: 0;
+}
+
 
 /* Chat Windows */
 .chat {

@@ -72,6 +72,15 @@
       </fieldset>
     </div>
     <script type="text/javascript">
+      (function( $ ){
+        $.fn.rotate = function(degree) {
+          this.css({
+            WebkitTransform: 'rotate(' + degree + 'deg)',
+            'transform': 'rotate(' + degree + 'deg)'}
+          );
+        };
+      })( jQuery );
+
       $(document).ready(function() {
         // Connect immediately...
         ShipSocket.initialize('http://' + window.location.host + '/');

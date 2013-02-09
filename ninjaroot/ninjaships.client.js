@@ -132,7 +132,9 @@
             $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + d.name + '</label>');
 
             // Add player list element
-            $('#players').append('<player class="ship-id-' + id + '"><ship class="ship_' + d.style + '"></ship>' + d.name + '</player>');
+            $('#players').append('<player class="ship-id-' + id +
+              '"><ship class="ship_' + d.style + '"></ship>' + d.name +
+              '<span class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span></player>');
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
@@ -276,8 +278,15 @@
               margin: y + 'px ' + x + 'px',
               backgroundPosition: x + 'px ' + y + 'px'
             });
-          }
 
+            // Update all compasses
+            for (var g in ShipSocket.dummyShips){
+              ShipSocket._updateCompass(g);
+            }
+
+          } else { // Update This players compass!
+              ShipSocket._updateCompass(id);
+          }
 
         }
       }
@@ -338,6 +347,20 @@
       // Only show notify if chat window isn't visible
       if (!$('#chat-main:visible').length){
         $('#chat-notify').fadeIn('slow');
+      }
+    },
+
+    // Utility function for updating player compass directions
+    _updateCompass: function(target){
+      if (ShipSocket.dummyShips[ShipSocket.id] && target != ShipSocket.id){
+        var myPos = ShipSocket.dummyShips[ShipSocket.id].pos;
+        var t = ShipSocket.dummyShips[target].pos;
+        var theta = Math.atan2((t.y + 32) - (myPos.y + 32), (t.x + 32) - (myPos.x + 32));
+        if (theta < 0) {theta += 2 * Math.PI;}
+        var angle = theta * (180 / Math.PI) + 90;
+
+        $('player.ship-id-' + target + ' .arrow')
+          .rotate(Math.round(angle));
       }
     },
 
