@@ -321,6 +321,7 @@
       var sysMsgActions = {
         join: 'joined the game',
         disconnect: 'disconnected',
+        projectile: 'gunned down',
         collision: 'slammed into'
       }
 

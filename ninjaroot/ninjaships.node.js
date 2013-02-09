@@ -318,6 +318,8 @@ function _shipObject(options){
       data.source.triggerBoom();
     } else if (data.type == 'projectile') {
       // TODO: Calc damage
+      // Just kill em for now
+      data.target.triggerBoom();
     }
 
     options.hit(data);

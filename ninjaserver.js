@@ -119,7 +119,9 @@ io.sockets.on('connection', function (clientSocket) {
 
     // Also.. if it's a collision, then they're dead!
     if (data.type == 'collision'){
-      emitSystemMessage(data.target.id, data.type, data.source.id);
+      emitSystemMessage(data.source.id, data.type, data.target.id);
+    } else { // For right now, one shot = one kill
+      emitSystemMessage(data.source.id, data.type, data.target.id);
     }
   }
 
