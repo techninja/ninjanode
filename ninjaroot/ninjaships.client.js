@@ -28,6 +28,21 @@
       this.dummyShips = {};
       this.projectiles = {};
 
+      // Audio Resources
+      var audioRoot = '/resources/audio/';
+      this.audioPath = {
+        boom:  audioRoot + "explosion.wav",
+        thrust: audioRoot + "thrust.wav",
+        firea: audioRoot + "fire1.wav",
+        fireb: audioRoot + "fire2.wav",
+        firec: audioRoot + "fire3.wav",
+        fired: audioRoot + "fire1.wav",
+        firee: audioRoot + "fire2.wav",
+        firef: audioRoot + "fire3.wav",
+        hit1: audioRoot + "hit1.wav",
+        hit2: audioRoot + "hit2.wav"
+      };
+
       // Preload large resources
       $('body').append('<div id="preload-boom" class="preload"> </div>');
 
@@ -154,6 +169,11 @@
               element: $('ship#user_' + id),
               label: $('#label_' + id),
               name: d.name,
+              sound: {
+                boom: new Audio(ShipSocket.audioPath['boom']),
+                thrust: new Audio(ShipSocket.audioPath['thrust']),
+                fire: new Audio(ShipSocket.audioPath['fire' + d.style])
+              },
               height: 64,
               width: 64,
               pos: d.pos,
@@ -177,7 +197,7 @@
           // TODO: Add sound effect, with volume based on distance away from user?
         } else if (d.status == 'boom'){ // BOOM!
           if (d.stage == 'start'){
-            // TODO: Add sound, fade out
+            ShipSocket.dummyShips[id].sound.boom.play();
             ShipSocket._animateBoom(id);
           } else { // Complete
             // Fade back in
@@ -195,7 +215,7 @@
         if (d.status == 'create'){
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
-            // TODO: Add sound effect
+            ShipSocket.dummyShips[d.shipID].sound.fire.play();
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),
