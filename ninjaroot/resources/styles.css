@@ -4,7 +4,7 @@
  * v0.1
  */
 
- body {
+body {
    font-family: sans-serif;
    width: 100%;
  }
@@ -233,7 +233,7 @@ label.username {
   padding: 0 0.5em;
 }
 
-boom {
+boom, #preload-boom {
   display: block;
   width: 256px;
   height: 256px;
