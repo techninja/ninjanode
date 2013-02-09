@@ -132,8 +132,6 @@
         if (d.status == 'create'){ // Create new ship object
           // Only create locally if it doesn't exist.
           if (!ShipSocket.dummyShips[id]){
-            console.log('Create Ship: ', d);
-
             // Add ship element
             $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + d.name + '</label>');
 
@@ -155,7 +153,6 @@
             ShipSocket.updatePos(u);
           }
         } else if (d.status == 'destroy'){ // Destroy!
-          console.log('Remove Ship: ', id);//
           // Remove element, projectile elements, and data
           if (ShipSocket.dummyShips[id]){
             $('.ship-id-' + id).remove();
@@ -183,7 +180,6 @@
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
             // TODO: Add sound effect
-            console.log('Create projectile: ', id);
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),
@@ -194,11 +190,8 @@
             var u = {};
             u[id] = d.pos;
             ShipSocket.updateProjectilePos(u);
-          } else {
-            console.log('Ignore Create Ship: ', id);
           }
         } else { // Destroy!
-          console.log('Remove Projectile: ', id);
           // Remove element and data
           if (ShipSocket.projectiles[id]){
             ShipSocket.projectiles[id].element.remove();
