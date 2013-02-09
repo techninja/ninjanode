@@ -28,6 +28,9 @@
       this.dummyShips = {};
       this.projectiles = {};
 
+      // Preload large resources
+      $('body').append('<div id="preload-boom" class="preload"> </div>');
+
       // Bind functions to incoming data
       this.socket.on('chat', this.chat);
       this.socket.on('pos', this.updatePos);
@@ -151,6 +154,8 @@
               element: $('ship#user_' + id),
               label: $('#label_' + id),
               name: d.name,
+              height: 64,
+              width: 64,
               pos: d.pos,
               style: d.style
             }
@@ -173,8 +178,11 @@
         } else if (d.status == 'boom'){ // BOOM!
           if (d.stage == 'start'){
             // TODO: Add sound, fade out
+            ShipSocket._animateBoom(id);
           } else { // Complete
             // Fade back in
+            ShipSocket.dummyShips[id].element.fadeIn('slow');
+            ShipSocket.dummyShips[id].label.fadeIn('slow');
           }
         }
       }
@@ -242,11 +250,11 @@
         if (ShipSocket.dummyShips[id]){
           var d = data[id];
           var s = ShipSocket.dummyShips[id];
-          /*if (this.exploding){
-            $('#boom_'+ this.element_name).css({
-              left:this.pos.x - this.width/2-64, top:this.pos.y+this.height/2-128
+          if (s.exploding){
+            $('#boom-'+ id).css({
+              left:s.pos.x - s.width/2-64, top:s.pos.y+s.height/2-128
             });
-          }*/
+          }
           s.pos = {x: d.x, y: d.y, d: d.d};
 
           // Set ship element position and rotation
@@ -369,6 +377,34 @@
         $('player.ship-id-' + target + ' .arrow')
           .rotate(Math.round(angle));
       }
+    },
+
+    _animateBoom: function(id){
+      var ship = ShipSocket.dummyShips[id];
+      ship.exploding = true;
+      //ship.element.addClass('exploding');
+
+      $('body').append('<boom id="boom-' + id + '" class="layer5 overlay" />');
+      $('#boom-'+ id)
+      .css({
+        left: ship.pos.x - ship.width / 2 - 64,
+        top: ship.pos.y + ship.height / 2 - 128
+      })
+      .destroy()
+      .sprite({
+        fps: 20,
+        no_of_frames: 56,
+        on_frame: {26: function(obj) { // called on frame 26
+            ship.element.fadeOut();
+            ship.label.fadeOut();
+          }
+        },
+        on_last_frame: function(obj) {
+          obj.spStop();
+          ship.exploding = false;
+          obj.remove();
+        }
+      });
     },
 
     xxx: {}
