@@ -316,16 +316,16 @@ function _shipObject(options){
   };
 
   // Prep the lastFire var for testing
-  this.lastFire = new Date().getTime();
+  this.lastFire = [0, 0];
 
   // FUNCTION Send out a projectile
   this.fire = function(createCallback, destroyCallback, weaponID){
     // Don't fire too quickly! Respect the fireRate for this ship
-    if (new Date().getTime() - this.lastFire < this.data.weapons[weaponID].fireRate){
+    if (new Date().getTime() - this.lastFire[weaponID] < this.data.weapons[weaponID].fireRate){
       return;
     }
 
-    this.lastFire = new Date().getTime();
+    this.lastFire[weaponID] = new Date().getTime();
 
     // Add to the projectile array for the ship object
     var index = -1;
