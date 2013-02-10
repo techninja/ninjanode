@@ -30,7 +30,7 @@ var projectileTypes = {
   },
   mine : {
     speed: 0,
-    life: 500,
+    life: 1000,
     sound: 4,
     knockBackForce: 5,
     yOffset: 0
@@ -46,7 +46,7 @@ var shipTypes = {
     rotationSpeed: 6,
     weapons: [
       {type: 'biglaser', style: 'red', fireRate: 950},
-      {type: 'mine', style: 'red', fireRate: 3500}
+      {type: 'mine', style: 'red', fireRate: 10000}
     ]
   },
   b: {
@@ -57,7 +57,7 @@ var shipTypes = {
     rotationSpeed: 2,
     weapons: [
       {type: 'energy', style: 'red', fireRate: 450},
-      {type: 'mine', style: 'red', fireRate: 3500}
+      {type: 'mine', style: 'red', fireRate: 10000}
     ]
   },
   c: {
@@ -68,7 +68,7 @@ var shipTypes = {
     rotationSpeed: 10,
     weapons: [
       {type: 'laser', style: 'green', fireRate: 1750},
-      {type: 'mine', style: 'green', fireRate: 3500}
+      {type: 'mine', style: 'green', fireRate: 10000}
     ]
   },
   d: {
@@ -79,7 +79,7 @@ var shipTypes = {
     rotationSpeed: 5,
     weapons: [
       {type: 'biglaser', style: 'blue', fireRate: 750},
-      {type: 'mine', style: 'blue', fireRate: 3500}
+      {type: 'mine', style: 'blue', fireRate: 10000}
     ]
   },
   e: {
@@ -90,7 +90,7 @@ var shipTypes = {
     rotationSpeed: 5,
     weapons: [
       {type: 'laser', style: 'red', fireRate: 650},
-      {type: 'mine', style: 'red', fireRate: 3500}
+      {type: 'mine', style: 'red', fireRate: 10000}
     ]
   },
   f: {
@@ -101,7 +101,7 @@ var shipTypes = {
     rotationSpeed: 5,
     weapons: [
       {type: 'energy', style: 'blue', fireRate: 650},
-      {type: 'mine', style: 'red', fireRate: 3500}
+      {type: 'mine', style: 'red', fireRate: 10000}
     ]
   }
 };
