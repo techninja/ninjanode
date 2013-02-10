@@ -69,6 +69,21 @@ String.prototype.spanWrap = function() {
       this.socket.on('shipstat', this.shipStatus);
       this.socket.on('projstat', this.projectileStatus);
       this.socket.on('projpos', this.updateProjectilePos);
+
+      // Load previous preferences & bind change save
+      var prefs = this._cookiePrefs();
+      if (prefs){
+        $('#name').val(prefs.name);
+        $('#connection-window input[value=' + prefs.ship + ']').prop('checked',true);
+      }
+
+      $('#connection-window input').change(function(){
+        ShipSocket._cookiePrefs({
+          name: $('#name').val(),
+          ship: $('input[name=ship]:checked').val()
+        });
+      })
+
     },
 
     // Actually join the game! Happens once connection screen is submitted
@@ -496,6 +511,29 @@ String.prototype.spanWrap = function() {
           $(obj).remove();
         }
       });
+    },
+
+    _cookiePrefs: function(prefs){
+      var d = new Date();
+
+      if (prefs) { // Set Data
+        d.setDate(d.getDate() + 100);
+        var data = escape(JSON.stringify(prefs)) + "; expires=" + d.toUTCString();
+        document.cookie = "ninjaprefs=" + data;
+      } else { // Get Data
+        var nameEQ = "ninjaprefs=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' '){
+            c = c.substring(1,c.length);
+          }
+          if (c.indexOf(nameEQ) == 0){
+            return JSON.parse(unescape(c.substring(nameEQ.length,c.length)));
+          }
+        }
+        return false;
+      }
     },
 
     xxx: {}
