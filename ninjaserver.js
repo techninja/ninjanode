@@ -29,8 +29,9 @@ io.sockets.on('connection', function (clientSocket) {
   // their name, ship type, etc.
   console.log('New user connected: ' + id);
 
-  // Send out list of existing ships for this new client (gets sent to everyone)
+  // Send out list of existing ships & projectiles for this new client (gets sent to everyone)
   emitAllShips(id);
+  emitAllProjectiles(id);
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
@@ -135,13 +136,12 @@ io.sockets.on('connection', function (clientSocket) {
 
 });
 
-// Send out shipstat for every ship to everyone
+// Send out shipstat for every ship to everyone (for creation)
 function emitAllShips(targetID){
   var listShips = ships.shipGet();
   var out = {};
-  var shipCount = 0;
+
   for (var id in listShips){
-    shipCount++;
     out[id] = {
       status: 'create',
       name: listShips[id].name,
@@ -151,7 +151,7 @@ function emitAllShips(targetID){
     }
   }
 
-  if (shipCount){
+  if (Object.keys(out).length){
     console.log('Existing ship update: ', out);
 
     if (targetID){
@@ -182,9 +182,52 @@ function emitShipPositionUpdates(){
 
 // Send out positions for every projectile position to everyone
 function emitProjectilePositionUpdates(){
-  var out = ships.getAllProjectiles();
+  var projectiles = ships.getActiveProjectiles();
+  var out = {};
+
+  // Filter out non-moving projectiles, and simplify output to just positions
+  for (var i in projectiles) {
+    var proj = projectiles[i];
+    if (proj.data.speed){
+      out[i] = {
+        x: Math.round(proj.pos.x * 100)/100,
+        y: Math.round(proj.pos.y * 100)/100,
+        d: proj.pos.d
+      };
+    }
+  }
+
   if (Object.keys(out).length) {
     io.sockets.emit('projpos', out);
+  }
+}
+
+// Send out projstat for every projectile to everyone (for creation on connect)
+function emitAllProjectiles(targetID){
+  var projectiles = ships.getActiveProjectiles();
+  var out = {};
+
+  for (var id in projectiles){
+    var proj = projectiles[id];
+
+    out[id] = {
+      shipID: proj.shipID,
+      status: 'create',
+      pos: proj.pos,
+      noSound: true, // Don't play the sound for bulk create
+      weaponID: proj.weaponID,
+      style: proj.style,
+      type: proj.type
+    }
+  }
+
+  if (Object.keys(out).length) {
+    console.log('Existing Projectile update: ', out);
+
+    if (targetID){
+      // TODO: Get targetID to send to JUST that socket.io ID!
+    }
+    io.sockets.emit('projstat', out);
   }
 }
 

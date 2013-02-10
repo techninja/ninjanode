@@ -238,8 +238,11 @@ String.prototype.spanWrap = function() {
         if (d.status == 'create'){
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
-            ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].volume = ShipSocket._getDistanceVolume(d.shipID);
-            ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].play();
+            if (!d.noSound){ // No sound play for bulk updates or the like
+              ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].volume = ShipSocket._getDistanceVolume(d.shipID);
+              ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].play();
+            }
+
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),

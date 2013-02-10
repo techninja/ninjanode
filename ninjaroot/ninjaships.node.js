@@ -144,23 +144,20 @@ module.exports.shipGet = function(id){
     return _ships;
   }
 }
+
 /**
  *  Exported Getter for all projectile positions
  */
-module.exports.getAllProjectiles = function(){
+module.exports.getActiveProjectiles = function(){
   var out = {};
 
-  // Pile all the projectile positions from every ship together into a clean list
+  // Each projectile, from each ship
   for (var s in _ships){
     for (var p in _ships[s].projectiles) {
       var proj = _ships[s].projectiles[p];
-      // Only send updates for active and moving projectiles
-      if (proj.active && proj.data.speed){
-        out[s + '_' + p] = {
-          x: Math.round(proj.pos.x * 100)/100,
-          y: Math.round(proj.pos.y * 100)/100,
-          d: proj.pos.d
-        };
+      // Only return active projectiles
+      if (proj.active){
+        out[s + '_' + p] = proj;
       }
     }
   }
@@ -351,6 +348,7 @@ function _shipObject(options){
       id: index,
       type: this.data.weapons[weaponID].type,
       style: this.data.weapons[weaponID].style,
+      shipID: this.id,
       weaponID: weaponID,
       pos: {x: this.pos.x + 25, y: this.pos.y, d: this.pos.d},
       create: createCallback,
@@ -427,6 +425,7 @@ function _projectileObject(options){
   this.pos = options.pos;
   this.style = options.style;
   this.id = options.id;
+  this.shipID = options.shipID;
   this.age = 0;
   this.type = options.type;
   this.weaponID = options.weaponID;
