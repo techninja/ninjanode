@@ -490,7 +490,7 @@ String.prototype.spanWrap = function() {
         on_last_frame: function(obj) {
           obj.spStop();
           ship.exploding = false;
-          obj.remove();
+          $(obj).remove();
         }
       });
     },
