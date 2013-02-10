@@ -94,6 +94,10 @@ div#debug {
   margin: 0.5em auto;
 }
 
+#connection-window label.selected {
+  background-color: #faed56;
+}
+
 /* Players Window */
 #players {
   background-color: rgba(22, 22, 22, 0.5);

@@ -74,7 +74,7 @@ String.prototype.spanWrap = function() {
       var prefs = this._cookiePrefs();
       if (prefs){
         $('#name').val(prefs.name);
-        $('#connection-window input[value=' + prefs.ship + ']').prop('checked',true);
+        $('input[value=' + prefs.ship + ']').prop('checked',true);
       }
 
       $('#connection-window input').change(function(){
@@ -83,6 +83,17 @@ String.prototype.spanWrap = function() {
           ship: $('input[name=ship]:checked').val()
         });
       })
+
+      // Set the initially selected class
+      $('input[name=ship]:checked').parent().addClass('selected');
+
+      // Bind to change to add / remove select class
+      $('input[name=ship]').change(function(){
+        if ($(this).is(':checked')){
+          $('#connection-window label').removeClass('selected');
+          $(this).parent().addClass('selected');
+        }
+      });
 
     },
 
