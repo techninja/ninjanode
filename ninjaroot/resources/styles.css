@@ -310,11 +310,25 @@ projectile.laser {
   background-color:#FFF;
 }
 
+projectile.biglaser {
+  height: 70px;
+  width: 8px;
+  border-radius: 8px;
+  background-color:#FFF;
+}
+
 projectile.energy {
   height: 20px;
   width: 20px;
   border-radius: 20px;
   background-color:#FFF;
+}
+
+projectile.mine {
+  height: 25px !important;
+  width: 25px !important;
+  border-radius: 6px 0;
+  background-color:#AAA;
 }
 
 projectile.blue {

@@ -91,6 +91,7 @@ io.sockets.on('connection', function (clientSocket) {
       shipID: id,
       status: 'create',
       pos: data.pos,
+      weaponID: data.weaponID,
       style: data.style,
       type: data.type
     };
@@ -144,6 +145,7 @@ function emitAllShips(targetID){
     out[id] = {
       status: 'create',
       name: listShips[id].name,
+      sounds: [listShips[id].data.weapons[0].data.sound, listShips[id].data.weapons[1].data.sound],
       style: listShips[id].style,
       pos: listShips[id].pos
     }

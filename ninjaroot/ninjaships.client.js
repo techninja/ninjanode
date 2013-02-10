@@ -33,12 +33,10 @@
       this.audioPath = {
         boom:  audioRoot + "explosion.wav",
         thrust: audioRoot + "thrust.wav",
-        firea: audioRoot + "fire1.wav",
-        fireb: audioRoot + "fire2.wav",
-        firec: audioRoot + "fire3.wav",
-        fired: audioRoot + "fire1.wav",
-        firee: audioRoot + "fire2.wav",
-        firef: audioRoot + "fire3.wav",
+        fire1: audioRoot + "fire1.wav",
+        fire2: audioRoot + "fire2.wav",
+        fire3: audioRoot + "fire3.wav",
+        fire4: audioRoot + "fire4.wav",
         hit1: audioRoot + "hit1.wav",
         hit2: audioRoot + "hit2.wav"
       };
@@ -61,12 +59,14 @@
       shipData.status = "create";
       this.socket.emit('shipstat', shipData);
 
+      // Key command bindings
       this.keys = {
-        l: 37,
-        u: 38,
-        r: 39,
-        d: 40,
-        f: 32
+        l: 37, // Left
+        u: 38, // Up
+        r: 39, // Right
+        d: 40, // Down
+        f: 32, // Primary Fire (space)
+        s: 77  // Secondary Fire (m)
       };
 
       // Bind to the window global keyup & keydown events
@@ -172,7 +172,10 @@
               sound: {
                 boom: new Audio(ShipSocket.audioPath['boom']),
                 thrust: new Audio(ShipSocket.audioPath['thrust']),
-                fire: new Audio(ShipSocket.audioPath['fire' + d.style])
+                fire: [
+                  new Audio(ShipSocket.audioPath['fire' + d.sounds[0]]),
+                  new Audio(ShipSocket.audioPath['fire' + d.sounds[1]])
+                ]
               },
               height: 64,
               width: 64,
@@ -216,8 +219,8 @@
         if (d.status == 'create'){
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
-            ShipSocket.dummyShips[d.shipID].sound.fire.volume = ShipSocket._getDistanceVolume(d.shipID);
-            ShipSocket.dummyShips[d.shipID].sound.fire.play();
+            ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].volume = ShipSocket._getDistanceVolume(d.shipID);
+            ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].play();
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),

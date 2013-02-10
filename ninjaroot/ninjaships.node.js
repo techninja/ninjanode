@@ -351,6 +351,7 @@ function _shipObject(options){
       id: index,
       type: this.data.weapons[weaponID].type,
       style: this.data.weapons[weaponID].style,
+      weaponID: weaponID,
       pos: {x: this.pos.x + 25, y: this.pos.y, d: this.pos.d},
       create: createCallback,
       destroy: destroyCallback
@@ -428,6 +429,7 @@ function _projectileObject(options){
   this.id = options.id;
   this.age = 0;
   this.type = options.type;
+  this.weaponID = options.weaponID;
 
   this.data = projectileTypes[options.type];
 
