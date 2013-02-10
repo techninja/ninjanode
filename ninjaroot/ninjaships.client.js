@@ -3,6 +3,25 @@
  * communication and html element management.
  */
 
+// String protype formatter (for system messages)
+// Via http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/{(\d+)}/g, function(match, number) {
+        return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+    ;
+  });
+};
+
+
+// String Prototype for wrapping with spans
+String.prototype.spanWrap = function() {
+  return '<span>' + this + '</span>';
+};
+
+
 (function () {
   var updateCount = 0;
 
@@ -347,22 +366,25 @@
 
       var classType = '';
       var out = '';
-      var name = ShipSocket.dummyShips[data.id].name;
+      var nameSource = ShipSocket.dummyShips[data.id].name.spanWrap();
+      var nameTarget = '';
+
+      if (data.target){
+        nameTarget = ShipSocket.dummyShips[data.target].name.spanWrap();
+      }
 
       var sysMsgActions = {
-        join: 'joined the game',
-        disconnect: 'disconnected',
-        projectile: 'gunned down',
-        collision: 'slammed into'
+        join: '{0} joined the game',
+        disconnect: '{0} disconnected',
+        projectile: '{0} made {1} explode',
+        collision: '{0} slammed into {1}'
       }
 
       if (data.type == 'system'){
         classType = 'sys';
-        data.msg = '<span>' + name + '</span> '
-        data.msg+= sysMsgActions[data.action]
-        data.msg+= (!data.target ? '' :' <span>' + ShipSocket.dummyShips[data.target].name + '</span>');
+        data.msg = sysMsgActions[data.action].format(nameSource, nameTarget);
       } else if (data.type == 'chat') {
-        data.msg = '<span>' + name + ':</span> ' + data.msg;
+        data.msg = nameSource + ': ' + data.msg;
         if (data.id == ShipSocket.id) {
           classType = 'self';
         }
