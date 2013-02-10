@@ -9,13 +9,100 @@ var _ships = {};
 var projectileTypes = {
   laser: {
     speed: 20,
-    life: 30, // Num of cycles before death
+    life: 40, // Num of cycles before death
+    sound: 3,
+    knockBackForce: 3,
+    yOffset: -50
+  },
+  biglaser: {
+    speed: 15,
+    life: 80, // Num of cycles before death
+    sound: 1,
+    knockBackForce: 10,
     yOffset: -50
   },
   energy : {
-    speed: 10,
+    speed: 15,
     life: 90,
+    sound: 2,
+    knockBackForce: 15,
     yOffset: -2
+  },
+  mine : {
+    speed: 0,
+    life: 500,
+    sound: 4,
+    knockBackForce: 5,
+    yOffset: 0
+  }
+};
+
+var shipTypes = {
+  a: {
+    name: 'Legionnaire',
+    topSpeed: 14,
+    accelRate: 0.15,
+    drag: 0.09,
+    rotationSpeed: 6,
+    weapons: [
+      {type: 'biglaser', style: 'red', fireRate: 950},
+      {type: 'mine', style: 'red', fireRate: 3500}
+    ]
+  },
+  b: {
+    name: 'Cygnuss',
+    topSpeed: 20,
+    accelRate: 0.2,
+    drag: 0.03,
+    rotationSpeed: 2,
+    weapons: [
+      {type: 'energy', style: 'red', fireRate: 450},
+      {type: 'mine', style: 'red', fireRate: 3500}
+    ]
+  },
+  c: {
+    name: 'Scimitar',
+    topSpeed: 15,
+    accelRate: 0.6,
+    drag: 0.08,
+    rotationSpeed: 10,
+    weapons: [
+      {type: 'laser', style: 'green', fireRate: 1750},
+      {type: 'mine', style: 'green', fireRate: 3500}
+    ]
+  },
+  d: {
+    name: 'Mongoose',
+    topSpeed: 12,
+    accelRate: 0.25,
+    drag: 0.03,
+    rotationSpeed: 5,
+    weapons: [
+      {type: 'biglaser', style: 'blue', fireRate: 750},
+      {type: 'mine', style: 'blue', fireRate: 3500}
+    ]
+  },
+  e: {
+    name: 'Sulaco',
+    topSpeed: 10,
+    accelRate: 0.2,
+    drag: 0.03,
+    rotationSpeed: 5,
+    weapons: [
+      {type: 'laser', style: 'red', fireRate: 650},
+      {type: 'mine', style: 'red', fireRate: 3500}
+    ]
+  },
+  f: {
+    name: 'Excalibur',
+    topSpeed: 8,
+    accelRate: 0.8,
+    drag: 0.03,
+    rotationSpeed: 5,
+    weapons: [
+      {type: 'energy', style: 'blue', fireRate: 650},
+      {type: 'mine', style: 'red', fireRate: 3500}
+    ]
   }
 };
 
@@ -67,7 +154,8 @@ module.exports.getAllProjectiles = function(){
   for (var s in _ships){
     for (var p in _ships[s].projectiles) {
       var proj = _ships[s].projectiles[p];
-      if (proj.active){
+      // Only send updates for active and moving projectiles
+      if (proj.active && proj.data.speed){
         out[s + '_' + p] = {
           x: Math.round(proj.pos.x * 100)/100,
           y: Math.round(proj.pos.y * 100)/100,
@@ -130,9 +218,10 @@ module.exports.getAllPos = function(){
 /**
  *  Exported Setter for thrust
  */
-module.exports.shipSetThrust = function(id, thrust){
+module.exports.shipSetThrust = function(id, direction){
   if (_ships[id]){
-    _ships[id].thrust = thrust;
+    var amount = _ships[id].data.accelRate;
+    _ships[id].thrust = amount * direction;
 
     if (_ships[id].exploding) {
       _ships[id].thrust = 0;
@@ -150,7 +239,7 @@ module.exports.shipSetThrust = function(id, thrust){
 module.exports.shipSetTurn = function(id, direction){
   if (_ships[id]){
     if (direction){
-      _ships[id].turn = _ships[id].rotation_speed * (direction == 'l' ? -1 : 1);
+      _ships[id].turn = _ships[id].data.rotationSpeed * (direction == 'l' ? -1 : 1);
     } else {
       _ships[id].turn = 0;
     }
@@ -168,9 +257,9 @@ module.exports.shipSetTurn = function(id, direction){
 /**
  *  Exported Setter for triggering Fire command
  */
-module.exports.shipSetFire = function(id, createCallback, destroyCallback){
+module.exports.shipSetFire = function(id, createCallback, destroyCallback, weaponID){
   if (_ships[id]){
-      _ships[id].fire(createCallback, destroyCallback);
+      _ships[id].fire(createCallback, destroyCallback, weaponID);
     return true;
   }else {
     return false;
@@ -184,7 +273,7 @@ module.exports.shipSetFire = function(id, createCallback, destroyCallback){
  *   Accepts the following object keys:
  *     name {string}: Name of the user
  *     style {char}: Letter of the ship style to use (a|b|c|d|e|f)
- *     pos {object}: Initial home position object (x:[n], y:[n], d:[n])
+ *     pos {object}: Initial position object (x:[n], y:[n], d:[n])
  *     hit {func}: Callback for when the ship gets hit or collides
  * @returns {object} instantiated ship object
  * @see module.exports.addShip
@@ -193,77 +282,31 @@ function _shipObject(options){
 
   this.name = options.name;
 
+  // Ship object state variables===========
   // Velocity (speed + direction)
   this.velocity_x = 0;
   this.velocity_y = 0;
   this.id = options.id;
   this.velocityLength = 0;
-  this.max_speed = 10;
-  this.drag = 0.03;
   this.turn = 0;
   this.thrust = 0;
   this.width = 64;
   this.height = 64;
   this.projectiles = [];
-
-  this.rotation_speed = 5;
   this.exploding = false;
 
-  this.style = options.style ? options.style : 'a';
+  // Default to style 'a' if not found in shipTypes
+  this.style = shipTypes[options.style] ? options.style : 'a';
 
-  // Set Projectile defaults per ship style
-  switch (this.style){
-    case 'b':
-      this.projectileDefaults = {
-        type: 'energy',
-        style: 'blue'
-      };
-      this.fireRate = 550; // MS between shots
-      break;
+  // All customizable ship type options are held here
+  this.data = shipTypes[options.style];
 
-    case 'c':
-      this.projectileDefaults = {
-        type: 'laser',
-        style: 'green'
-      };
-      this.fireRate = 450; // MS between shots
-      break;
-
-    case 'd':
-      this.projectileDefaults = {
-        type: 'energy',
-        style: 'blue'
-      };
-      this.fireRate = 750; // MS between shots
-      break;
-
-    case 'e':
-      this.projectileDefaults = {
-        type: 'laser',
-        style: 'blue'
-      };
-      this.fireRate = 650; // MS between shots
-      break;
-
-    case 'f':
-      this.projectileDefaults = {
-        type: 'laser',
-        style: 'green'
-      };
-      this.fireRate = 850; // MS between shots
-      break;
-
-    default:
-      this.projectileDefaults = {
-        type: 'laser',
-        style: 'red'
-      };
-      this.fireRate = 750; // MS between shots
+  // Populate weapons with projectile type data for data access
+  for (var w in this.data.weapons){
+    this.data.weapons[w].data = projectileTypes[this.data.weapons[w].type];
   }
 
   this.pos = options.pos ? options.pos : {x: 0, y: 0, d: 0};
-
-  this.home = {x: this.pos.x, y: this.pos.y, d: this.pos.d};
 
   // FUNCTION Direct visual rotation
   this.rot = function(deg){
@@ -279,9 +322,9 @@ function _shipObject(options){
   this.lastFire = new Date().getTime();
 
   // FUNCTION Send out a projectile
-  this.fire = function(createCallback, destroyCallback){
+  this.fire = function(createCallback, destroyCallback, weaponID){
     // Don't fire too quickly! Respect the fireRate for this ship
-    if (new Date().getTime() - this.lastFire < this.fireRate){
+    if (new Date().getTime() - this.lastFire < this.data.weapons[weaponID].fireRate){
       return;
     }
 
@@ -306,9 +349,9 @@ function _shipObject(options){
 
     this.projectiles[index] = new _projectileObject({
       id: index,
-      type: this.projectileDefaults.type,
-      style: this.projectileDefaults.style,
-      pos: {x: this.pos.x+25, y: this.pos.y, d: this.pos.d},
+      type: this.data.weapons[weaponID].type,
+      style: this.data.weapons[weaponID].style,
+      pos: {x: this.pos.x + 25, y: this.pos.y, d: this.pos.d},
       create: createCallback,
       destroy: destroyCallback
     });
@@ -386,10 +429,7 @@ function _projectileObject(options){
   this.age = 0;
   this.type = options.type;
 
-  var typeData = projectileTypes[options.type];
-  this.speed = typeData.speed;
-  this.life = typeData.life;
-  this.yOffset = typeData.yOffset;
+  this.data = projectileTypes[options.type];
 
   this.destroy = function(){
     this.active = false;
@@ -411,14 +451,14 @@ function _updateProjectileMovement(){
 
       if (proj.active){
         var theta = proj.pos.d * (Math.PI / 180);
-        proj.pos.x+= Math.sin(theta) * proj.speed;
-        proj.pos.y+= Math.cos(theta) * -proj.speed;
+        proj.pos.x+= Math.sin(theta) * proj.data.speed;
+        proj.pos.y+= Math.cos(theta) * -proj.data.speed;
 
         // Age the projectile
         proj.age++;
 
         // Projectile is to old! Kill it.
-        if (proj.age > proj.life) {
+        if (proj.age > proj.data.life) {
           proj.destroy();
         }
       }
@@ -469,7 +509,7 @@ function _detectCollision(){
             if (p.active){ // Skip inactive projectiles
               if (p.pos.x > target.pos.x && p.pos.x < target.pos.x + target.width){
                 // Target is within the vertical column! check horizontal
-                if (p.pos.y - p.yOffset > target.pos.y && p.pos.y - p.yOffset < target.pos.y + target.height){
+                if (p.pos.y - p.data.yOffset > target.pos.y && p.pos.y - p.data.yOffset < target.pos.y + target.height){
                   // Projectile X & Y is within the target's box!
                   console.log(source.name + ' shot ' + target.name);
 
@@ -480,9 +520,9 @@ function _detectCollision(){
                   });
 
                   // Register knockback on the target on next move
-                  target.knockback = {
+                  target.knockBack = {
                     angle: p.pos.d,
-                    type: p.type
+                    amount: p.data.knockBackForce
                   };
                   p.destroy();
                 } // End Check Y bounds
@@ -513,10 +553,10 @@ function _updateShipMovement(){
       var amount = self.thrust;
 
       // For knockback hit, only run once..
-      if (self.knockback){
-        angle = self.knockback.angle;
-        amount = 2;
-        delete self.knockback;
+      if (self.knockBack){
+        angle = self.knockBack.angle;
+        amount = self.knockBack.amount;
+        delete self.knockBack;
       }
 
       theta = angle * (Math.PI / 180);
@@ -525,7 +565,7 @@ function _updateShipMovement(){
     }
 
     // find the overall velocity length
-    self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.drag;
+    self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.data.drag;
 
     // if exploding, exponential drag!
     if (self.exploding){
@@ -535,8 +575,8 @@ function _updateShipMovement(){
     if (self.velocityLength < 0) {
       self.velocityLength = 0;
     } else {
-      if (self.velocityLength > self.max_speed){
-        self.velocityLength = self.max_speed;
+      if (self.velocityLength > self.data.topSpeed){
+        self.velocityLength = self.data.topSpeed;
       }
 
       // find the current velocity rotation

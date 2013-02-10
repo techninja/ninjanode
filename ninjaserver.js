@@ -69,16 +69,17 @@ io.sockets.on('connection', function (clientSocket) {
   // Keypresses from individual clients
   clientSocket.on('key', function (data) {
     switch (data.c){
-      case 'u':
-        ships.shipSetThrust(id, data.s ? 0.2 : 0); break;
-      case 'd':
-        ships.shipSetThrust(id, data.s ? -0.2 : 0); break;
+      case 'u': // Up (thrust forward)
+        ships.shipSetThrust(id, data.s ? 1 : 0); break;
+      case 'd': // Down (thrust back)
+        ships.shipSetThrust(id, data.s ? -1 : 0); break;
       case 'l':
-      case 'r':
+      case 'r': // Turn Right/Left
         ships.shipSetTurn(id, data.s ? data.c : false); break;
-      case 'f':
+      case 's':
+      case 'f': // Main/Secondary Fire
         if (data.s) {
-          ships.shipSetFire(id, projectileCreate, projectileDestroy);
+          ships.shipSetFire(id, projectileCreate, projectileDestroy, data.c == 'f' ? 0 : 1);
         }
     }
   });
