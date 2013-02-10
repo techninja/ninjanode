@@ -9,28 +9,28 @@ var _ships = {};
 var projectileTypes = {
   laser: {
     speed: 20,
-    life: 40, // Num of cycles before death
+    life: 2500, // How many ms till it dies?
     sound: 3,
     knockBackForce: 3,
     yOffset: -50
   },
   biglaser: {
     speed: 15,
-    life: 80, // Num of cycles before death
+    life: 5000,
     sound: 1,
     knockBackForce: 10,
     yOffset: -50
   },
   energy : {
     speed: 15,
-    life: 90,
+    life: 5500,
     sound: 2,
     knockBackForce: 15,
     yOffset: -2
   },
   mine : {
     speed: 0,
-    life: 1000,
+    life: 60000,
     sound: 4,
     knockBackForce: 5,
     yOffset: 0
@@ -429,6 +429,7 @@ function _projectileObject(options){
   this.age = 0;
   this.type = options.type;
   this.weaponID = options.weaponID;
+  this.born = new Date().getTime();
 
   this.data = projectileTypes[options.type];
 
@@ -455,11 +456,8 @@ function _updateProjectileMovement(){
         proj.pos.x+= Math.sin(theta) * proj.data.speed;
         proj.pos.y+= Math.cos(theta) * -proj.data.speed;
 
-        // Age the projectile
-        proj.age++;
-
         // Projectile is to old! Kill it.
-        if (proj.age > proj.data.life) {
+        if (new Date().getTime() - proj.born > proj.data.life) {
           proj.destroy();
         }
       }
