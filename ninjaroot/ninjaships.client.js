@@ -197,6 +197,7 @@
           // TODO: Add sound effect, with volume based on distance away from user?
         } else if (d.status == 'boom'){ // BOOM!
           if (d.stage == 'start'){
+            ShipSocket.dummyShips[id].sound.boom.volume = ShipSocket._getDistanceVolume(id);
             ShipSocket.dummyShips[id].sound.boom.play();
             ShipSocket._animateBoom(id);
           } else { // Complete
@@ -215,6 +216,7 @@
         if (d.status == 'create'){
           // Only create locally if it doesn't exist.
           if (!ShipSocket.projectiles[id]){
+            ShipSocket.dummyShips[d.shipID].sound.fire.volume = ShipSocket._getDistanceVolume(d.shipID);
             ShipSocket.dummyShips[d.shipID].sound.fire.play();
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
@@ -285,7 +287,7 @@
           });
 
           s.sound.thrust.loop = true;
-          s.sound.thrust.volume = 0.2;
+          s.sound.thrust.volume = ShipSocket._getDistanceVolume(id) / 10;
 
           // Show thrust direction
           if (d.t == 0){
@@ -404,6 +406,40 @@
         $('player.ship-id-' + target + ' .arrow')
           .rotate(Math.round(angle));
       }
+    },
+
+    // Utility function to return a volume from 0 to 1 as a factor of distance
+    _getDistanceVolume: function(id){
+      // The distance past which nothing can be heard
+      var maxDistance = 2500;
+
+      // The distance at which there is no volume drop
+      var minDistance = 500;
+
+      var source = {x:0, y:0};
+      var target = ShipSocket.dummyShips[id].pos;
+
+      // If after connection... et pos from current user location
+      if (ShipSocket.dummyShips[ShipSocket.id]){
+        source = ShipSocket.dummyShips[ShipSocket.id].pos;
+      }
+
+      var dist = Math.sqrt( Math.pow(target.x - source.x, 2) + Math.pow(target.y - source.y, 2));
+
+      if (dist < minDistance){
+        return 1;
+      } else if (dist > maxDistance){
+        return 0;
+      }
+
+      var range = maxDistance - minDistance;
+
+      // Remove the min from the bottom of the distance
+      dist = dist - minDistance;
+
+      // Straight linear scale for now... though it should be log
+      return 1 - (dist / range);
+
     },
 
     _animateBoom: function(id){
