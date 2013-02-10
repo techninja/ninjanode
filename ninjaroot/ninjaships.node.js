@@ -81,6 +81,19 @@ module.exports.getAllProjectiles = function(){
 }
 
 /**
+ *  Exported Getter for a random starting position
+ */
+var getRandomPos = function(){
+  return {
+    x: Math.floor((Math.random()*16)+1) * 128,
+    y: Math.floor((Math.random()*16)+1) * 128,
+    d: Math.floor((Math.random()*355)+1)
+  };
+}
+module.exports.getRandomPos = getRandomPos;
+
+
+/**
  *  Exported Getter for all ship positions
  */
 module.exports.getAllPos = function(){
@@ -340,9 +353,7 @@ function _shipObject(options){
       // 5 seconds should be enough time for the explosion and wait
       setTimeout(function(){
         ship.kill_velocity();
-        ship.pos.x = ship.home.x;
-        ship.pos.y = ship.home.y;
-        ship.pos.d = 0;
+        ship.pos = getRandomPos();
         ship.exploding = false;
 
         // Trigger second callback
