@@ -427,7 +427,7 @@ function _detectCollision(){
       // Check every ship against this projectile
       for(var t in _ships){
         var target = _ships[t];
-        if (t != s && !target.exploding && !source.exploding){ // Ships can't hit themselves
+        if (t != s && !target.exploding){ // Ships can't hit themselves
 
           // While we're here, check for ship to ship collision
           if (source.pos.x + source.width > target.pos.x && source.pos.x < target.pos.x + target.width){
