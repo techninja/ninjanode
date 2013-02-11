@@ -41,7 +41,7 @@ var shipTypes = {
   a: {
     name: 'Legionnaire',
     topSpeed: 14,
-    accelRate: 0.15,
+    accelRate: 0.25,
     drag: 0.09,
     rotationSpeed: 6,
     weapons: [
@@ -54,7 +54,7 @@ var shipTypes = {
     topSpeed: 20,
     accelRate: 0.2,
     drag: 0.03,
-    rotationSpeed: 2,
+    rotationSpeed: 3,
     weapons: [
       {type: 'energy', style: 'red', fireRate: 450},
       {type: 'mine', style: 'red', fireRate: 10000}
