@@ -35,9 +35,8 @@ io.sockets.on('connection', function (clientSocket) {
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
-    console.log('Creating ship: ' + data);
     if (data.status == 'create'){ // New ship!
-      console.log('Creating ship: ' + id);
+      console.log('Creating ship for user: ' + id);
       data.id = id;
       data.hit = shipHit;
       data.boom = shipBoom;
