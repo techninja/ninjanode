@@ -167,6 +167,22 @@ String.prototype.spanWrap = function() {
           }
         });
 
+        // Chat notification manager, check every second
+        setInterval(function(){
+          $('#chat-notify li').each(function(){
+            // Remove items older than 10 seconds
+            if (new Date().getTime() - $(this).data('time') > 10000) {
+              $(this).hide('slow', function(){
+                $(this).remove();
+                if (!$('#chat-notify li').length){
+                  $('#chat-notify').fadeOut('slow');
+                }
+              });
+            }
+          });
+        }, 1000);
+
+
       });
     },
 
@@ -430,17 +446,7 @@ String.prototype.spanWrap = function() {
 
       // Manage notifications system =================================
       $notifyList.append(out);
-      $notifyList.find('li:last').hide().show('slow');
-
-      // Remove items older than 10 seconds
-      setTimeout(function(){
-        $notifyList.find('li:first').hide('slow', function(){
-          $(this).remove();
-          if (!$notifyList.find('li').length){
-            $('#chat-notify').fadeOut('slow');
-          }
-        });
-      }, 10000);
+      $notifyList.find('li:last').data('time', new Date().getTime()).hide().show('slow');
 
       // Only show notify if chat window isn't visible
       if (!$('#chat-main:visible').length){
