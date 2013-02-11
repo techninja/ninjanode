@@ -479,30 +479,33 @@ function _detectCollision(){
         var target = _ships[t];
         if (t != s && !target.exploding){ // Ships can't hit themselves
 
-          // While we're here, check for ship to ship collision
-          if (source.pos.x + source.width > target.pos.x && source.pos.x < target.pos.x + target.width){
-            // Target is within the vertical column! check horizontal
-            if (source.pos.y + source.height > target.pos.y && source.pos.y < target.pos.y + target.height){
-              // Source bounding box is within the target's box!
+          // Exploding ships can't collide with things
+          if (!source.exploding){
+            // While we're here, check for ship to ship collision
+            if (source.pos.x + source.width > target.pos.x && source.pos.x < target.pos.x + target.width){
+              // Target is within the vertical column! check horizontal
+              if (source.pos.y + source.height > target.pos.y && source.pos.y < target.pos.y + target.height){
+                // Source bounding box is within the target's box!
 
-              // Trigger hit callback (to simplify things.. both should die
-              if (target.velocityLength > source.velocityLength){
-                console.log(target.name + ' slammed into ' + source.name);
-                source.hit({
-                  type: 'collision',
-                  source: target // Include source to find out who's hitting who
-                });
-              } else {
-                console.log(source.name + ' slammed into ' + target.name);
-                target.hit({
-                  type: 'collision',
-                  source: source // Include source to find out who's hitting who
-                });
-              }
-            } // End Check Y bounds
-          } // End Check X bounds
+                // Trigger hit callback (to simplify things.. both should die
+                if (target.velocityLength > source.velocityLength){
+                  console.log(target.name + ' slammed into ' + source.name);
+                  source.hit({
+                    type: 'collision',
+                    source: target // Include source to find out who's hitting who
+                  });
+                } else {
+                  console.log(source.name + ' slammed into ' + target.name);
+                  target.hit({
+                    type: 'collision',
+                    source: source // Include source to find out who's hitting who
+                  });
+                }
+              } // End Check Y bounds
+            } // End Check X bounds
+          } // End not source exploding
 
-          // Loop through projectiles on source ship
+          // Loop through projectiles on source ship (CAN be exploding!)
           for (var i in source.projectiles){
             var p = source.projectiles[i];
             if (p.active){ // Skip inactive projectiles
