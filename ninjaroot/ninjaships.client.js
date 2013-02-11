@@ -260,14 +260,20 @@ String.prototype.spanWrap = function() {
         } else if (d.status == 'hit'){ // Hit
           // TODO: Add sound effect, with volume based on distance away from user?
         } else if (d.status == 'boom'){ // BOOM!
+          var ship = ShipSocket.dummyShips[id];
           if (d.stage == 'start'){
-            ShipSocket.dummyShips[id].sound.boom.volume = ShipSocket._getDistanceVolume(id);
-            ShipSocket.dummyShips[id].sound.boom.play();
+            console.log('Boom start')
+            ship.sound.boom.volume = ShipSocket._getDistanceVolume(id);
+            ship.sound.boom.play();
             ShipSocket._animateBoom(id);
-          } else { // Complete
+          } else if (d.stage == 'middle') { // Fade out...
+            ship.element.fadeOut();
+            ship.label.fadeOut();
+          } else { // Complete!
+            console.log('Boom complete')
             // Fade back in
-            ShipSocket.dummyShips[id].element.fadeIn('slow');
-            ShipSocket.dummyShips[id].label.fadeIn('slow');
+            ship.element.fadeIn('slow');
+            ship.label.fadeIn('slow');
           }
         }
       }
@@ -339,11 +345,19 @@ String.prototype.spanWrap = function() {
         if (ShipSocket.dummyShips[id]){
           var d = data[id];
           var s = ShipSocket.dummyShips[id];
+
+          // In case the ship missed the mark
+          if (!s.element.is(':visible')) {
+            //s.element.show();
+          }
+
+          // Move explosion sprite with ship
           if (s.exploding){
             $('#boom-'+ id).css({
               left:s.pos.x - s.width/2-64, top:s.pos.y+s.height/2-128
             });
           }
+
           s.pos = {x: d.x, y: d.y, d: d.d};
 
           // Set ship element position and rotation
@@ -517,11 +531,6 @@ String.prototype.spanWrap = function() {
       .sprite({
         fps: 20,
         no_of_frames: 56,
-        on_frame: {26: function(obj) { // called on frame 26
-            ship.element.fadeOut();
-            ship.label.fadeOut();
-          }
-        },
         on_last_frame: function(obj) {
           obj.spStop();
           ship.exploding = false;

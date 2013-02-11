@@ -392,13 +392,23 @@ function _shipObject(options){
         stage: 'start'
       });
 
+      // 2 seconds to wait for the middle
+      setTimeout(function(){
+        // Trigger second callback
+        options.boom({
+          id: ship.id,
+          stage: 'middle'
+        });
+      }, 2000)
+
+
       // 5 seconds should be enough time for the explosion and wait
       setTimeout(function(){
         ship.kill_velocity();
         ship.pos = getRandomPos();
         ship.exploding = false;
 
-        // Trigger second callback
+        // Trigger third callback
         options.boom({
           id: ship.id,
           stage: 'complete'
