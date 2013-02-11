@@ -255,7 +255,7 @@ module.exports.shipSetTurn = function(id, direction){
  *  Exported Setter for triggering Fire command
  */
 module.exports.shipSetFire = function(id, createCallback, destroyCallback, weaponID){
-  if (_ships[id]){
+  if (_ships[id] && !_ships[id].exploding){
       _ships[id].fire(createCallback, destroyCallback, weaponID);
     return true;
   }else {
