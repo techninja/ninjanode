@@ -35,7 +35,7 @@ var projectileTypes = {
     yOffset: -2
   },
   mine : {
-    name: "Space Mine",
+    name: "Mine",
     damage: 100,
     speed: 0,
     life: 60000,
