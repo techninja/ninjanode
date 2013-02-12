@@ -32,6 +32,7 @@ io.sockets.on('connection', function (clientSocket) {
   // Send out list of existing ships & projectiles for this new client (gets sent to everyone)
   emitAllShips(id);
   emitAllProjectiles(id);
+  emitAllShipTypes(id)
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
@@ -158,6 +159,12 @@ function emitAllShips(targetID){
     }
     io.sockets.emit('shipstat', out);
   }
+}
+
+// Send out ship types to all users (really uneccesary)
+function emitAllShipTypes(id){
+  // TODO: Tweak/Add to data?
+  io.sockets.emit('shiptypes', ships.shipTypesGet());
 }
 
 // Send out positions for every new ship position to everyone

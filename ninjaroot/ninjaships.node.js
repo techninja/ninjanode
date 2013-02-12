@@ -154,6 +154,16 @@ module.exports.shipGet = function(id){
 }
 
 /**
+ *  Exported Getter for ship types & projectiles
+ */
+module.exports.shipTypesGet = function(){
+  return {
+    ships: shipTypes,
+    projectiles: projectileTypes
+  };
+}
+
+/**
  *  Exported Getter for all projectile positions
  */
 module.exports.getActiveProjectiles = function(){
