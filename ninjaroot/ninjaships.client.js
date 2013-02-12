@@ -39,13 +39,12 @@ String.prototype.spanWrap = function() {
       this.socket.on('connect', function(){
         // Shortcut to our session id
         ShipSocket.id = ShipSocket.socket.socket.sessionid;
-        $('#connection-window').fadeIn('slow');
-        $('#connection-window input')[0].focus();
       })
 
       // Object array of ships and their elements
       this.dummyShips = {};
       this.projectiles = {};
+      this.hasConnected = false;
 
       // Audio Resources
       var audioRoot = '/resources/audio/';
@@ -67,34 +66,9 @@ String.prototype.spanWrap = function() {
       this.socket.on('chat', this.chat);
       this.socket.on('pos', this.updatePos);
       this.socket.on('shipstat', this.shipStatus);
+      this.socket.on('shiptypes', this.buildShipSelect);
       this.socket.on('projstat', this.projectileStatus);
       this.socket.on('projpos', this.updateProjectilePos);
-
-      // Load previous preferences & bind change save
-      var prefs = this._cookiePrefs();
-      if (prefs){
-        $('#name').val(prefs.name);
-        $('input[value=' + prefs.ship + ']').prop('checked',true);
-      }
-
-      $('#connection-window input').change(function(){
-        ShipSocket._cookiePrefs({
-          name: $('#name').val(),
-          ship: $('input[name=ship]:checked').val()
-        });
-      })
-
-      // Set the initially selected class
-      $('input[name=ship]:checked').parent().addClass('selected');
-
-      // Bind to change to add / remove select class
-      $('input[name=ship]').change(function(){
-        if ($(this).is(':checked')){
-          $('#connection-window label').removeClass('selected');
-          $(this).parent().addClass('selected');
-        }
-      });
-
     },
 
     // Actually join the game! Happens once connection screen is submitted
@@ -449,6 +423,7 @@ String.prototype.spanWrap = function() {
         }
       }
 
+      // TODO: Refactor to use objects and set text with .text to avoid XSS
       out+= '<li class="' + classType + '">' + data.msg + '</li>';
 
       var $chatList = $('#chat-main ol');
@@ -466,6 +441,144 @@ String.prototype.spanWrap = function() {
       if (!$('#chat-main:visible').length){
         $('#chat-notify').fadeIn('slow');
       }
+    },
+
+    // Build out the main ship select menu and initialize the connect window
+    buildShipSelect: function(data){
+      if (ShipSocket.hasConnected) {
+        return; // This stuff should only happen once
+      } else {
+        ShipSocket.hasConnected = true;
+      }
+
+      var ships = data.ships;
+      var $menu = $('#connection-window .ship-select');
+      var $selector = $('<div>').addClass('selector');
+      $menu.before($selector);
+
+      // Use the data sent from the server and build out the ship selection
+      for (var s in ships){
+        var weapons = [
+          data.projectiles[ships[s].weapons[0].type],
+          data.projectiles[ships[s].weapons[1].type]
+        ];
+
+        var $item = $('<label>');
+        $item.attr('for', 'ship-' + s).addClass('ship');
+        $item.append(
+          $('<input>').attr({
+            type: 'radio',
+            name: 'ship',
+            id: 'ship-' + s,
+            value: s
+          }),
+          $('<ship>').addClass('ship_' + s)
+        );
+
+        // Selector tabs
+        $selector.append(
+          $('<ship>')
+            .attr('title', ships[s].name)
+            .addClass('ship_' + s)
+            .data('type', s)
+        );
+
+        var $details = $('<div>').addClass('details');
+
+        $details.append(
+          $('<h4>').text(ships[s].name),
+          $('<table>').append(
+            $('<tr>').append(
+              $('<th>').text('Ship Stats').attr('colspan', 2),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<th>').text(weapons[0].name + ' (space)').attr('colspan', 2),
+              $('<th>').text(weapons[1].name + ' (m)')
+            ),
+            $('<tr>').append(
+              $('<td>').text('Top Speed'),
+              $('<td>').text(ships[s].topSpeed * 420 + ' kph'),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<td>').text('Damage'),
+              $('<td>').text(weapons[0].damage),
+              $('<td>').text(weapons[1].damage)
+            ),
+            $('<tr>').append(
+              $('<td>').text('Rotation Speed'),
+              $('<td>').text(Math.round((ships[s].rotationSpeed*16)/360*60) + ' rpm'),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<td>').text('Speed'),
+              $('<td>').text(weapons[0].speed),
+              $('<td>').text(weapons[1].speed)
+            ),
+            $('<tr>').append(
+              $('<td>').text('Acceleration'),
+              $('<td>').html(((ships[s].accelRate*16)*42.5).toFixed(2) + ' cps<sup>2</sup>'),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<td>').text('Pushback'),
+              $('<td>').text(weapons[0].knockBackForce*42),
+              $('<td>').text(weapons[1].knockBackForce*42)
+            ),
+            $('<tr>').append(
+              $('<td>').text('Drag'),
+              $('<td>').html(((ships[s].drag*16)*42.5).toFixed(2) + ' cps<sup>2</sup>'),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<td>').text('Lifetime'),
+              $('<td>').text(weapons[0].life/1000 + ' sec'),
+              $('<td>').text(weapons[1].life/1000 + ' sec')
+            ),
+            $('<tr>').append(
+              $('<td>').text('').attr('colspan', 2),
+              $('<td>').text(' ').addClass('spacer'),
+              $('<td>').text('Reload Rate'),
+              $('<td>').text(ships[s].weapons[0].fireRate/1000 + ' sec'),
+              $('<td>').text(ships[s].weapons[1].fireRate/1000 + ' sec')
+            )
+          )
+        );
+
+        $item.append($details);
+        $menu.append($item);
+      }
+
+
+      // Load previous preferences & bind change save
+      var prefs = ShipSocket._cookiePrefs();
+      if (prefs){
+        $('#name').val(prefs.name);
+        $('input[value=' + prefs.ship + ']').prop('checked',true);
+      }
+
+      $('#connection-window input').change(function(){
+        ShipSocket._cookiePrefs({
+          name: $('#name').val(),
+          ship: $('input[name=ship]:checked').val()
+        });
+      })
+
+      // Bind click for the the selector tabs
+      $('.selector ship').click(function(){
+        $('input#ship-' + $(this).data('type')).prop('checked', true).change();
+      })
+
+      // Bind to change to add / remove select class
+      $('input[name=ship]').change(function(){
+        if ($(this).is(':checked')){
+          $('#connection-window label, .selector ship').removeClass('selected');
+          $('.selector ship.ship_'+$(this).val()).addClass('selected');
+          $(this).parent().addClass('selected');
+
+          $('.ship-select').animate({
+            scrollTop: $(this).parent()[0].offsetTop - $('.selector ship:first')[0].offsetTop - 43
+          }, 'slow');
+        }
+      });
+
+      // Set the initially selected classes
+      $('input[name=ship]:checked').parent().addClass('selected');
+
+      $('#connection-window').fadeIn('slow', function(){
+        $('.selector ship.ship_' + $('input[name=ship]:checked').val()).addClass('selected').click();
+      }).find('input')[0].focus();
     },
 
     // Utility function for updating player compass directions

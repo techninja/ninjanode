@@ -51,51 +51,147 @@ div#debug {
 
 /* Connection Window */
 #connection-window {
+  background-color: #A0A0A0;
+  height: 361px;
   left: 50%;
-  margin-left: -28%;
-  width: 50%;
+  margin-left: -300px;
+  margin-top: -180px;
+  top: 50%;
+  width: 600px;
+  -webkit-box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
+  box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
 }
 
 #connection-window button {
+  font-size: 0.9em;
+  font-weight: bold;
+  height: 2.5em;
+  margin-right: -0.5em;
+  margin-top: -0.5em;
   float: right;
 }
 
 .window {
+  z-index: 100;
   position: fixed;
-  border: 5px dashed #990000;
-  padding: 2em;
+  padding: 1em;
   background-color: #fff;
+  border-radius: 0 1em;
 }
 
 #connection-window .ship-select {
-  margin: 1em;
+  height: 167px;
+  margin: 0 auto;
+  overflow: auto;
+}
+
+#connection-window .selector {
+  margin: 1em auto 0;
+  overflow: hidden;
+  width: 85%;
+}
+
+#connection-window .selector ship {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 32px 32px;
+  border-color: #000000;
+  border-radius: 0.5em 0.5em 0 0;
+  border-style: solid solid none;
+  border-width: 1px 1px 0;
+  cursor: pointer;
+  float: left;
+  height: 32px;
+  margin: 0.5em 1em 0;
+  padding: 0.3em;
+  width: 32px;
+  opacity: 0.5;
+}
+
+#connection-window .selector ship:hover {
+  background-color: #aaa;
+  opacity: 1;
+}
+#connection-window .selector ship.selected { opacity: 1; }
+
+#connection-window .selector .ship_a.selected { background-color: #FEA940; }
+#connection-window .selector .ship_b.selected { background-color: #00B219; }
+#connection-window .selector .ship_c.selected { background-color: #A35B5B; }
+#connection-window .selector .ship_d.selected { background-color: #D34121; }
+#connection-window .selector .ship_e.selected { background-color: #BE5225; }
+#connection-window .selector .ship_f.selected { background-color: #14A6F8; }
+
+#connection-window fieldset {
+  border: 2px solid #0055EE;
+  border-radius: 1em 0 1em 0;
 }
 
 #connection-window h1 {
   margin-top: 0;
+  font-family: 'Black Ops One',cursive;
   text-align: center;
 }
 
 #connection-window label.ship {
   display: block;
-  float: left;
-  margin-right: 1em;
-  margin-bottom: 1em;
-  width: 100px;
-  text-align: center;
+  margin-bottom: 0.5em;
+  width: 96%;
   border: 1px solid #aaa;
   border-radius: 1em;
   padding: 0.5em;
   font-family: fantasy;
-  font-style: italic;
+  font-size: 0.8em;
+}
+
+#connection-window label h4 {
+  font-family: 'Black Ops One',cursive;
+  font-size: 2em;
+  margin: -0.1em 0.2em;
 }
 
 #connection-window label ship {
-  margin: 0.5em auto;
+  float: right;
+  margin-right: -1.2em;
+  margin-top: 2.5em;
+  transform: rotate(317deg);
+  -webkit-transform: rotate(317deg);
 }
 
-#connection-window label.selected {
-  background-color: #faed56;
+#connection-window label input {
+  float: right;
+}
+
+#connection-window .ship-select label {
+  background-color: #fff;
+}
+
+#connection-window .ship-select label.selected {
+  background: #e0f3fa;
+  background: -moz-linear-gradient(13deg,  #e0f3fa 0%, #d8f0fc 43%, #b8e2f6 55%, #b6dffd 100%);
+  background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#e0f3fa), color-stop(43%,#d8f0fc), color-stop(55%,#b8e2f6), color-stop(100%,#b6dffd));
+  background: -webkit-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
+  background: -o-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
+  background: -ms-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
+  background: linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', endColorstr='#b6dffd',GradientType=1 );
+}
+
+.ship-select table {
+  border-collapse: collapse;
+  width: 85%;
+}
+
+.ship-select table th {
+  border-bottom: 2px solid #aaa;
+}
+
+.ship-select table td {
+  border-bottom: 1px solid #aaa;
+}
+
+.ship-select table td.spacer {
+  border: 0 none;
+  width: 1.7em;
 }
 
 /* Players Window */

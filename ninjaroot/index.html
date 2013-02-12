@@ -3,6 +3,7 @@
   <head>
     <title>Ninja Ships ONLINE!</title>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="resources/styles.css">
     <script src="libs/jquery.js"></script>
     <script src="libs/jquery.spritely-0.6.js"></script>
@@ -29,45 +30,14 @@
     </div>
 
     <div id="connection-window" class="window layer5 hidden">
-      <h1>NinjaShips On-line!</h1>
-      The most-awesomest node.js proof of concept ever
+      <h1>ninjanode</h1>
       <fieldset><legend>Pick a name and a ship...</legend>
         <form>
-          <button>Connect!</button>
+          <button>Join the Fun &gt;&gt;</button>
           <label for="name">Nickname:</label>
           <input type="text" class="name" value="NinjaNoob" id="name"/>
 
-          <div class="ship-select">
-            <label for="ship-a" class="ship">
-              <input type="radio" name="ship" checked id="ship-a" value="a"/>
-              <ship class="ship_a"></ship>Legionnaire
-            </label>
-
-            <label for="ship-b" class="ship">
-              <input type="radio" name="ship" id="ship-b" value="b"/>
-              <ship class="ship_b"></ship>Cygnuss
-            </label>
-
-            <label for="ship-c" class="ship">
-              <input type="radio" name="ship" id="ship-c" value="c"/>
-              <ship class="ship_c"></ship>Scimitar
-            </label>
-
-            <label for="ship-d" class="ship">
-              <input type="radio" name="ship" id="ship-d" value="d"/>
-              <ship class="ship_d"></ship>Mongoose
-            </label>
-
-            <label for="ship-e" class="ship">
-              <input type="radio" name="ship" id="ship-e" value="e"/>
-              <ship class="ship_e"></ship>Sulaco
-            </label>
-
-            <label for="ship-f" class="ship">
-              <input type="radio" name="ship" id="ship-f" value="f"/>
-              <ship class="ship_f"></ship>Excalibur
-            </label>
-          </div>
+          <div class="ship-select"></div>
         </form>
       </fieldset>
     </div>
