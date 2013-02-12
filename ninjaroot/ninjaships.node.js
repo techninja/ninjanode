@@ -8,13 +8,17 @@ var _ships = {};
 
 var projectileTypes = {
   laser: {
+    name: "Death Laser",
     speed: 20,
     life: 2500, // How many ms till it dies?
     sound: 3,
+    damage: 20,
     knockBackForce: 3,
     yOffset: -50
   },
   biglaser: {
+    name: "Super Laser",
+    damage: 40,
     speed: 15,
     life: 5000,
     sound: 1,
@@ -22,6 +26,8 @@ var projectileTypes = {
     yOffset: -50
   },
   energy : {
+    name: "Energy Orb",
+    damage: 30,
     speed: 15,
     life: 5500,
     sound: 2,
@@ -29,6 +35,8 @@ var projectileTypes = {
     yOffset: -2
   },
   mine : {
+    name: "Space Mine",
+    damage: 100,
     speed: 0,
     life: 60000,
     sound: 4,
