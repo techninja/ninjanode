@@ -15,8 +15,8 @@ var projectileTypes = {
     damage: 20,
     size: {
       hitRadius: 10,
-      width: 20,
-      height: 20
+      width: 8,
+      height: 70
     },
     knockBackForce: 3,
     yOffset: -50
@@ -29,8 +29,8 @@ var projectileTypes = {
     sound: 1,
     size: {
       hitRadius: 10,
-      width: 20,
-      height: 20
+      width: 8,
+      height: 70
     },
     knockBackForce: 10,
     yOffset: -50
@@ -388,7 +388,7 @@ function _shipObject(options){
       style: this.data.weapons[weaponID].style,
       shipID: this.id,
       weaponID: weaponID,
-      pos: {x: this.pos.x + 25, y: this.pos.y, d: this.pos.d},
+      pos: {x: this.pos.x + this.width/2, y: this.pos.y + this.height/2, d: this.pos.d},
       create: createCallback,
       destroy: destroyCallback
     });
@@ -480,6 +480,9 @@ function _projectileObject(options){
   this.born = new Date().getTime();
 
   this.data = projectileTypes[options.type];
+
+  this.pos.x = this.pos.x - this.data.size.width/2;
+  this.pos.y = this.pos.y - this.data.size.height/2;
 
   this.destroy = function(){
     this.active = false;
