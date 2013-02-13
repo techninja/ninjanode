@@ -132,32 +132,30 @@ String.prototype.spanWrap = function() {
           }
           return false;
         }
+      });
 
-        // Send chat
-        $('#chat-main input').bind('keyup', function(e) {
-          if (e.which == 13 && $(this).val().trim()){
-            ShipSocket.sendChat($(this).val());
-            $(this).val('');
+      // Send chat
+      $('#chat-main input').bind('keyup', function(e) {
+        if (e.which == 13 && $(this).val().trim()){
+          ShipSocket.sendChat($(this).val());
+          $(this).val('');
+        }
+      });
+
+      // Chat notification manager, check every second
+      setInterval(function(){
+        $('#chat-notify li').each(function(){
+          // Remove items older than 10 seconds
+          if (new Date().getTime() - $(this).data('time') > 10000) {
+            $(this).hide('slow', function(){
+              $(this).remove();
+              if (!$('#chat-notify li').length){
+                $('#chat-notify').fadeOut('slow');
+              }
+            });
           }
         });
-
-        // Chat notification manager, check every second
-        setInterval(function(){
-          $('#chat-notify li').each(function(){
-            // Remove items older than 10 seconds
-            if (new Date().getTime() - $(this).data('time') > 10000) {
-              $(this).hide('slow', function(){
-                $(this).remove();
-                if (!$('#chat-notify li').length){
-                  $('#chat-notify').fadeOut('slow');
-                }
-              });
-            }
-          });
-        }, 1000);
-
-
-      });
+      }, 1000);
     },
 
 
