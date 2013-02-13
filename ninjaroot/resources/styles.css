@@ -324,6 +324,7 @@ ship {
 }
 
 label.username {
+  white-space: nowrap;
   background-color: rgba(33, 33, 33, 0.8);
   color: green;
   font-family: monospace;
@@ -398,6 +399,12 @@ ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
 
 /* Projectiles! */
 
+/* keyframes for animation;  simple 0 to 360 */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 projectile.init {
   display: none;
   top: 50px;
@@ -418,15 +425,20 @@ projectile.biglaser {
 }
 
 projectile.energy {
-  height: 20px;
-  width: 20px;
-  border-radius: 20px;
-  background-color:#FFF;
+  height: 64px;
+  width: 64px;
+  background-size: 64px 64px;
+  background-image: url('energy_orb_white.png');
+
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 
 projectile.mine {
-  height: 25px !important;
-  width: 25px !important;
+  height: 40px !important;
+  width: 40px !important;
   border-radius: 6px 0;
   background-color:#AAA;
 }
@@ -442,4 +454,19 @@ projectile.green {
 
 projectile.red {
   background-color: red;
+}
+
+projectile.energy.red {
+  background-image: url('energy_orb_red.png');
+  background-color: transparent;
+}
+
+projectile.energy.blue {
+  background-image: url('energy_orb_blue.png');
+  background-color: transparent;
+}
+
+projectile.energy.green {
+  background-image: url('energy_orb_green.png');
+  background-color: transparent;
 }
