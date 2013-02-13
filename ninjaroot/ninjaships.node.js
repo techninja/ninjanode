@@ -9,19 +9,29 @@ var _ships = {};
 var projectileTypes = {
   laser: {
     name: "Death Laser",
-    speed: 20,
+    speed: 45,
     life: 2500, // How many ms till it dies?
     sound: 3,
     damage: 20,
+    size: {
+      hitRadius: 10,
+      width: 20,
+      height: 20
+    },
     knockBackForce: 3,
     yOffset: -50
   },
   biglaser: {
     name: "Super Laser",
     damage: 40,
-    speed: 15,
+    speed: 20,
     life: 5000,
     sound: 1,
+    size: {
+      hitRadius: 10,
+      width: 20,
+      height: 20
+    },
     knockBackForce: 10,
     yOffset: -50
   },
@@ -31,8 +41,13 @@ var projectileTypes = {
     speed: 15,
     life: 5500,
     sound: 2,
+    size: {
+      hitRadius: 21,
+      width: 64,
+      height: 64
+    },
     knockBackForce: 15,
-    yOffset: -2
+    yOffset: -8
   },
   mine : {
     name: "Mine",
@@ -40,6 +55,11 @@ var projectileTypes = {
     speed: 0,
     life: 60000,
     sound: 4,
+    size: {
+      hitRadius: 20,
+      width: 40,
+      height: 40
+    },
     knockBackForce: 5,
     yOffset: 0
   }
@@ -499,70 +519,83 @@ function _updateProjectileMovement(){
  * @see module.exports.processShipFrame
  */
 function _detectCollision(){
-    // Loop through every ship, to every ship, to every projectile
-    for(var s in _ships){
-      var source = _ships[s];
-      // Check every ship against this projectile
-      for(var t in _ships){
-        var target = _ships[t];
-        if (t != s && !target.exploding){ // Ships can't hit themselves
+  // Loop through every ship, to every ship, to every projectile
+  for(var s in _ships){
+    var source = _ships[s];
+    // Check every ship against this projectile
+    for(var t in _ships){
+      var target = _ships[t];
+      if (t != s && !target.exploding){ // Ships can't hit themselves
 
-          // Exploding ships can't collide with things
-          if (!source.exploding){
-            // While we're here, check for ship to ship collision
-            if (source.pos.x + source.width > target.pos.x && source.pos.x < target.pos.x + target.width){
-              // Target is within the vertical column! check horizontal
-              if (source.pos.y + source.height > target.pos.y && source.pos.y < target.pos.y + target.height){
-                // Source bounding box is within the target's box!
+        // Exploding ships can't collide with things
+        if (!source.exploding){
+          // While we're here, check for ship to ship collision via circular hitbox
+          if (_circleIntersects(source.pos, source.width, source.width/2, target.pos, target.width, target.width/2)){
+            // Trigger hit callback (to simplify things.. both should die
+            if (target.velocityLength > source.velocityLength){
+              console.log(target.name + ' slammed into ' + source.name);
+              source.hit({
+                type: 'collision',
+                source: target // Include source to find out who's hitting who
+              });
+            } else {
+              console.log(source.name + ' slammed into ' + target.name);
+              target.hit({
+                type: 'collision',
+                source: source // Include source to find out who's hitting who
+              });
+            }
+          } // End Check Circle Intersection
+        } // End not source exploding
 
-                // Trigger hit callback (to simplify things.. both should die
-                if (target.velocityLength > source.velocityLength){
-                  console.log(target.name + ' slammed into ' + source.name);
-                  source.hit({
-                    type: 'collision',
-                    source: target // Include source to find out who's hitting who
-                  });
-                } else {
-                  console.log(source.name + ' slammed into ' + target.name);
-                  target.hit({
-                    type: 'collision',
-                    source: source // Include source to find out who's hitting who
-                  });
-                }
-              } // End Check Y bounds
-            } // End Check X bounds
-          } // End not source exploding
+        // Loop through projectiles on source ship (CAN be exploding!)
+        for (var i in source.projectiles){
+          var p = source.projectiles[i];
+          if (p.active){ // Skip inactive projectiles
+            if (_circleIntersects({x: p.pos.x, y: p.pos.y - p.data.yOffset}, p.data.size.width, p.data.size.hitRadius, target.pos, target.width, target.width/2)){
+              // Target is within the hit circle fpr projectile! check horizontal
+              console.log(source.name + ' shot ' + target.name);
 
-          // Loop through projectiles on source ship (CAN be exploding!)
-          for (var i in source.projectiles){
-            var p = source.projectiles[i];
-            if (p.active){ // Skip inactive projectiles
-              if (p.pos.x > target.pos.x && p.pos.x < target.pos.x + target.width){
-                // Target is within the vertical column! check horizontal
-                if (p.pos.y - p.data.yOffset > target.pos.y && p.pos.y - p.data.yOffset < target.pos.y + target.height){
-                  // Projectile X & Y is within the target's box!
-                  console.log(source.name + ' shot ' + target.name);
+              // Run callback
+              target.hit({
+                type: 'projectile',
+                source: source
+              });
 
-                  // Run callback
-                  target.hit({
-                    type: 'projectile',
-                    source: source
-                  });
+              // Register knockback on the target on next move
+              target.knockBack = {
+                angle: p.pos.d,
+                amount: p.data.knockBackForce
+              };
+              p.destroy();
+            } // End Check Circular Intersection
+          } // End if projectile active
+        } // End each projectile in source ship
+      } // End if source != target
+    } // End each target ship
+  } // End Each source ship
+}
 
-                  // Register knockback on the target on next move
-                  target.knockBack = {
-                    angle: p.pos.d,
-                    amount: p.data.knockBackForce
-                  };
-                  p.destroy();
-                } // End Check Y bounds
-              } // End Check X bounds
-            } // End if projectile active
-          } // End each projectile in source ship
-        } // End if source != target
-      } // End each target ship
-    } // End Each source ship
+// Find out if two circles intersect for hit detection
+function _circleIntersects(pos1, width1, radius1, pos2, width2, radius2){
 
+  // Get center of circles (as positions are all top left corner centered)
+  var x0 = pos1.x + width1 / 2;
+  var y0 = pos1.y + width1 / 2;
+
+  var x1 = pos2.x + width2 / 2;
+  var y1 = pos2.y + width2 / 2;
+
+  // Find the distance between the centerpoints
+  // TODO: Probably use something faster than sqrt...
+  var distance = Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
+
+  // Return true if the distance is shorter than difference between the radii
+  if (distance >= (radius1 + radius2) || distance <= Math.abs(radius1 - radius2)){
+    return false;
+  } else {
+    return true;
+  }
 }
 
 /**
