@@ -417,6 +417,16 @@ projectile.laser {
   background-color:#FFF;
 }
 
+
+projectile.duallaser {
+  height: 50px;
+  width: 25px !important;
+  border-left: 2px solid green;
+  border-right: 2px solid green;
+  border-radius: 3px;
+  background-color: transparent !important;
+}
+
 projectile.biglaser {
   height: 70px;
   width: 8px;
