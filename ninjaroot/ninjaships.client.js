@@ -263,7 +263,7 @@ String.prototype.spanWrap = function() {
               ShipSocket.dummyShips[d.shipID].sound.fire[d.weaponID].play();
             }
 
-            $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
+            $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' ship-type-' + ShipSocket.dummyShips[d.shipID].style + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),
               pos: d.pos
