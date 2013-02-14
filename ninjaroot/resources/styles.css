@@ -435,8 +435,8 @@ projectile.biglaser {
 }
 
 projectile.energy {
-  height: 64px;
-  width: 64px;
+  height: 64px !important;
+  width: 64px !important;
   background-size: 64px 64px;
   background-image: url('energy_orb_white.png');
 
