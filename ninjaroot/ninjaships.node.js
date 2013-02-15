@@ -232,11 +232,16 @@ module.exports.getActiveProjectiles = function(){
 /**
  *  Exported Getter for a random starting position
  */
-var getRandomPos = function(){
+var getRandomPos = function(angleDivisibleBy){
+  angleDivisibleBy = angleDivisibleBy ? angleDivisibleBy : 1;
+
+  var angle = Math.floor((Math.random()*355)+1);
+  angle = Math.round(angle / angleDivisibleBy) * angleDivisibleBy;
+
   return {
     x: Math.floor((Math.random()*16)+1) * 128,
     y: Math.floor((Math.random()*16)+1) * 128,
-    d: Math.floor((Math.random()*355)+1)
+    d: angle
   };
 }
 module.exports.getRandomPos = getRandomPos;
@@ -425,7 +430,7 @@ function _shipObject(options){
     this.data.weapons[w].data = projectileTypes[this.data.weapons[w].type];
   }
 
-  this.pos = options.pos ? options.pos : {x: 0, y: 0, d: 0};
+  this.pos = options.pos ? options.pos : getRandomPos(this.data.rotationSpeed);
 
   // FUNCTION Direct visual rotation
   this.rot = function(deg){
@@ -542,7 +547,7 @@ function _shipObject(options){
       // Respawn & reset ship
       setTimeout(function(){
         ship.kill_velocity();
-        ship.pos = getRandomPos();
+        ship.pos = getRandomPos(ship.data.rotationSpeed);
         ship.exploding = false;
         ship.shieldPowerStatus = ship.data.shieldPower;
 

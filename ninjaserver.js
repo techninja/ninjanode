@@ -42,7 +42,6 @@ io.sockets.on('connection', function (clientSocket) {
       data.id = id;
       data.hit = shipHit;
       data.boom = shipBoom;
-      data.pos = ships.getRandomPos();
       ships.addShip(data);
       emitAllShips();
       emitSystemMessage(id, 'join'); // Must send after create...
