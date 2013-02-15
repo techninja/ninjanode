@@ -16,7 +16,7 @@ body.fixed {
 
 body.space {
   background-color: #222;
-  background-image: url('starfield.png');
+  background-image: url('graphics/starfield.png');
 }
 
 div#debug {
@@ -338,19 +338,19 @@ boom, #preload-boom {
   display: block;
   width: 256px;
   height: 256px;
-  background-image: url('explosion_wide.png');
+  background-image: url('graphics/explosion_wide.png');
 }
 
-ship.ship_a { background-image: url('ship_a.png'); }
-ship.ship_b { background-image: url('ship_b.png'); }
-ship.ship_c { background-image: url('ship_c.png'); }
-ship.ship_d { background-image: url('ship_d.png'); }
-ship.ship_e { background-image: url('ship_e.png'); }
-ship.ship_f { background-image: url('ship_f.png'); }
+ship.ship_a { background-image: url('graphics/ship_a.png'); }
+ship.ship_b { background-image: url('graphics/ship_b.png'); }
+ship.ship_c { background-image: url('graphics/ship_c.png'); }
+ship.ship_d { background-image: url('graphics/ship_d.png'); }
+ship.ship_e { background-image: url('graphics/ship_e.png'); }
+ship.ship_f { background-image: url('graphics/ship_f.png'); }
 
 /* Forward thrust */
 ship.thrusting:before, ship.thrusting:after {
-  content: url("flame_down.gif");
+  content: url("graphics/flame_down.gif");
   position: relative;
   top: 60px;
 }
@@ -375,7 +375,7 @@ ship.ship_f.thrusting:after { left: 3px; top: 62px; }
 
 /* Backward thrust */
 ship.thrusting_back:before, ship.thrusting_back:after {
-  content: url("flame_up.gif");
+  content: url("graphics/flame_up.gif");
   position: relative;
 }
 
@@ -399,7 +399,7 @@ ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
 
 /* Projectiles! */
 
-/* keyframes for animation;  simple 0 to 360 */
+/* keyframes for spinning energy animation;  simple 0 to 360 */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -438,7 +438,7 @@ projectile.energy {
   height: 64px !important;
   width: 64px !important;
   background-size: 64px 64px;
-  background-image: url('energy_orb_white.png');
+  background-image: url('graphics/energy_orb_white.png');
 
   animation-name: spin;
   animation-duration: 1000ms;
@@ -467,16 +467,16 @@ projectile.red {
 }
 
 projectile.energy.red {
-  background-image: url('energy_orb_red.png');
+  background-image: url('graphics/energy_orb_red.png');
   background-color: transparent;
 }
 
 projectile.energy.blue {
-  background-image: url('energy_orb_blue.png');
+  background-image: url('graphics/energy_orb_blue.png');
   background-color: transparent;
 }
 
 projectile.energy.green {
-  background-image: url('energy_orb_green.png');
+  background-image: url('graphics/energy_orb_green.png');
   background-color: transparent;
 }
