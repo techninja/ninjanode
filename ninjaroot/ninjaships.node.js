@@ -12,14 +12,14 @@ var projectileTypes = {
     speed: 45,
     life: 2500, // How many ms till it dies?
     sound: 3,
-    damage: 20,
+    damage: 50,
     size: {
-      hitRadius: 10,
+      hitRadius: 20,
       width: 8,
       height: 70
     },
-    knockBackForce: 3,
-    yOffset: -50
+    knockBackForce: 2,
+    yOffset: -30
   },
   biglaser: {
     name: "Super Laser",
@@ -28,11 +28,11 @@ var projectileTypes = {
     life: 5000,
     sound: 1,
     size: {
-      hitRadius: 10,
+      hitRadius: 20,
       width: 8,
       height: 70
     },
-    knockBackForce: 10,
+    knockBackForce: 4,
     yOffset: -50
   },
   duallaser: {
@@ -46,7 +46,7 @@ var projectileTypes = {
       width: 25,
       height: 50
     },
-    knockBackForce: 10,
+    knockBackForce: 3,
     yOffset: -50
   },
   energy : {
@@ -60,7 +60,7 @@ var projectileTypes = {
       width: 64,
       height: 64
     },
-    knockBackForce: 15,
+    knockBackForce: 5,
     yOffset: -8
   },
   mine : {
@@ -86,6 +86,8 @@ var shipTypes = {
     accelRate: 0.25,
     drag: 0.09,
     rotationSpeed: 6,
+    shieldPower: 100,
+    shieldRegenRate: 0.3,
     weapons: [
       {type: 'biglaser', style: 'red', fireRate: 950},
       {type: 'mine', style: 'red', fireRate: 10000}
@@ -97,6 +99,8 @@ var shipTypes = {
     accelRate: 0.2,
     drag: 0.03,
     rotationSpeed: 3,
+    shieldPower: 100,
+    shieldRegenRate: 0.2,
     weapons: [
       {type: 'energy', style: 'green', fireRate: 450},
       {type: 'mine', style: 'red', fireRate: 10000}
@@ -108,6 +112,8 @@ var shipTypes = {
     accelRate: 0.6,
     drag: 0.08,
     rotationSpeed: 10,
+    shieldPower: 100,
+    shieldRegenRate: 0.3,
     weapons: [
       {type: 'laser', style: 'green', fireRate: 1750},
       {type: 'mine', style: 'green', fireRate: 10000}
@@ -119,6 +125,8 @@ var shipTypes = {
     accelRate: 0.25,
     drag: 0.03,
     rotationSpeed: 5,
+    shieldPower: 75,
+    shieldRegenRate: 0.4,
     weapons: [
       {type: 'biglaser', style: 'blue', fireRate: 750},
       {type: 'mine', style: 'blue', fireRate: 10000}
@@ -130,6 +138,8 @@ var shipTypes = {
     accelRate: 0.29,
     drag: 0.03,
     rotationSpeed: 5,
+    shieldPower: 125,
+    shieldRegenRate: 0.2,
     weapons: [
       {type: 'duallaser', style: 'green', fireRate: 650},
       {type: 'mine', style: 'green', fireRate: 10000}
@@ -141,6 +151,8 @@ var shipTypes = {
     accelRate: 0.8,
     drag: 0.03,
     rotationSpeed: 5,
+    shieldPower: 200,
+    shieldRegenRate: 0.2,
     weapons: [
       {type: 'energy', style: 'blue', fireRate: 650},
       {type: 'mine', style: 'blue', fireRate: 10000}
@@ -350,6 +362,9 @@ function _shipObject(options){
   // All customizable ship type options are held here
   this.data = shipTypes[options.style];
 
+  // Set intial shieldPower (will be drawn down by hits from opponents)
+  this.shieldPowerStatus = this.data.shieldPower;
+
   // Populate weapons with projectile type data for data access
   for (var w in this.data.weapons){
     this.data.weapons[w].data = projectileTypes[this.data.weapons[w].type];
@@ -421,12 +436,26 @@ function _shipObject(options){
 
     if (data.type == 'collision'){
       // Everyone dies here!
+      data.target.shieldPowerStatus = 0;
+      data.source.shieldPowerStatus = 0;
+
+      // Trigger source hit callback as well cause he's also dying
+      options.hit({
+        type: 'secondary collision',
+        target: data.source
+      });
+
       data.target.triggerBoom();
       data.source.triggerBoom();
     } else if (data.type == 'projectile') {
-      // TODO: Calc damage
-      // Just kill em for now
-      data.target.triggerBoom();
+      // Remove the shield power directly via the weapon damage
+      data.target.shieldPowerStatus = data.target.shieldPowerStatus - data.weapon.data.damage;
+
+      // Kill em if their shield is out
+      if (data.target.shieldPowerStatus <= 0) {
+        data.target.shieldPowerStatus = 0;
+        data.target.triggerBoom();
+      }
     }
 
     options.hit(data);
@@ -455,10 +484,12 @@ function _shipObject(options){
 
 
       // 5 seconds should be enough time for the explosion and wait
+      // Respawn & reset ship
       setTimeout(function(){
         ship.kill_velocity();
         ship.pos = getRandomPos();
         ship.exploding = false;
+        ship.shieldPowerStatus = ship.data.shieldPower;
 
         // Trigger third callback
         options.boom({
@@ -573,9 +604,10 @@ function _detectCollision(){
               // Target is within the hit circle fpr projectile! check horizontal
               console.log(source.name + ' shot ' + target.name);
 
-              // Run callback
+              // Run hit callback on the target, the shooter is the source
               target.hit({
                 type: 'projectile',
+                weapon: p,
                 source: source
               });
 
@@ -623,8 +655,19 @@ function _updateShipMovement(){
   for (s in _ships){
     var self = _ships[s];
 
+    // Rotate the ship
     if (self.turn != 0 && !self.exploding){
       self.rot(self.turn);
+    }
+
+    // Apply shield regeneration
+    if (!self.exploding) {
+      self.shieldPowerStatus = self.shieldPowerStatus + self.data.shieldRegenRate;
+
+      // Cap shield power at max power
+      if (self.shieldPowerStatus > self.data.shieldPower){
+        self.shieldPowerStatus = self.data.shieldPower;
+      }
     }
 
     // Apply thrust vector

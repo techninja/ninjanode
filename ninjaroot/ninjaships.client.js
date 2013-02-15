@@ -193,11 +193,12 @@ String.prototype.spanWrap = function() {
     shipStatus: function(data){
       for (var id in data){
         var d = data[id];
+        var ship = ShipSocket.dummyShips[id];
         if (d.status == 'create'){ // Create new ship object
           // Only create locally if it doesn't exist.
-          if (!ShipSocket.dummyShips[id]){
+          if (!ship){
             // Add ship element
-            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username" id="label_' + id + '">' + d.name + '</label>');
+            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username ship-type-' + d.style + '" id="label_' + id + '">' + d.name + '</label>');
 
             // Add player list element
             $('#players').append('<player class="ship-id-' + id +
@@ -214,6 +215,10 @@ String.prototype.spanWrap = function() {
                 fire: [
                   new Audio(ShipSocket.audioPath['fire' + d.sounds[0]]),
                   new Audio(ShipSocket.audioPath['fire' + d.sounds[1]])
+                ],
+                hit: [
+                  new Audio(ShipSocket.audioPath['hit1']),
+                  new Audio(ShipSocket.audioPath['hit2'])
                 ]
               },
               height: 64,
@@ -229,26 +234,73 @@ String.prototype.spanWrap = function() {
           }
         } else if (d.status == 'destroy'){ // Destroy!
           // Remove element, projectile elements, and data
-          if (ShipSocket.dummyShips[id]){
+          if (ship){
             $('.ship-id-' + id).remove();
             ShipSocket.dummyShips[id].element.remove();
             ShipSocket.dummyShips[id].label.remove();
             delete ShipSocket.dummyShips[id];
           }
         } else if (d.status == 'hit'){ // Hit
-          // TODO: Add sound effect, with volume based on distance away from user?
+          var index = Math.round(Math.random()); // Pick between 0 and 1
+          ship.sound.hit[index].volume = ShipSocket._getDistanceVolume(id);
+          ship.sound.hit[index].play();
+
+          // Make Shields pulse (css animation)
+          ship.label.addClass('pulse');
+          setTimeout(function(){
+            ship.label.removeClass('pulse');
+          }, 300);
+        } else if (d.status == 'shield'){ // Shield status (up or down!)
+          // Shield amounts already rounded to nearest 5% by the server
+          var oldValue = ship.label.data('shields');
+
+          // Remove all classes that look like "shield-"
+          ship.label.removeClass(function (index, css) {
+            return (css.match(/\bshield-\S+/g) || []).join(' ');
+          });
+
+          // Shields went down! Animate
+          if (oldValue > d.amount) {
+            // Make Shields pulse (css animation)
+            var color = 'green';
+
+            if (d.amount <= 60) {
+              color = 'orange';
+            }
+
+            if (d.amount <= 30) {
+              color = 'red';
+            }
+
+            ship.label.addClass('flash-' + color);
+
+            // Red flash sticks around to make it obvious that this is BAD
+            if (color != 'red') {
+              setTimeout(function(){
+                ship.label.removeClass('flash-' + color);
+              }, 500);
+            }
+          }
+
+          // If transitioning from red to orange, clear the red class
+          if (oldValue < d.amount && d.amount > 30 && oldValue <= 30) {
+            ship.label.removeClass('flash-red');
+          }
+
+          // Set data and class for width
+          ship.label.addClass('shield-'+d.amount).data('shields', d.amount);
+
         } else if (d.status == 'boom'){ // BOOM!
-          var ship = ShipSocket.dummyShips[id];
           if (d.stage == 'start'){
-            console.log('Boom start')
+            // Start animation
             ship.sound.boom.volume = ShipSocket._getDistanceVolume(id);
             ship.sound.boom.play();
             ShipSocket._animateBoom(id);
-          } else if (d.stage == 'middle') { // Fade out...
+          } else if (d.stage == 'middle') {
+            // Fade out...
             ship.element.fadeOut();
             ship.label.fadeOut();
           } else { // Complete!
-            console.log('Boom complete')
             // Fade back in
             ship.element.fadeIn('slow');
             ship.label.fadeIn('slow');

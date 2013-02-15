@@ -14,7 +14,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server, {log: false});
 var ships = require('./ninjaroot/ninjaships.node.js');
-var lastData = {}; // Ensures duplicate data isn't sent
+var lastData = {}; // Ensures duplicate data for positions isn't sent
+var lastShieldData = {} // Ensures duplicate data for shield values isn't sent
 
 // Start express hosting the site from "ninjaroot" folder on the given port
 server.listen(port);
@@ -116,10 +117,13 @@ io.sockets.on('connection', function (clientSocket) {
     };
     io.sockets.emit('shipstat', out);
 
-    // Also.. if it's a collision, then they're dead!
+    // Send a system message for death if collision...
     if (data.type == 'collision'){
       emitSystemMessage(data.source.id, data.type, data.target.id);
-    } else { // For right now, one shot = one kill
+    }
+
+    // ...or if target shield power is 0
+    if (data.type == 'projectile' && data.target.shieldPowerStatus == 0){
       emitSystemMessage(data.source.id, data.type, data.target.id);
     }
   }
@@ -183,6 +187,31 @@ function emitShipPositionUpdates(){
   // Only *if* there's useful data to be sent, send only that pos data to all clients
   if (Object.keys(out).length) {
     io.sockets.emit('pos', out);
+  }
+}
+
+// Send out shield amounts for every new shield change to everyone
+function emitShipShieldUpdates(){
+  var vessels = ships.shipGet();
+  var out = {};
+
+  // Only add to the output json that has changed since last send
+  for (var id in vessels){
+    var roundedPercent = (vessels[id].shieldPowerStatus * 100) / vessels[id].data.shieldPower;
+    roundedPercent = Math.round(roundedPercent / 5) * 5;
+
+    if (lastShieldData[id] != roundedPercent) {
+      lastShieldData[id] = roundedPercent;
+      out[id] = {
+        status: 'shield',
+        amount: roundedPercent
+      };
+    }
+  }
+
+  // Only *if* there's useful data to be sent, send that data to all clients
+  if (Object.keys(out).length) {
+    io.sockets.emit('shipstat', out);
   }
 }
 
@@ -252,6 +281,7 @@ function emitSystemMessage(id, action, target){
 // Also compiles changed positions and sends out to all clients
 setInterval(function(){
   ships.processShipFrame();
+  emitShipShieldUpdates();
   emitShipPositionUpdates();
   emitProjectilePositionUpdates();
 }, 60);

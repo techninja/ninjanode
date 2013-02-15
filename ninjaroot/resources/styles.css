@@ -380,6 +380,145 @@ label.username {
   padding: 0 0.5em;
 }
 
+/** Keyframes for flash animation **/
+@keyframes flash-green {
+  0%   { background-color: green; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: green; }
+}
+
+@keyframes flash-orange {
+  0%   { background-color: orange; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: orange; }
+}
+
+@keyframes flash-red {
+  0%   { background-color: red; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: red; }
+}
+
+label.username:before { /* Shield Status (label hack) */
+  background-color: green;
+  content: "";
+  display: block;
+  height: 5px;
+  margin-left: -6px;
+  margin-top: -5px;
+  width: 100%;
+  padding-right: 11px; /* Make up for padding in parent */
+}
+
+label.username.flash-green:before {
+  animation-name: flash-green;
+  animation-duration: 500ms;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+
+  -webkit-animation-name: flash-green;
+  -webkit-animation-duration: 500ms;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: ease-out;
+}
+
+label.username.flash-orange:before {
+  animation-name: flash-orange;
+  animation-duration: 300ms;
+  animation-iteration-count: 2;
+  animation-timing-function: ease-out;
+
+  -webkit-animation-name: flash-orange;
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-iteration-count: 2;
+  -webkit-animation-timing-function: ease-out;
+}
+
+label.username.flash-red:before {
+  animation-name: flash-red;
+  animation-duration: 200ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+
+  -webkit-animation-name: flash-red;
+  -webkit-animation-duration: 200ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-out;
+}
+
+/** No way to set pseudo :before with JS, so these classes will have to do **/
+label.username.shield-0:before{padding-right:0;width:0%}
+label.username.shield-5:before{padding-right:1px;width:5%}
+label.username.shield-10:before{padding-right:1px;width:10%}
+label.username.shield-15:before{padding-right:2px;width:15%}
+label.username.shield-20:before{padding-right:2px;width:20%}
+label.username.shield-25:before{padding-right:3px;width:25%}
+label.username.shield-30:before{padding-right:3px;width:30%}
+label.username.shield-35:before{padding-right:5px;background-color:orange;width:35%}
+label.username.shield-40:before{padding-right:5px;background-color:orange;width:40%}
+label.username.shield-45:before{padding-right:7px;background-color:orange;width:45%}
+label.username.shield-50:before{padding-right:7px;background-color:orange;width:50%}
+label.username.shield-55:before{padding-right:9px;background-color:orange;width:55%}
+label.username.shield-60:before{padding-right:9px;background-color:orange;width:60%}
+label.username.shield-65:before{width:65%}label.username.shield-70:before{width:70%}
+label.username.shield-75:before{width:75%}label.username.shield-80:before{width:80%}
+label.username.shield-85:before{width:85%}label.username.shield-90:before{width:90%}
+label.username.shield-95:before{width:95%}label.username.shield-100:before{width:100%}
+
+
+/** Keyframes for opacity pulse animation **/
+@keyframes pulse {
+  0%   { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+  10%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
+  40%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
+  100%  { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+}
+
+label.username:after { /* Shields! Hacked into the label */
+  background-color: transparent;
+  background-image: url("graphics/shield_yellow.png");
+  background-size: 90px 90px;
+  content: "";
+  display: block;
+  height: 90px;
+  left: 0;
+  margin-left: -12px;
+  margin-top: 3px;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: 90px;
+}
+
+label.username.pulse:after {
+  animation-name: pulse;
+  animation-duration: 400ms;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+
+  -webkit-animation-name: pulse;
+  -webkit-animation-duration: 400ms;
+  -webkit-animation-iteration-count: 2;
+  -webkit-animation-timing-function: ease-out;
+}
+
+label.username.ship-type-b:after {
+  background-image: url("graphics/shield_green.png");
+}
+label.username.ship-type-c:after {
+  background-image: url("graphics/shield_red.png");
+}
+label.username.ship-type-d:after {
+  background-image: url("graphics/shield_pink.png");
+}
+label.username.ship-type-e:after {
+  background-image: url("graphics/shield_orange.png");
+}
+label.username.ship-type-f:after {
+  background-image: url("graphics/shield_blue.png");
+}
+
+
 boom, #preload-boom {
   display: block;
   width: 256px;
