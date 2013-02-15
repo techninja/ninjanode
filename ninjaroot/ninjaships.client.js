@@ -583,7 +583,8 @@ String.prototype.spanWrap = function() {
               $('<td>').text(weapons[1].life/1000 + ' sec')
             ),
             $('<tr>').append(
-              $('<td>').text('').attr('colspan', 2),
+              $('<td>').text('Shield (' + ships[s].shieldPower + ')'),
+              $('<td>').html('Regen Rate: ' + (ships[s].shieldRegenRate*16) + ' jps'),
               $('<td>').text(' ').addClass('spacer'),
               $('<td>').text('Reload Rate'),
               $('<td>').text(ships[s].weapons[0].fireRate/1000 + ' sec'),
