@@ -134,7 +134,7 @@ String.prototype.spanWrap = function() {
           $('#chat-main').fadeOut('slow');
           $('#chat-main input').val(''); // Counteract text coming back...
           if ($('#chat-notify li').length){
-            $('#chat-notify').fadeOut('slow');
+            $('#chat-notify').fadeIn('slow');
           }
           return false;
         }
@@ -145,6 +145,12 @@ String.prototype.spanWrap = function() {
         if (e.which == 13 && $(this).val().trim()){
           ShipSocket.sendChat($(this).val());
           $(this).val('');
+
+          // Leave chat window once chat sent
+          $('#chat-main').fadeOut('slow');
+          if ($('#chat-notify li').length){
+            $('#chat-notify').fadeIn('slow');
+          }
         }
       });
 
@@ -486,8 +492,9 @@ String.prototype.spanWrap = function() {
       var $notifyList = $('#chat-notify ol');
 
       $chatList.append(out); // Add element
-      $chatList.find('li:last').hide().show('slow');
-      $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll down
+      $chatList.find('li:last').hide().show('slow', function(){
+        $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll down
+      });
 
       // Manage notifications system =================================
       $notifyList.append(out);
