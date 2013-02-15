@@ -140,6 +140,33 @@ String.prototype.spanWrap = function() {
         }
       });
 
+      // Bind mouse and touch events for alternate control scheme
+      this._bindPushEvents(function(e){ // Touch Start / Mouse move
+        // Find the angle relative to the center of the screen
+        var center = {x: $(document).width() / 2, y: $(document).height() / 2}
+
+        // TODO: Remove hardcoded ship width / height to allow for larger ships!
+        var touchAngle = (Math.atan2(
+          e.y - center.y,
+          e.x - center.x) * (180 / Math.PI)
+        ) + 90;
+
+        // Fix quandrant offset
+        if (touchAngle < 0) {
+          touchAngle = touchAngle + 360;
+        }
+
+        ShipSocket.key({
+          type: 'mousetouch',
+          angle: Math.round(touchAngle)
+        }, 'm');
+
+      }, function(e){ // Touch end / Mouse Up
+        // Short circuit with keyup ;)
+        ShipSocket.key({type: 'keyup'}, 'm');
+      })
+
+
       // Send chat
       $('#chat-main input').bind('keyup', function(e) {
         if (e.which == 13 && $(this).val().trim()){
@@ -184,10 +211,17 @@ String.prototype.spanWrap = function() {
 
     // Sends key commands to the server for the user
     key : function(e, name) {
-      this.socket.emit('key', {
-        s: e.type == 'keyup'? 0 : 1, // Status
+      var out = {
+        s: e.type == 'keyup' ? 0 : 1, // Status
         c: name // Command
-      });
+      }
+
+      // If mouse / touch event, send the x/y pos
+      if (e.type == 'mousetouch') {
+        out.d = e.angle;
+      }
+
+      this.socket.emit('key', out);
     },
 
 
@@ -755,6 +789,51 @@ String.prototype.spanWrap = function() {
           }
         }
         return false;
+      }
+    },
+
+    // Bind callbacks to both mouse and touch events for input
+    _bindPushEvents: function(positionCallback, endCallback){
+      if (document.body.ontouchstart === undefined){ // For desktop browsers
+        $(document).bind('mousedown', function(e){
+          positionCallback({x:e.pageX, y:e.pageY});
+          ShipSocket.mousedown = e.which;
+          return false;
+        });
+
+        $(document).bind('mousemove', function(e){
+          if (ShipSocket.mousedown == 1){
+            positionCallback({x:e.pageX, y:e.pageY});
+            return false;
+          }
+        });
+
+        $(document).bind('mouseup', function(e){
+          endCallback({x:e.pageX, y:e.pageY});
+          ShipSocket.mousedown = 0;
+          return false;
+        });
+
+      }else{  // For all touch devices
+        $(document).bind('touchstart touchmove', function(e){
+          var orig = e.originalEvent;
+          positionCallback({
+            x: orig.changedTouches[0].pageX,
+            y: orig.changedTouches[0].pageY
+          });
+          ShipSocket.mousedown = 1;
+          return false;
+        });
+
+        $(document).bind('touchend', function(e){
+          var orig = e.originalEvent;
+          endCallback({
+            x: orig.changedTouches[0].pageX,
+            y: orig.changedTouches[0].pageY
+          });
+          ShipSocket.mousedown = 0;
+          return false;
+        });
       }
     },
 

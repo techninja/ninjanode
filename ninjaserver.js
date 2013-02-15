@@ -83,6 +83,9 @@ io.sockets.on('connection', function (clientSocket) {
         if (data.s) {
           ships.shipSetFire(id, projectileCreate, projectileDestroy, data.c == 'f' ? 0 : 1);
         }
+        break;
+      case 'm': // Mouse / touch control
+        ships.shipSetTouch(id, data.s ? data.d : false);
     }
   });
 

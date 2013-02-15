@@ -279,7 +279,7 @@ module.exports.getAllPos = function(){
 /**
  *  Exported Setter for thrust
  */
-module.exports.shipSetThrust = function(id, direction){
+shipSetThrust = function(id, direction){
   if (_ships[id]){
     var amount = _ships[id].data.accelRate;
     _ships[id].thrust = amount * direction;
@@ -293,11 +293,12 @@ module.exports.shipSetThrust = function(id, direction){
     return false;
   }
 }
+module.exports.shipSetThrust = shipSetThrust;
 
 /**
  *  Exported Setter for direction
  */
-module.exports.shipSetTurn = function(id, direction){
+shipSetTurn = function(id, direction){
   if (_ships[id]){
     if (direction){
       _ships[id].turn = _ships[id].data.rotationSpeed * (direction == 'l' ? -1 : 1);
@@ -314,6 +315,60 @@ module.exports.shipSetTurn = function(id, direction){
     return false;
   }
 }
+module.exports.shipSetTurn = shipSetTurn;
+
+/**
+ *  Exported Setter for thrust & direction via xy input
+ */
+shipSetTouch = function(id, angle){
+  if (_ships[id]){
+    if (angle !== false) {
+      var d = _ships[id].pos.d;
+
+      // Round incoming angle to nearest available ship rotation speed angle
+      // Prevents angle jitter, but makes touch less precise
+      angle = Math.round(angle / _ships[id].data.rotationSpeed) * _ships[id].data.rotationSpeed;
+
+      // Always thrust forward
+      shipSetThrust(id, 1);
+
+      // Same direction! disable turning
+      if (d == angle){
+        shipSetTurn(id, false);
+
+        // Stop ship calc position
+        _ships[id].touchAngle = false;
+        return true;
+      }
+
+      // The algorithm below fails with an angle of 0, so cheat and make it 1
+      if (angle == 0) {
+        angle = 1;
+      }
+      // Figure out which direction to turn comparing current angle to touch angle
+      var turnDir = (((angle - d + 540) % 360) - 180);
+      if (turnDir > 0) {
+        shipSetTurn(id, 'r');
+      } else {
+        shipSetTurn(id, 'l');
+      }
+      // Continue calculation during ship move without new data sent
+      _ships[id].touchAngle = angle;
+
+
+    } else {
+      // Stop ship calc position
+      _ships[id].touchAngle = false;
+      shipSetTurn(id, false);
+      shipSetThrust(id, false);
+    }
+
+    return true;
+  }else {
+    return false;
+  }
+}
+module.exports.shipSetTouch = shipSetTouch;
 
 /**
  *  Exported Setter for triggering Fire command
@@ -654,6 +709,11 @@ function _circleIntersects(pos1, width1, radius1, pos2, width2, radius2){
 function _updateShipMovement(){
   for (s in _ships){
     var self = _ships[s];
+
+    // Process touch angle movement, if any
+    if (self.touchAngle) {
+      shipSetTouch(s, self.touchAngle);
+    }
 
     // Rotate the ship
     if (self.turn != 0 && !self.exploding){
