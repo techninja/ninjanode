@@ -490,6 +490,11 @@ projectile.energy {
   animation-duration: 1000ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
 }
 
 projectile.mine {
