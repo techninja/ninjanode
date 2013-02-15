@@ -194,6 +194,19 @@ div#debug {
   width: 1.7em;
 }
 
+.disconnected {
+  font-weight: bold;
+  left: 50%;
+  margin-left: -100px;
+  text-align: center;
+  top: 50%;
+  width: 200px;
+  background-color:darkred;
+  color: white;
+  border-color: red;
+  z-index: 1000;
+}
+
 /* Players Window */
 #players {
   background-color: rgba(22, 22, 22, 0.5);

@@ -35,11 +35,17 @@ String.prototype.spanWrap = function() {
 
     // Intitalize the socket.io websockets connection, happens on page load
     initialize : function(socketURL) {
-      this.socket = io.connect(socketURL);
+      this.socket = io.connect(socketURL, {reconnect: false});
       this.socket.on('connect', function(){
         // Shortcut to our session id
         ShipSocket.id = ShipSocket.socket.socket.sessionid;
-      })
+      });
+
+      this.socket.on('disconnect', function(){
+        $('body').append('<div class="window fixed disconnected">Connection to server lost, refresh the page to reconnect</div>');
+        ShipSocket.socket.disconnect();
+      });
+
 
       // Object array of ships and their elements
       this.dummyShips = {};
