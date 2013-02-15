@@ -334,8 +334,14 @@ shipSetTouch = function(id, angle){
       // Prevents angle jitter, but makes touch less precise
       angle = Math.round(angle / _ships[id].data.rotationSpeed) * _ships[id].data.rotationSpeed;
 
-      // Always thrust forward
-      shipSetThrust(id, 1);
+      console.log('TouchAngle: ' + angle, 'Actual Angle: ' + d)
+
+      // Figure out which direction to turn comparing current angle to touch angle
+      var turnDir = (((angle - d + 540) % 360) - 180);
+
+      // If user touches in 40 degree range behind the ship, thrust backwards
+      var reverse = Math.abs(turnDir) > 150;
+      shipSetThrust(id, reverse ? -1 : 1);
 
       // Same direction! disable turning
       if (d == angle){
@@ -350,13 +356,15 @@ shipSetTouch = function(id, angle){
       if (angle == 0) {
         angle = 1;
       }
-      // Figure out which direction to turn comparing current angle to touch angle
-      var turnDir = (((angle - d + 540) % 360) - 180);
-      if (turnDir > 0) {
-        shipSetTurn(id, 'r');
-      } else {
-        shipSetTurn(id, 'l');
+
+      if (!reverse) {
+        if (turnDir > 0) {
+          shipSetTurn(id, 'r');
+        } else {
+          shipSetTurn(id, 'l');
+        }
       }
+
       // Continue calculation during ship move without new data sent
       _ships[id].touchAngle = angle;
 
