@@ -594,7 +594,26 @@ String.prototype.spanWrap = function() {
         if (theta < 0) {theta += 2 * Math.PI;}
         var angle = theta * (180 / Math.PI) + 90;
 
+        // Change color based on distance
+        var dist = Math.sqrt( Math.pow(t.x - myPos.x, 2) + Math.pow(t.y - myPos.y, 2));
+        var color = 'gray'; // Default far away
+
+        if (dist < 4000) {
+          color = 'green';
+        }
+        if (dist < 3000) {
+          color = 'blue';
+        }
+        if (dist < 2000) {
+          color = 'orange';
+        }
+        if (dist < 750) {
+          color = 'red';
+        }
+
         $('player.ship-id-' + target + ' .arrow')
+          .removeClass('gray green blue orange red')
+          .addClass(color)
           .rotate(Math.round(angle));
       }
     },
