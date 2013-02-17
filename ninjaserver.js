@@ -9,6 +9,7 @@
 
 var arguments = process.argv.splice(2);
 var port = arguments[0] ? arguments[0] : 4242;
+var sanitizer = require('sanitizer');
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -39,6 +40,8 @@ io.sockets.on('connection', function (clientSocket) {
   clientSocket.on('shipstat', function (data) {
     if (data.status == 'create'){ // New ship!
       console.log('Creating ship for user: ' + id);
+      data.name = sanitizer.escape(data.name);
+      data.style = sanitizer.sanitize(data.style);
       data.id = id;
       data.hit = shipHit;
       data.boom = shipBoom;
@@ -62,7 +65,7 @@ io.sockets.on('connection', function (clientSocket) {
   clientSocket.on('chat', function (data) {
     io.sockets.emit('chat', {
       type: 'chat',
-      msg: data.msg,
+      msg: sanitizer.escape(data.msg),
       id: id
     });
   });
