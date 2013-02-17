@@ -643,7 +643,9 @@ String.prototype.spanWrap = function() {
       var prefs = ShipSocket._cookiePrefs();
       if (prefs){
         $('#name').val(prefs.name);
-        $('input[value=' + prefs.ship + ']').prop('checked',true);
+        $('input[value=' + prefs.ship + ']').prop('checked', true);
+      } else { // default ship selection if no cookie
+        $('input[type=radio]:first').prop('checked', true);
       }
 
       $('#connection-window input').change(function(){
