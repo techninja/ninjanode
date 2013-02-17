@@ -164,8 +164,16 @@ String.prototype.spanWrap = function() {
       }, function(e){ // Touch end / Mouse Up
         // Short circuit with keyup ;)
         ShipSocket.key({type: 'keyup'}, 'm');
-      })
+      }, function(touchCount){  // Multitouch trigger
+        // If touch enabled device, give them some way to fire!
+        if (touchCount == 2) { // 2 touch primary fire
+          ShipSocket.key({type: 'keydown'}, 'f');
+        }
 
+        if (touchCount == 3) { // 3 touch secondary fire
+          ShipSocket.key({type: 'keydown'}, 's');
+        }
+      });
 
       // Send chat
       $('#chat-main input').bind('keyup', function(e) {
