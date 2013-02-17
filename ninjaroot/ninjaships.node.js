@@ -334,8 +334,6 @@ shipSetTouch = function(id, angle){
       // Prevents angle jitter, but makes touch less precise
       angle = Math.round(angle / _ships[id].data.rotationSpeed) * _ships[id].data.rotationSpeed;
 
-      console.log('TouchAngle: ' + angle, 'Actual Angle: ' + d)
-
       // Figure out which direction to turn comparing current angle to touch angle
       var turnDir = (((angle - d + 540) % 360) - 180);
 
@@ -428,7 +426,7 @@ function _shipObject(options){
   this.style = shipTypes[options.style] ? options.style : 'a';
 
   // All customizable ship type options are held here
-  this.data = shipTypes[options.style];
+  this.data = shipTypes[this.style];
 
   // Set intial shieldPower (will be drawn down by hits from opponents)
   this.shieldPowerStatus = this.data.shieldPower;
