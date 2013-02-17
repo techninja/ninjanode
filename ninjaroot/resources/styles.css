@@ -244,6 +244,10 @@ div#debug {
   clear: both;
   display: block;
   margin-top: 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
 #players player .arrow {
@@ -326,7 +330,12 @@ div#debug {
 }
 
 .chat li span {
+  display: -moz-box; /* TODO: Find another way! */
   font-weight: bold;
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat li.sys {

@@ -250,9 +250,10 @@ String.prototype.spanWrap = function() {
 
             // Add player list element
             $('#players').append('<player class="ship-id-' + id +
-              '"><ship class="ship_' + d.style + '"></ship>' + d.name +
+              '"><ship class="ship_' + d.style + '"></ship>' +
               '<span title="' + (id == ShipSocket.id ? 'It\'s you!' : 'Follow me!') +
-              '" class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span></player>');
+              '" class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span>' + d.name + '</player>'
+            );
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
