@@ -795,7 +795,7 @@ String.prototype.spanWrap = function() {
     },
 
     // Bind callbacks to both mouse and touch events for input
-    _bindPushEvents: function(positionCallback, endCallback){
+    _bindPushEvents: function(positionCallback, endCallback, triggerCallback){
       if (document.body.ontouchstart === undefined){ // For desktop browsers
         $(document).bind('mousedown', function(e){
           positionCallback({x:e.pageX, y:e.pageY});
@@ -817,23 +817,38 @@ String.prototype.spanWrap = function() {
         });
 
       }else{  // For all touch devices
+
+        $(document).bind('touchstart', function(e){
+          var orig = e.originalEvent;
+          if (orig.touches.length != 1){
+            triggerCallback(orig.touches.length);
+          }
+        });
+
         $(document).bind('touchstart touchmove', function(e){
           var orig = e.originalEvent;
-          positionCallback({
-            x: orig.changedTouches[0].pageX,
-            y: orig.changedTouches[0].pageY
-          });
-          ShipSocket.mousedown = 1;
+
+          // Ignore any touchstart / touchmove here except the first
+          if (orig.touches.length == 1){
+            positionCallback({
+              x: orig.changedTouches[0].pageX,
+              y: orig.changedTouches[0].pageY
+            });
+          }
           return false;
         });
 
         $(document).bind('touchend', function(e){
           var orig = e.originalEvent;
-          endCallback({
-            x: orig.changedTouches[0].pageX,
-            y: orig.changedTouches[0].pageY
-          });
-          ShipSocket.mousedown = 0;
+
+          // Ignore any touchend except the last one
+          if (orig.changedTouches.length == 1){
+            endCallback({
+              x: orig.changedTouches[0].pageX,
+              y: orig.changedTouches[0].pageY
+            });
+          }
+
           return false;
         });
       }
