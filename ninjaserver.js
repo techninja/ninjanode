@@ -156,6 +156,7 @@ function emitAllShips(targetID){
       name: listShips[id].name,
       sounds: [listShips[id].data.weapons[0].data.sound, listShips[id].data.weapons[1].data.sound],
       style: listShips[id].style,
+      shieldStyle: listShips[id].data.shield.style,
       pos: listShips[id].pos
     }
   }
@@ -202,7 +203,7 @@ function emitShipShieldUpdates(){
 
   // Only add to the output json that has changed since last send
   for (var id in vessels){
-    var roundedPercent = (vessels[id].shieldPowerStatus * 100) / vessels[id].data.shieldPower;
+    var roundedPercent = (vessels[id].shieldPowerStatus * 100) / vessels[id].data.shield.max;
     roundedPercent = Math.round(roundedPercent / 5) * 5;
 
     if (lastShieldData[id] != roundedPercent) {

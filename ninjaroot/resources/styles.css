@@ -250,6 +250,10 @@ div#debug {
   width: 100%;
 }
 
+#players player div {
+  margin-right: 0.3em;
+}
+
 #players player .arrow {
   border-bottom: 16px solid #FF0000;
   border-left: 5px solid transparent;
@@ -489,7 +493,7 @@ label.username.shield-95:before{width:95%}label.username.shield-100:before{width
 
 label.username:after { /* Shields! Hacked into the label */
   background-color: transparent;
-  background-image: url("graphics/shield_yellow.png");
+  background-image: url("graphics/shield_red.png");
   background-size: 90px 90px;
   content: "";
   display: block;
@@ -503,6 +507,13 @@ label.username:after { /* Shields! Hacked into the label */
   width: 90px;
 }
 
+label.username.style-blue:after {background-image: url("graphics/shield_blue.png");}
+label.username.style-green:after {background-image: url("graphics/shield_green.png");}
+label.username.style-orange:after {background-image: url("graphics/shield_orange.png");}
+label.username.style-pink:after {background-image: url("graphics/shield_pink.png");}
+label.username.style-purple:after {background-image: url("graphics/shield_purple.png");}
+label.username.style-yellow:after {background-image: url("graphics/shield_yellow.png");}
+
 label.username.pulse:after {
   animation-name: pulse;
   animation-duration: 400ms;
@@ -515,21 +526,6 @@ label.username.pulse:after {
   -webkit-animation-timing-function: ease-out;
 }
 
-label.username.ship-type-b:after {
-  background-image: url("graphics/shield_green.png");
-}
-label.username.ship-type-c:after {
-  background-image: url("graphics/shield_red.png");
-}
-label.username.ship-type-d:after {
-  background-image: url("graphics/shield_pink.png");
-}
-label.username.ship-type-e:after {
-  background-image: url("graphics/shield_orange.png");
-}
-label.username.ship-type-f:after {
-  background-image: url("graphics/shield_blue.png");
-}
 
 
 boom, #preload-boom {

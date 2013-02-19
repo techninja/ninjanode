@@ -86,8 +86,11 @@ var shipTypes = {
     accelRate: 0.25,
     drag: 0.09,
     rotationSpeed: 6,
-    shieldPower: 100,
-    shieldRegenRate: 0.3,
+    shield: {
+      max: 100,
+      regenRate: 0.3,
+      style: 'yellow'
+    },
     weapons: [
       {type: 'biglaser', style: 'red', fireRate: 950},
       {type: 'mine', style: 'red', fireRate: 10000}
@@ -99,8 +102,11 @@ var shipTypes = {
     accelRate: 0.2,
     drag: 0.03,
     rotationSpeed: 3,
-    shieldPower: 100,
-    shieldRegenRate: 0.2,
+    shield: {
+      max: 100,
+      regenRate: 0.2,
+      style: 'green'
+    },
     weapons: [
       {type: 'energy', style: 'green', fireRate: 450},
       {type: 'mine', style: 'red', fireRate: 10000}
@@ -112,8 +118,11 @@ var shipTypes = {
     accelRate: 0.6,
     drag: 0.08,
     rotationSpeed: 10,
-    shieldPower: 100,
-    shieldRegenRate: 0.3,
+    shield: {
+      max: 100,
+      regenRate: 0.3,
+      style: 'red'
+    },
     weapons: [
       {type: 'laser', style: 'green', fireRate: 1750},
       {type: 'mine', style: 'green', fireRate: 10000}
@@ -125,8 +134,11 @@ var shipTypes = {
     accelRate: 0.25,
     drag: 0.03,
     rotationSpeed: 5,
-    shieldPower: 75,
-    shieldRegenRate: 0.4,
+    shield: {
+      max: 75,
+      regenRate: 0.4,
+      style: 'pink'
+    },
     weapons: [
       {type: 'biglaser', style: 'blue', fireRate: 750},
       {type: 'mine', style: 'blue', fireRate: 10000}
@@ -138,8 +150,11 @@ var shipTypes = {
     accelRate: 0.29,
     drag: 0.03,
     rotationSpeed: 5,
-    shieldPower: 125,
-    shieldRegenRate: 0.2,
+    shield: {
+      max: 125,
+      regenRate: 0.2,
+      style: 'purple'
+    },
     weapons: [
       {type: 'duallaser', style: 'green', fireRate: 650},
       {type: 'mine', style: 'green', fireRate: 10000}
@@ -151,8 +166,11 @@ var shipTypes = {
     accelRate: 0.8,
     drag: 0.03,
     rotationSpeed: 5,
-    shieldPower: 200,
-    shieldRegenRate: 0.2,
+    shield: {
+      max: 200,
+      regenRate: 0.2,
+      style: 'blue'
+    },
     weapons: [
       {type: 'energy', style: 'blue', fireRate: 650},
       {type: 'mine', style: 'blue', fireRate: 10000}
@@ -428,8 +446,8 @@ function _shipObject(options){
   // All customizable ship type options are held here
   this.data = shipTypes[this.style];
 
-  // Set intial shieldPower (will be drawn down by hits from opponents)
-  this.shieldPowerStatus = this.data.shieldPower;
+  // Set intial shield power level (will be drawn down by hits from opponents)
+  this.shieldPowerStatus = this.data.shield.max;
 
   // Populate weapons with projectile type data for data access
   for (var w in this.data.weapons){
@@ -555,7 +573,7 @@ function _shipObject(options){
         ship.kill_velocity();
         ship.pos = getRandomPos(ship.data.rotationSpeed);
         ship.exploding = false;
-        ship.shieldPowerStatus = ship.data.shieldPower;
+        ship.shieldPowerStatus = ship.data.shield.max;
 
         // Trigger third callback
         options.boom({
@@ -733,11 +751,11 @@ function _updateShipMovement(){
 
     // Apply shield regeneration
     if (!self.exploding) {
-      self.shieldPowerStatus = self.shieldPowerStatus + self.data.shieldRegenRate;
+      self.shieldPowerStatus = self.shieldPowerStatus + self.data.shield.regenRate;
 
       // Cap shield power at max power
-      if (self.shieldPowerStatus > self.data.shieldPower){
-        self.shieldPowerStatus = self.data.shieldPower;
+      if (self.shieldPowerStatus > self.data.shield.max){
+        self.shieldPowerStatus = self.data.shield.max;
       }
     }
 

@@ -245,15 +245,32 @@ String.prototype.spanWrap = function() {
         if (d.status == 'create'){ // Create new ship object
           // Only create locally if it doesn't exist.
           if (!ship){
-            // Add ship element
-            $('body').append('<ship id="user_' + id + '" class="overlay layer2 ship_' + d.style + '"></ship><label class="overlay layer4 username ship-type-' + d.style + '" id="label_' + id + '">' + d.name + '</label>');
-
-            // Add player list element
-            $('#players').append('<player class="ship-id-' + id +
-              '"><ship class="ship_' + d.style + '"></ship>' +
-              '<span title="' + (id == ShipSocket.id ? 'It\'s you!' : 'Follow me!') +
-              '" class="' + (id == ShipSocket.id ? 'circle' : 'arrow') + '"></span>' + d.name + '</player>'
+            // Add ship and label element
+            $('body').append(
+              $('<ship>')
+                .attr('id', 'user_' + id)
+                .attr('class', 'overlay layer2 ship_' + d.style),
+              $('<label>')
+                .attr('class', 'overlay layer4 username ship-type-' + d.style)
+                .addClass('style-' + d.shieldStyle)
+                .attr('id', 'label_' + id)
+                .text(d.name)
             );
+
+            // Add player list element, mini ship and player compass
+            $('#players').append(
+              $('<player>')
+                .attr('class', 'ship-id-' + id)
+                .append(
+                  $('<ship>')
+                    .addClass('ship_' + d.style),
+                  $('<div>')
+                    .attr('title', id == ShipSocket.id ? "It's you!" : 'Follow me!')
+                    .addClass(id == ShipSocket.id ? 'circle' : 'arrow'),
+                  $('<label>').text(d.name)
+                )
+            );
+
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
