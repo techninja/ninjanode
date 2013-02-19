@@ -126,6 +126,7 @@ String.prototype.spanWrap = function() {
           $('#chat-main').show();
           $('#chat-notify').hide();
           $('#chat-main input')[0].focus();
+          $('#chat-main ol')[0].scrollTop = $('#chat-main ol')[0].scrollHeight; // Scroll to bottom
           return false;
         }
 
@@ -183,9 +184,7 @@ String.prototype.spanWrap = function() {
 
           // Leave chat window once chat sent
           $('#chat-main').fadeOut('slow');
-          if ($('#chat-notify li').length){
-            $('#chat-notify').fadeIn('slow');
-          }
+          $('#chat-notify').fadeIn('slow');
         }
       });
 
@@ -553,7 +552,7 @@ String.prototype.spanWrap = function() {
 
       $chatList.append(out); // Add element
       $chatList.find('li:last').hide().show('slow', function(){
-        $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll down
+        $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll to bottom
       });
 
       // Manage notifications system =================================
