@@ -92,8 +92,8 @@ var shipTypes = {
       style: 'yellow'
     },
     weapons: [
-      {type: 'biglaser', style: 'red', fireRate: 950},
-      {type: 'mine', style: 'red', fireRate: 10000}
+      {type: 'biglaser', style: 'yellow', fireRate: 950},
+      {type: 'mine', style: 'yellow', fireRate: 10000}
     ]
   },
   b: {
@@ -109,7 +109,7 @@ var shipTypes = {
     },
     weapons: [
       {type: 'energy', style: 'green', fireRate: 450},
-      {type: 'mine', style: 'red', fireRate: 10000}
+      {type: 'mine', style: 'green', fireRate: 10000}
     ]
   },
   c: {
@@ -124,8 +124,8 @@ var shipTypes = {
       style: 'red'
     },
     weapons: [
-      {type: 'laser', style: 'green', fireRate: 1750},
-      {type: 'mine', style: 'green', fireRate: 10000}
+      {type: 'laser', style: 'red', fireRate: 1750},
+      {type: 'mine', style: 'red', fireRate: 10000}
     ]
   },
   d: {
@@ -140,8 +140,8 @@ var shipTypes = {
       style: 'pink'
     },
     weapons: [
-      {type: 'biglaser', style: 'blue', fireRate: 750},
-      {type: 'mine', style: 'blue', fireRate: 10000}
+      {type: 'biglaser', style: 'pink', fireRate: 750},
+      {type: 'mine', style: 'pink', fireRate: 10000}
     ]
   },
   e: {
@@ -156,8 +156,8 @@ var shipTypes = {
       style: 'purple'
     },
     weapons: [
-      {type: 'duallaser', style: 'green', fireRate: 650},
-      {type: 'mine', style: 'green', fireRate: 10000}
+      {type: 'duallaser', style: 'purple', fireRate: 650},
+      {type: 'mine', style: 'purple', fireRate: 10000}
     ]
   },
   f: {

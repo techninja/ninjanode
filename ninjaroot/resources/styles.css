@@ -464,13 +464,13 @@ label.username.flash-red:before {
 }
 
 /** No way to set pseudo :before with JS, so these classes will have to do **/
-label.username.shield-0:before{padding-right:0;width:0%}
-label.username.shield-5:before{padding-right:1px;width:5%}
-label.username.shield-10:before{padding-right:1px;width:10%}
-label.username.shield-15:before{padding-right:2px;width:15%}
-label.username.shield-20:before{padding-right:2px;width:20%}
-label.username.shield-25:before{padding-right:3px;width:25%}
-label.username.shield-30:before{padding-right:3px;width:30%}
+label.username.shield-0:before{padding-right:0;background-color:red;width:0%}
+label.username.shield-5:before{padding-right:1px;background-color:red;width:5%}
+label.username.shield-10:before{padding-right:1px;background-color:red;width:10%}
+label.username.shield-15:before{padding-right:2px;background-color:red;width:15%}
+label.username.shield-20:before{padding-right:2px;background-color:red;width:20%}
+label.username.shield-25:before{padding-right:3px;background-color:red;width:25%}
+label.username.shield-30:before{padding-right:3px;background-color:red;width:30%}
 label.username.shield-35:before{padding-right:5px;background-color:orange;width:35%}
 label.username.shield-40:before{padding-right:5px;background-color:orange;width:40%}
 label.username.shield-45:before{padding-right:7px;background-color:orange;width:45%}
@@ -611,12 +611,11 @@ projectile.laser {
   background-color:#FFF;
 }
 
-
 projectile.duallaser {
   height: 50px;
   width: 25px !important;
-  border-left: 2px solid green;
-  border-right: 2px solid green;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
   border-radius: 3px;
   background-color: transparent !important;
 }
@@ -632,7 +631,8 @@ projectile.energy {
   height: 64px !important;
   width: 64px !important;
   background-size: 64px 64px;
-  background-image: url('graphics/energy_orb_white.png');
+  background-image: url('graphics/energy_orb_red.png');
+  background-color: transparent !important;
 
   animation-name: spin;
   animation-duration: 1000ms;
@@ -645,37 +645,35 @@ projectile.energy {
   -webkit-animation-timing-function: linear;
 }
 
+projectile.energy.blue {background-image: url('graphics/energy_orb_blue.png');}
+projectile.energy.green {background-image: url('graphics/energy_orb_green.png');}
+projectile.energy.orange {background-image: url('graphics/energy_orb_orange.png');}
+projectile.energy.pink {background-image: url('graphics/energy_orb_pink.png');}
+projectile.energy.purple {background-image: url('graphics/energy_orb_purple.png');}
+projectile.energy.yellow {background-image: url('graphics/energy_orb_yellow.png');}
+
 projectile.mine {
+  background-color: transparent !important;
+  background-image: url("graphics/mine_red.gif");
+  background-size: 40px 40px;
+  border-radius: 6px 0 6px 0;
   height: 40px !important;
   width: 40px !important;
-  border-radius: 6px 0;
-  background-color:#AAA;
 }
 
-projectile.blue {
-  background-color: blue;
-}
+projectile.mine.blue { background-image: url("graphics/mine_blue.gif"); }
+projectile.mine.green { background-image: url("graphics/mine_green.gif"); }
+projectile.mine.orange { background-image: url("graphics/mine_orange.gif"); }
+projectile.mine.pink { background-image: url("graphics/mine_pink.gif"); }
+projectile.mine.purple { background-image: url("graphics/mine_purple.gif"); }
+projectile.mine.yellow { background-image: url("graphics/mine_yellow.gif"); }
 
-projectile.green {
-  background-color: green;
-  width: 2px;
-}
 
-projectile.red {
-  background-color: red;
-}
+projectile.blue {background-color: blue; border-color: blue;}
+projectile.green {background-color: green; border-color: green;}
+projectile.orange {background-color: orange; border-color: orange;}
+projectile.pink {background-color: magenta; border-color: magenta;}
+projectile.purple {background-color: purple; border-color: purple;}
+projectile.red {background-color: red; border-color: red;}
+projectile.yellow {background-color: yellow; border-color: yellow;}
 
-projectile.energy.red {
-  background-image: url('graphics/energy_orb_red.png');
-  background-color: transparent;
-}
-
-projectile.energy.blue {
-  background-image: url('graphics/energy_orb_blue.png');
-  background-color: transparent;
-}
-
-projectile.energy.green {
-  background-image: url('graphics/energy_orb_green.png');
-  background-color: transparent;
-}
