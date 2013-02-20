@@ -62,11 +62,13 @@ String.prototype.spanWrap = function() {
         fire3: audioRoot + "fire3.wav",
         fire4: audioRoot + "fire4.wav",
         hit1: audioRoot + "hit1.wav",
-        hit2: audioRoot + "hit2.wav"
+        hit2: audioRoot + "hit2.wav",
+        mine: audioRoot + "mine_boom.wav"
       };
 
       // Preload large resources
       $('body').append('<div id="preload-boom" class="preload"> </div>');
+      $('body').append('<div id="preload-boom-mine" class="preload"> </div>');
 
       // Bind functions to incoming data
       this.socket.on('chat', this.chat);
@@ -284,7 +286,8 @@ String.prototype.spanWrap = function() {
                 hit: [
                   new Audio(ShipSocket.audioPath['hit1']),
                   new Audio(ShipSocket.audioPath['hit2'])
-                ]
+                ],
+                minehit: new Audio(ShipSocket.audioPath['mine'])
               },
               height: 64,
               width: 64,
@@ -306,9 +309,17 @@ String.prototype.spanWrap = function() {
             delete ShipSocket.dummyShips[id];
           }
         } else if (d.status == 'hit'){ // Hit
-          var index = Math.round(Math.random()); // Pick between 0 and 1
-          ship.sound.hit[index].volume = ShipSocket._getDistanceVolume(id);
-          ship.sound.hit[index].play();
+
+          // Play hit sounds
+          // TODO: Genralize this to allow custom hit sounds for every weapon
+          if (d.weapon == 'mine') {
+            ship.sound.minehit.volume = ShipSocket._getDistanceVolume(id);
+            ship.sound.minehit.play();
+          } else {
+            var index = Math.round(Math.random()); // Pick between 0 and 1
+            ship.sound.hit[index].volume = ShipSocket._getDistanceVolume(id);
+            ship.sound.hit[index].play();
+          }
 
           // Make Shields pulse (css animation)
           ship.label.addClass('pulse');
@@ -389,6 +400,7 @@ String.prototype.spanWrap = function() {
             $('body').append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' ship-type-' + ShipSocket.dummyShips[d.shipID].style + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
             ShipSocket.projectiles[id] = {
               element: $('#proj_' + id),
+              type: d.type,
               pos: d.pos
             }
 
@@ -400,6 +412,13 @@ String.prototype.spanWrap = function() {
         } else { // Destroy!
           // Remove element and data
           if (ShipSocket.projectiles[id]){
+
+            // Mines get a special explosion
+            // TODO: allow for special animation for each weapon
+            if (ShipSocket.projectiles[id].type == 'mine') {
+              ShipSocket._animateMineBoom(id);
+            }
+
             ShipSocket.projectiles[id].element.remove();
             delete ShipSocket.projectiles[id];
           }
@@ -792,6 +811,27 @@ String.prototype.spanWrap = function() {
           obj.spStop();
           ship.exploding = false;
           $('#boom-'+ id).remove();
+        }
+      });
+    },
+
+    _animateMineBoom: function(projectileID){
+      var minePos = ShipSocket.projectiles[projectileID].pos;
+      var mineSize = 40;
+
+      $('body').append('<boom id="mineboom-' + projectileID + '" class="layer5 overlay mine" />');
+      $('#mineboom-' + projectileID)
+      .css({
+        left: minePos.x - mineSize / 2 - 32,
+        top: minePos.y + mineSize / 2 - 64
+      })
+      .destroy()
+      .sprite({
+        fps: 24,
+        no_of_frames: 37,
+        on_last_frame: function(obj) {
+          obj.spStop();
+          $('#mineboom-' + projectileID).remove();
         }
       });
     },

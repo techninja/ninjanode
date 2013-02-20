@@ -534,6 +534,13 @@ boom, #preload-boom {
   background-image: url('graphics/explosion_wide.png');
 }
 
+boom.mine, #preload-boom-mine {
+  display: block;
+  width: 128px;
+  height: 128px;
+  background-image: url('graphics/mine_boom.png');
+}
+
 ship.ship_a { background-image: url('graphics/ship_a.png'); }
 ship.ship_b { background-image: url('graphics/ship_b.png'); }
 ship.ship_c { background-image: url('graphics/ship_c.png'); }

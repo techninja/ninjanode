@@ -118,7 +118,9 @@ io.sockets.on('connection', function (clientSocket) {
   function shipHit(data){
     var out = {};
     out[data.target.id] = {
-      status: 'hit'
+      status: 'hit',
+      type: data.type,
+      weapon: out.weapon ? 'none' : data.weapon.type
     };
     io.sockets.emit('shipstat', out);
 
