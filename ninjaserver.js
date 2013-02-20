@@ -120,7 +120,7 @@ io.sockets.on('connection', function (clientSocket) {
     out[data.target.id] = {
       status: 'hit',
       type: data.type,
-      weapon: out.weapon ? 'none' : data.weapon.type
+      weapon: data.weapon ? data.weapon.type : 'none'
     };
     io.sockets.emit('shipstat', out);
 
