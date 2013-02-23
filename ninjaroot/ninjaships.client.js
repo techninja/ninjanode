@@ -380,6 +380,7 @@ String.prototype.spanWrap = function() {
             // Fade back in
             ship.element.fadeIn('slow');
             ship.label.fadeIn('slow');
+            ShipSocket._updateCompass(id);
           }
         }
       }
@@ -731,29 +732,35 @@ String.prototype.spanWrap = function() {
       if (ShipSocket.dummyShips[ShipSocket.id] && target != ShipSocket.id){
         var myPos = ShipSocket.dummyShips[ShipSocket.id].pos;
         var t = ShipSocket.dummyShips[target].pos;
-        var theta = Math.atan2((t.y + 32) - (myPos.y + 32), (t.x + 32) - (myPos.x + 32));
-        if (theta < 0) {theta += 2 * Math.PI;}
-        var angle = theta * (180 / Math.PI) + 90;
-
-        // Change color based on distance
-        var dist = Math.sqrt( Math.pow(t.x - myPos.x, 2) + Math.pow(t.y - myPos.y, 2));
+        var angle = 0;
         var color = 'gray'; // Default far away
 
-        if (dist < 4000) {
-          color = 'green';
-        }
-        if (dist < 3000) {
-          color = 'blue';
-        }
-        if (dist < 2000) {
-          color = 'orange';
-        }
-        if (dist < 750) {
-          color = 'red';
+        if (ShipSocket.dummyShips[target].exploding){
+          color = 'dead';
+        } else {
+          var theta = Math.atan2((t.y + 32) - (myPos.y + 32), (t.x + 32) - (myPos.x + 32));
+          if (theta < 0) {theta += 2 * Math.PI;}
+          angle = theta * (180 / Math.PI) + 90;
+
+          // Change color based on distance
+          var dist = Math.sqrt( Math.pow(t.x - myPos.x, 2) + Math.pow(t.y - myPos.y, 2));
+
+          if (dist < 4000) {
+            color = 'green';
+          }
+          if (dist < 3000) {
+            color = 'blue';
+          }
+          if (dist < 2000) {
+            color = 'orange';
+          }
+          if (dist < 750) {
+            color = 'red';
+          }
         }
 
         $('player.ship-id-' + target + ' .arrow')
-          .removeClass('gray green blue orange red')
+          .removeClass('gray green blue orange red dead')
           .addClass(color)
           .rotate(Math.round(angle));
       }

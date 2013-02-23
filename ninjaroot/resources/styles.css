@@ -275,6 +275,26 @@ div#debug {
   border-bottom-color: orange;
 }
 
+#players player .arrow.dead { /* Show a diamond for dead players */
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-bottom-color: gray;
+  position: relative;
+  top: -8px;
+}
+#players player .arrow.dead:after {
+	content: '';
+	position: absolute;
+	left: -8px;
+	top: 8px;
+	width: 0;
+	height: 0;
+	border: 8px solid transparent;
+	border-top-color: gray;
+}
+
+
 @keyframes arrow-flash {
   0%   { border-bottom-color: red; }
   10%  { border-bottom-color: #FFF; }
