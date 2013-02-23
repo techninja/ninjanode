@@ -281,6 +281,12 @@ div#debug {
   100%  { border-bottom-color: red; }
 }
 
+@-webkit-keyframes arrow-flash {
+  0%   { border-bottom-color: red; }
+  10%  { border-bottom-color: #FFF; }
+  100%  { border-bottom-color: red; }
+}
+
 #players player .arrow.red {
   border-bottom-color: red;
 
@@ -415,6 +421,25 @@ label.username {
   100%  { background-color: red; }
 }
 
+@-webkit-keyframes flash-green {
+  0%   { background-color: green; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: green; }
+}
+
+@-webkit-keyframes flash-orange {
+  0%   { background-color: orange; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: orange; }
+}
+
+@-webkit-keyframes flash-red {
+  0%   { background-color: red; }
+  10%  { background-color: #FFF; }
+  100%  { background-color: red; }
+}
+
+
 label.username:before { /* Shield Status (label hack) */
   background-color: green;
   content: "";
@@ -490,6 +515,13 @@ label.username.shield-95:before{width:95%}label.username.shield-100:before{width
   100%  { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
 }
 
+@-webkit-keyframes pulse {
+  0%   { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+  10%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
+  40%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
+  100%  { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+}
+
 label.username:after { /* Shields! Hacked into the label */
   background-color: transparent;
   background-image: url("graphics/shield_red.png");
@@ -521,11 +553,9 @@ label.username.pulse:after {
 
   -webkit-animation-name: pulse;
   -webkit-animation-duration: 400ms;
-  -webkit-animation-iteration-count: 2;
+  -webkit-animation-iteration-count: 1;
   -webkit-animation-timing-function: ease-out;
 }
-
-
 
 boom, #preload-boom {
   display: block;
@@ -611,6 +641,10 @@ ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
   to { transform: rotate(360deg); }
 }
 
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
 projectile.init {
   display: none;
   top: 50px;
