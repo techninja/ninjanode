@@ -52,6 +52,11 @@
       })( jQuery );
 
       $(document).ready(function() {
+        // Cheap iPad Detection
+        if (navigator.userAgent.match(/iPad/i) != null){
+          $('html').addClass('ipad');
+        }
+
         // Connect immediately...
         ShipSocket.initialize('http://' + window.location.host + '/');
 

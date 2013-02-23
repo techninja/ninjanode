@@ -468,7 +468,8 @@ String.prototype.spanWrap = function() {
           // Move explosion sprite with ship
           if (s.exploding){
             $('#boom-'+ id).css({
-              left:s.pos.x - s.width/2-64, top:s.pos.y+s.height/2-128
+              left: s.pos.x + s.width / 2 - $('#boom-'+ id).width() / 2,
+              top: s.pos.y + s.height / 2 - $('#boom-'+ id).height() / 2
             });
           }
 
@@ -797,16 +798,47 @@ String.prototype.spanWrap = function() {
       ship.exploding = true;
       //ship.element.addClass('exploding');
 
+      var frame = {
+        rate: 24,
+        number: 120
+      };
+
+      var ipad = false;
+
+      // Use the old explosion if ipad
+      if ($('html').is('.ipad')){
+        ipad = true;
+        frame.rate = 20;
+        frame.number = 56;
+      }
+
       $('body').append('<boom id="boom-' + id + '" class="layer5 overlay" />');
       $('#boom-'+ id)
       .css({
-        left: ship.pos.x - ship.width / 2 - 64,
-        top: ship.pos.y + ship.height / 2 - 128
+        left: ship.pos.x + ship.width / 2 - $('#boom-'+ id).width() / 2,
+        top: ship.pos.y + ship.height / 2 - $('#boom-'+ id).height() / 2
       })
       .destroy()
       .sprite({
-        fps: 20,
-        no_of_frames: 56,
+        fps: frame.rate,
+        no_of_frames: frame.number,
+        on_frame: { // note - on_frame is an object not a function
+          19: function(obj) {
+            if (!ipad) obj.spState(2);
+          },
+          39: function(obj) {
+            if (!ipad) obj.spState(3);
+          },
+          59: function(obj) {
+            if (!ipad) obj.spState(4);
+          },
+          79: function(obj) {
+            if (!ipad) obj.spState(5);
+          },
+          99: function(obj) {
+            if (!ipad) obj.spState(6);
+          }
+        },
         on_last_frame: function(obj) {
           obj.spStop();
           ship.exploding = false;

@@ -564,7 +564,7 @@ function _shipObject(options){
           id: ship.id,
           stage: 'middle'
         });
-      }, 2000)
+      }, 1500)
 
 
       // 5 seconds should be enough time for the explosion and wait
@@ -580,7 +580,7 @@ function _shipObject(options){
           id: ship.id,
           stage: 'complete'
         });
-      }, 5000)
+      }, 7000)
     }
   }
 }

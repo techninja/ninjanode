@@ -529,6 +529,12 @@ label.username.pulse:after {
 
 boom, #preload-boom {
   display: block;
+  width: 400px;
+  height: 400px;
+  background-image: url('graphics/ship_boom.png');
+}
+
+.ipad boom, .ipad #preload-boom {
   width: 256px;
   height: 256px;
   background-image: url('graphics/explosion_wide.png');
