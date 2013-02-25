@@ -17,15 +17,44 @@ var io = require('socket.io').listen(server, {log: false});
 var ships = require('./ninjaroot/ninjaships.node.js');
 var lastData = {}; // Ensures duplicate data for positions isn't sent
 var lastShieldData = {} // Ensures duplicate data for shield values isn't sent
+var users = {count:0, playerCount:0} // ID keyed object to hold on to user data for stats
 
 // Start express hosting the site from "ninjaroot" folder on the given port
 server.listen(port);
 app.use("/", express.static(__dirname + '/ninjaroot'));
 console.log('ninjanode server listening on localhost:' + port);
 
-// When a websockets client connects...
+// ninjanode API!
+// Return the entire users object, with players, names, kill/death stats etc.
+app.get("/users", function(req, res){
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(users));
+});
+
+// Return just the numbers of playing and lobby users
+app.get("/users/count", function(req, res){
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(
+  {
+    lobby: users.count - users.playerCount,
+    players: users.playerCount
+  }
+  ));
+});
+
+
+
+// All websockets client connect/disconnect management
 io.sockets.on('connection', function (clientSocket) {
   var id = clientSocket.id;
+
+  users.count++;
+  users[id] = {
+    status: 'lobby',
+    name: '',
+    ip: clientSocket.handshake.address,
+    started: new Date().getTime()
+  }
 
   // User is expected to 'connect' immediately, but isn't in game until they send
   // their name, ship type, etc.
@@ -39,6 +68,12 @@ io.sockets.on('connection', function (clientSocket) {
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
     if (data.status == 'create'){ // New ship!
+      users[id].name = data.name;
+      users[id].status = 'playing';
+      users[id].deaths = 0;
+      users[id].kills = 0;
+      users.playerCount++;
+
       console.log('Creating ship for user: ' + id);
       data.name = sanitizer.escape(data.name);
       data.style = sanitizer.sanitize(data.style);
@@ -54,6 +89,11 @@ io.sockets.on('connection', function (clientSocket) {
   // Client disconnected! Let everyone else know...
   clientSocket.on('disconnect', function (){
     console.log('Disconnected user: ' + id);
+
+    users.count--;
+    users.playerCount--;
+    delete users[id];
+
     var shipStat = {};
     shipStat[id] = {status: 'destroy'};
     emitSystemMessage(id, 'disconnect'); // Must send before delete...
@@ -126,11 +166,15 @@ io.sockets.on('connection', function (clientSocket) {
 
     // Send a system message for death if collision...
     if (data.type == 'collision'){
+      users[data.source.id].deaths++;
+      users[data.target.id].deaths++;
       emitSystemMessage(data.source.id, data.type, data.target.id);
     }
 
     // ...or if target shield power is 0
     if (data.type == 'projectile' && data.target.shieldPowerStatus == 0){
+      users[data.source.id].kills++;
+      users[data.target.id].deaths++;
       emitSystemMessage(data.source.id, data.type, data.target.id);
     }
   }
