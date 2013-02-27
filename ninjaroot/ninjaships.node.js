@@ -9,7 +9,7 @@ var _ships = {};
 var projectileTypes = {
   laser: {
     name: "Death Laser",
-    speed: 45,
+    speed: 67.5,
     life: 2500, // How many ms till it dies?
     sound: 3,
     damage: 50,
@@ -24,7 +24,7 @@ var projectileTypes = {
   biglaser: {
     name: "Super Laser",
     damage: 40,
-    speed: 20,
+    speed: 60,
     life: 5000,
     sound: 1,
     size: {
@@ -37,8 +37,8 @@ var projectileTypes = {
   },
   duallaser: {
     name: "Dual Laser",
-    damage: 15,
-    speed: 35,
+    damage: 20,
+    speed: 53,
     life: 2500,
     sound: 3,
     size: {
@@ -52,7 +52,7 @@ var projectileTypes = {
   energy : {
     name: "Energy Orb",
     damage: 30,
-    speed: 15,
+    speed: 22.5,
     life: 5500,
     sound: 2,
     size: {
@@ -82,10 +82,10 @@ var projectileTypes = {
 var shipTypes = {
   a: {
     name: 'Legionnaire',
-    topSpeed: 14,
-    accelRate: 0.25,
+    topSpeed: 21,
+    accelRate: 0.375,
     drag: 0.09,
-    rotationSpeed: 6,
+    rotationSpeed: 9,
     shield: {
       max: 100,
       regenRate: 0.3,
@@ -98,26 +98,26 @@ var shipTypes = {
   },
   b: {
     name: 'Cygnuss',
-    topSpeed: 20,
-    accelRate: 0.2,
+    topSpeed: 30,
+    accelRate: 0.35,
     drag: 0.03,
-    rotationSpeed: 3,
+    rotationSpeed: 8,
     shield: {
       max: 100,
       regenRate: 0.2,
       style: 'green'
     },
     weapons: [
-      {type: 'energy', style: 'green', fireRate: 450},
+      {type: 'energy', style: 'green', fireRate: 500},
       {type: 'mine', style: 'green', fireRate: 10000}
     ]
   },
   c: {
     name: 'Scimitar',
-    topSpeed: 15,
-    accelRate: 0.6,
+    topSpeed: 22.5,
+    accelRate: 0.9,
     drag: 0.08,
-    rotationSpeed: 10,
+    rotationSpeed: 15,
     shield: {
       max: 100,
       regenRate: 0.3,
@@ -130,10 +130,10 @@ var shipTypes = {
   },
   d: {
     name: 'Mongoose',
-    topSpeed: 12,
-    accelRate: 0.25,
+    topSpeed: 18,
+    accelRate: 0.375,
     drag: 0.03,
-    rotationSpeed: 5,
+    rotationSpeed: 15,
     shield: {
       max: 75,
       regenRate: 0.4,
@@ -146,13 +146,13 @@ var shipTypes = {
   },
   e: {
     name: 'Sulaco',
-    topSpeed: 11,
-    accelRate: 0.29,
+    topSpeed: 18,
+    accelRate: 0.435,
     drag: 0.03,
-    rotationSpeed: 5,
+    rotationSpeed: 18,
     shield: {
       max: 125,
-      regenRate: 0.2,
+      regenRate: 0.3,
       style: 'purple'
     },
     weapons: [
@@ -162,10 +162,10 @@ var shipTypes = {
   },
   f: {
     name: 'Excalibur',
-    topSpeed: 8,
-    accelRate: 0.8,
+    topSpeed: 12,
+    accelRate: 1.2,
     drag: 0.03,
-    rotationSpeed: 5,
+    rotationSpeed: 13,
     shield: {
       max: 200,
       regenRate: 0.2,
