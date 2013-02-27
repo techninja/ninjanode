@@ -90,15 +90,20 @@ io.sockets.on('connection', function (clientSocket) {
   clientSocket.on('disconnect', function (){
     console.log('Disconnected user: ' + id);
 
-    users.count--;
-    users.playerCount--;
-    delete users[id];
+    users.count--; // Remove from total user count
 
-    var shipStat = {};
-    shipStat[id] = {status: 'destroy'};
-    emitSystemMessage(id, 'disconnect'); // Must send before delete...
-    io.sockets.emit('shipstat', shipStat);
-    ships.shipRemove(id);
+    // Only if the connected socket was playing...
+    if (users[id].status == 'playing'){
+      users.playerCount--; // Remove from player count
+
+      // Send ship destroy and disconnect message
+      var shipStat = {};
+      shipStat[id] = {status: 'destroy'};
+      emitSystemMessage(id, 'disconnect'); // Must send before delete...
+      io.sockets.emit('shipstat', shipStat);
+      ships.shipRemove(id);
+    }
+    delete users[id];
   });
 
   // Broadcast incoming chats to all clients
