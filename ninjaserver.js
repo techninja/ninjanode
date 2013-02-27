@@ -52,7 +52,7 @@ io.sockets.on('connection', function (clientSocket) {
   users[id] = {
     status: 'lobby',
     name: '',
-    ip: clientSocket.handshake.address,
+    type: '',
     started: new Date().getTime()
   }
 
@@ -68,7 +68,6 @@ io.sockets.on('connection', function (clientSocket) {
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
     if (data.status == 'create'){ // New ship!
-      users[id].name = data.name;
       users[id].status = 'playing';
       users[id].deaths = 0;
       users[id].kills = 0;
@@ -81,6 +80,12 @@ io.sockets.on('connection', function (clientSocket) {
       data.hit = shipHit;
       data.boom = shipBoom;
       ships.addShip(data);
+
+      // Only store verified and cleaned user input data
+      var s = ships.shipGet(id);
+      users[id].name = s.name;
+      users[id].type = s.data.name;
+
       emitAllShips();
       emitSystemMessage(id, 'join'); // Must send after create...
     }
