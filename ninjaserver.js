@@ -73,8 +73,8 @@ io.sockets.on('connection', function (clientSocket) {
       users[id].kills = 0;
       users.playerCount++;
 
-      console.log('Creating ship for user: ' + id);
       data.name = sanitizer.escape(data.name);
+      console.log('Creating ship for user: ' + id + ': ' + data.name);
       data.style = sanitizer.sanitize(data.style);
       data.id = id;
       data.hit = shipHit;
@@ -218,8 +218,6 @@ function emitAllShips(targetID){
   }
 
   if (Object.keys(out).length){
-    console.log('Existing ship update: ', out);
-
     if (targetID){
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
@@ -319,8 +317,6 @@ function emitAllProjectiles(targetID){
   }
 
   if (Object.keys(out).length) {
-    console.log('Existing Projectile update: ', out);
-
     if (targetID){
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
