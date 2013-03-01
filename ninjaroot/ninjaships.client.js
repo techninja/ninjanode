@@ -117,6 +117,11 @@ String.prototype.spanWrap = function() {
           }
         }
 
+        // Bind window resize to re-center on ship
+        $(window).resize(function(){
+          ShipSocket._centerView(ShipSocket.id);
+        });
+
         // Show/hide debug box
         if (e.type == 'keyup' && e.which == 115){
           $('#debug').toggle();
@@ -504,18 +509,13 @@ String.prototype.spanWrap = function() {
             top: s.pos.y
           });
 
-          // Our ship updated its position, move the screen
+          // Our ship updated its position
           if (id == ShipSocket.id){
             // DEBUG
             $('#debug .pos span').html(s.pos.x + ', ' + s.pos.y);
 
-            var x = ($(window).width() / 2) - d.x - 32;
-            var y = ($(window).height() / 2) - d.y - 32;
-
-            $('body').css({
-              margin: y + 'px ' + x + 'px',
-              backgroundPosition: x + 'px ' + y + 'px'
-            });
+            // Center body view on us
+            ShipSocket._centerView(id);
 
             // Update all compasses
             for (var g in ShipSocket.dummyShips){
@@ -954,6 +954,21 @@ String.prototype.spanWrap = function() {
           }
 
           return false;
+        });
+      }
+    },
+
+    // Center the view onto a given ship
+    _centerView: function(id){
+      var s = ShipSocket.dummyShips[id];
+
+      if (s) {
+        var x = ($(window).width() / 2) - s.pos.x - 32;
+        var y = ($(window).height() / 2) - s.pos.y - 32;
+
+        $('body').css({
+          margin: y + 'px ' + x + 'px',
+          backgroundPosition: x + 'px ' + y + 'px'
         });
       }
     },
