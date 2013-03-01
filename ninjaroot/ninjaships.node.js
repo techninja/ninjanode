@@ -5,6 +5,7 @@
 
 // all Ships are held here with the key as the user hash
 var _ships = {};
+var _playArea = 20000 // Size of Square where users will wrap to other side
 
 var projectileTypes = {
   laser: {
@@ -802,6 +803,14 @@ function _updateShipMovement(){
       // update position
       self.pos.y += self.velocity_x;
       self.pos.x += self.velocity_y;
+
+      // Wrap to Play Area (centered on zero)
+      var p = _playArea / 2;
+      if (self.pos.y < -p){ self.pos.y = p } // Top to bottom
+      if (self.pos.y > p){ self.pos.y = -p } // Bottom to top
+
+      if (self.pos.x < -p){ self.pos.x = p } // Left to right
+      if (self.pos.x > p){ self.pos.x = -p } // Right to left
     }
   }
 }
