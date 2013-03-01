@@ -697,26 +697,26 @@ projectile.energy {
   height: 64px !important;
   width: 64px !important;
   background-size: 64px 64px;
-  background-image: url('graphics/energy_orb_red.png');
+  background-image: url('graphics/energy_orb_red.gif');
   background-color: transparent !important;
 
   animation-name: spin;
-  animation-duration: 1000ms;
+  animation-duration: 5000ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 
   -webkit-animation-name: spin;
-  -webkit-animation-duration: 1000ms;
+  -webkit-animation-duration: 5000ms;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
 }
 
-projectile.energy.blue {background-image: url('graphics/energy_orb_blue.png');}
-projectile.energy.green {background-image: url('graphics/energy_orb_green.png');}
-projectile.energy.orange {background-image: url('graphics/energy_orb_orange.png');}
-projectile.energy.pink {background-image: url('graphics/energy_orb_pink.png');}
-projectile.energy.purple {background-image: url('graphics/energy_orb_purple.png');}
-projectile.energy.yellow {background-image: url('graphics/energy_orb_yellow.png');}
+projectile.energy.blue {background-image: url('graphics/energy_orb_blue.gif');}
+projectile.energy.green {background-image: url('graphics/energy_orb_green.gif');}
+projectile.energy.orange {background-image: url('graphics/energy_orb_orange.gif');}
+projectile.energy.pink {background-image: url('graphics/energy_orb_pink.gif');}
+projectile.energy.purple {background-image: url('graphics/energy_orb_purple.gif');}
+projectile.energy.yellow {background-image: url('graphics/energy_orb_yellow.gif');}
 
 projectile.mine {
   background-color: transparent !important;

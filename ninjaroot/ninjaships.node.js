@@ -52,7 +52,7 @@ var projectileTypes = {
   energy : {
     name: "Energy Orb",
     damage: 30,
-    speed: 22.5,
+    speed: 20,
     life: 5500,
     sound: 2,
     size: {
