@@ -167,17 +167,18 @@ io.sockets.on('connection', function (clientSocket) {
   // Send out ship hit status
   function shipHit(data){
     var out = {};
+    var includeScore = false;
     out[data.target.id] = {
       status: 'hit',
       type: data.type,
       weapon: data.weapon ? data.weapon.type : 'none'
     };
-    io.sockets.emit('shipstat', out);
 
     // Send a system message for death if collision...
     if (data.type == 'collision'){
       users[data.source.id].deaths++;
       users[data.target.id].deaths++;
+      includeScore = true;
       emitSystemMessage(data.source.id, data.type, data.target.id);
     }
 
@@ -185,8 +186,25 @@ io.sockets.on('connection', function (clientSocket) {
     if (data.type == 'projectile' && data.target.shieldPowerStatus == 0){
       users[data.source.id].kills++;
       users[data.target.id].deaths++;
+      includeScore = true;
       emitSystemMessage(data.source.id, data.type, data.target.id);
     }
+
+    // Only if the score has changed... include it with the hit
+    if (includeScore) {
+      out[data.target.id].scores = {};
+      out[data.target.id].scores[data.source.id] = {
+        kills: users[data.source.id].kills,
+        deaths: users[data.source.id].deaths
+      }
+
+      out[data.target.id].scores[data.target.id] = {
+        kills: users[data.target.id].kills,
+        deaths: users[data.target.id].deaths
+      }
+    }
+
+    io.sockets.emit('shipstat', out);
   }
 
   // Send out ship exploding status
@@ -213,7 +231,8 @@ function emitAllShips(targetID){
       sounds: [listShips[id].data.weapons[0].data.sound, listShips[id].data.weapons[1].data.sound],
       style: listShips[id].style,
       shieldStyle: listShips[id].data.shield.style,
-      pos: listShips[id].pos
+      pos: listShips[id].pos,
+      score: {kills: users[id].kills, deaths: users[id].deaths}
     }
   }
 

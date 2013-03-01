@@ -240,17 +240,36 @@ div#debug {
 }
 
 #players player {
-  clear: both;
+  height: 0.8em;
+  position: relative;
   display: block;
   margin-top: 0.5em;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
 }
 
-#players player div {
+#players player label, #players player .score, #players player ship {
+  display: block;
+  float: left;
+}
+
+#players player label {
+  max-width: 7.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#players player .score {
+  margin-right: 0.5em;
+}
+
+#players player .compass {
   margin-right: 0.3em;
+  position: absolute;
+  right: 0;
+  top: 0.1em;
 }
 
 #players player .arrow {
@@ -282,6 +301,7 @@ div#debug {
   border-bottom-color: gray;
   position: relative;
   top: -8px;
+  margin-right: -2px;
 }
 #players player .arrow.dead:after {
 	content: '';

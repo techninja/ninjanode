@@ -270,9 +270,11 @@ String.prototype.spanWrap = function() {
                 .append(
                   $('<ship>')
                     .addClass('ship_' + d.style),
+                  $('<i>')
+                    .addClass('score'),
                   $('<div>')
                     .attr('title', id == ShipSocket.id ? "It's you!" : 'Follow me!')
-                    .addClass(id == ShipSocket.id ? 'circle' : 'arrow'),
+                    .addClass(id == ShipSocket.id ? 'circle' : 'arrow', 'compass'),
                   $('<label>').text(d.name)
                 )
             );
@@ -299,6 +301,8 @@ String.prototype.spanWrap = function() {
               pos: d.pos,
               style: d.style
             }
+
+            ShipSocket._updateScore(id, d.score.kills, d.score.deaths);
 
             // Send to update to ensure it gets drawn
             var u = {};
@@ -331,6 +335,15 @@ String.prototype.spanWrap = function() {
           setTimeout(function(){
             ship.label.removeClass('pulse');
           }, 300);
+
+          // If someone exploded, we've got to update the scores!
+          console.log(d);
+          if (d.scores) {
+            for (var i in d.scores){
+              ShipSocket._updateScore(i, d.scores[i].kills, d.scores[i].deaths);
+            }
+          }
+
         } else if (d.status == 'shield'){ // Shield status (up or down!)
           // Shield amounts already rounded to nearest 5% by the server
           var oldValue = ship.label.data('shields');
@@ -764,6 +777,18 @@ String.prototype.spanWrap = function() {
           .addClass(color)
           .rotate(Math.round(angle));
       }
+    },
+
+    // Utility function to update the player scores
+    _updateScore: function(id, kills, deaths){
+      var gcd = Math.gcd(deaths, kills);
+      $('player.ship-id-' + id + ' i').attr('title',
+        kills + ' kills / ' + deaths + ' deaths | Ratio: ' +
+          (kills ? kills / gcd : 0) + ':' +
+          (deaths ? deaths  / gcd : 0)
+      ).text(
+        kills + '/' + deaths + ' |'
+      );
     },
 
     // Utility function to return a volume from 0 to 1 as a factor of distance
