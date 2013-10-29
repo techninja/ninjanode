@@ -763,3 +763,61 @@ projectile.purple {background-color: purple; border-color: purple;}
 projectile.red {background-color: red; border-color: red;}
 projectile.yellow {background-color: yellow; border-color: yellow;}
 
+/** Power-ups effects! **/
+powerup {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 40px;
+  border-width: 3px;
+  content: "&nbsp;";
+  background-color: white;
+  border-color: #c8e1e1;
+  border-style: solid;
+  color: #000;
+  font-size: 2em;
+  line-height: 2em;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* GHOST Powerup */
+powerup.ghost:before {
+  content: "G";
+}
+
+powerup.ghost {
+  background-color: cornflowerblue;
+  border-color: blue;
+}
+
+
+/* Ship Ghost mode effect */
+.self.ghost-active {
+  animation-name: ghost;
+  animation-duration: 1500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  -webkit-animation-name: ghost;
+  -webkit-animation-duration: 1500ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+
+.other.ghost-active {
+  opacity: 0.15;
+}
+
+/* Keyframes for ghost opacity pulse animation */
+@keyframes ghost {
+  0%   { opacity: 0.5; }
+  50%  { opacity: 0.3; }
+  100%  { opacity: 0.5; }
+}
+
+@-webkit-keyframes ghost {
+  0%   { opacity: 0.5; }
+  50%  { opacity: 0.3; }
+  100%  { opacity: 0.5; }
+}

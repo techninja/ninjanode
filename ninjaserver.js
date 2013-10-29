@@ -16,7 +16,9 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server, {log: false});
 var ships = require('./ninjaroot/ninjaships.node.js');
 var lastData = {}; // Ensures duplicate data for positions isn't sent
-var lastShieldData = {} // Ensures duplicate data for shield values isn't sent
+var lastShieldData = {}; // Ensures duplicate data for shield values isn't sent
+var lastPowerUpData = {}; // Ensures duplicate data for powerup values isn't sent
+var lastPowerUpOrbData = {}; // Ensures duplicate data for powerup orbs isn't sent
 var users = {count:0, playerCount:0} // ID keyed object to hold on to user data for stats
 
 // Start express hosting the site from "ninjaroot" folder on the given port
@@ -64,6 +66,7 @@ io.sockets.on('connection', function (clientSocket) {
   emitAllShips(id);
   emitAllProjectiles(id);
   emitAllShipTypes(id)
+  emitAllPowerUps(id);
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
@@ -294,6 +297,52 @@ function emitShipShieldUpdates(){
   }
 }
 
+
+// Send out updates on powerup orb visibility
+function emitPowerUpOrbUpdates(){
+  var powerUps = ships.powerUpGet();
+  var out = {};
+
+  // Only add to the output json that has changed since last send
+  for (var i in powerUps){
+    if (lastPowerUpOrbData[i] != powerUps[i].visible) {
+      lastPowerUpOrbData[i] = powerUps[i].visible;
+      out[i] = {
+        visible: powerUps[i].visible
+      };
+    }
+  }
+
+  // Only *if* there's useful data to be sent, send that data to all clients
+  if (Object.keys(out).length) {
+    io.sockets.emit('powerupstat', out);
+  }
+}
+
+// Send out updates on powerup use
+function emitShipPowerUpUpdates(){
+  var vessels = ships.shipGet();
+  var out = {};
+
+  // Only add to the output json that has changed since last send
+  for (var id in vessels){
+    var list = vessels[id].powerUps.active.join(' ');
+    if (lastPowerUpData[id] != list) {
+      lastShieldData[id] = list;
+      out[id] = {
+        status: 'powerup',
+        addClasses: list,
+        removeClasses: vessels[id].powerUps.inactive.join(' ')
+      };
+    }
+  }
+
+  // Only *if* there's useful data to be sent, send that data to all clients
+  if (Object.keys(out).length) {
+    io.sockets.emit('shipstat', out);
+  }
+}
+
 // Send out positions for every projectile position to everyone
 function emitProjectilePositionUpdates(){
   var projectiles = ships.getActiveProjectiles();
@@ -343,6 +392,27 @@ function emitAllProjectiles(targetID){
   }
 }
 
+// Send out pustat for every powerup to everyone (for creation on connect)
+function emitAllPowerUps(targetID){
+  var powerUps = ships.getPowerUps();
+  var out = {};
+
+  for (var id in powerUps){
+    out[id] = {
+      pos: powerUps[id].pos,
+      cssClass: powerUps[id].type.id,
+      visible: powerUps[id].visible
+    }
+  }
+
+  if (Object.keys(out).length) {
+    if (targetID){
+      // TODO: Get targetID to send to JUST that socket.io ID!
+    }
+    io.sockets.emit('powerupstat', out);
+  }
+}
+
 // Send out system messages
 function emitSystemMessage(id, action, target){
   var out = {
@@ -361,6 +431,8 @@ setInterval(function(){
   emitShipShieldUpdates();
   emitShipPositionUpdates();
   emitProjectilePositionUpdates();
+  emitShipPowerUpUpdates();
+  emitPowerUpOrbUpdates();
 }, 60);
 
 

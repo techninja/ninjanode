@@ -3,10 +3,20 @@
  * communication to clients and turning input from clients into ship movement
  */
 
-// all Ships are held here with the key as the user hash
-var _ships = {};
+var _ships = {}; // all Ships are held here with the key as the user hash
+var _powerUps = {}; // All free floating power up orbs are stored with a random hash key
+var powerUpCount = 20;
 var _playArea = 10000 // Size of Square where users will wrap to other side
 var _gameData = require('./ninjanode.gamedata.js')
+
+
+// INITIALIZE THE GAME!
+
+// Create the powerups
+for (var i = 0; i < powerUpCount; i++) {
+  _powerUps['pu-' + Math.floor(Math.random() * 2000)] = new _powerUpObject();
+}
+
 
 /**
  *  Exported function for creating ships
@@ -48,6 +58,17 @@ module.exports.shipGet = function(id){
 }
 
 /**
+ *  Exported Getter for power up orb data
+ */
+module.exports.powerUpGet = function(id){
+  if (_powerUps[id]){
+    return _powerUps[id];
+  } else {
+    return _powerUps;
+  }
+}
+
+/**
  *  Exported Getter for ship types & projectiles
  */
 module.exports.shipTypesGet = function(){
@@ -80,20 +101,26 @@ module.exports.getActiveProjectiles = function(){
 /**
  *  Exported Getter for a random starting position
  */
-var getRandomPos = function(angleDivisibleBy){
+function getRandomPos(angleDivisibleBy){
   angleDivisibleBy = angleDivisibleBy ? angleDivisibleBy : 1;
 
   var angle = Math.floor((Math.random()*355)+1);
   angle = Math.round(angle / angleDivisibleBy) * angleDivisibleBy;
 
   return {
-    x: Math.floor((Math.random()*16)+1) * 128,
-    y: Math.floor((Math.random()*16)+1) * 128,
+    x: Math.floor((Math.random() * _playArea) - (_playArea / 2)),
+    y: Math.floor((Math.random() * _playArea) - (_playArea / 2)),
     d: angle
   };
 }
 module.exports.getRandomPos = getRandomPos;
 
+/**
+ *  Exported Getter for power up orbs
+ */
+module.exports.getPowerUps = function(){
+  return _powerUps;
+}
 
 /**
  *  Exported Getter for all ship positions
@@ -269,6 +296,31 @@ function _shipObject(options){
   this.height = 64;
   this.projectiles = [];
   this.exploding = false;
+  this.powerUps = {active: [], inactive: [], list: {}, rebuild: function(){
+        // Rebuild the lists from scratch
+    this.active = [];
+    this.inactive = [];
+
+    for (var p in this.list) {
+      if (this.list[p].active) {
+        this.active.push(this.list[p].type.active.cssClass);
+      } else {
+        this.inactive.push(this.list[p].type.active.cssClass);
+      }
+    }
+     // Returns true if an alter function returns true, can be used to skip
+     // certain operations based on input
+  }, alterSkip: function(func, arg1, arg2){
+    for (var p in _gameData.powerUpTypes) {
+      if (_gameData.powerUpTypes[p].skipAlters){
+        if (typeof _gameData.powerUpTypes[p].skipAlters[func] == 'function') {
+          return _gameData.powerUpTypes[p].skipAlters[func](arg1, arg2);
+        }
+      }
+    }
+
+    return false;
+  }};
 
   // Default to style 'a' if not found in shipTypes
   this.style = _gameData.shipTypes[options.style] ? options.style : 'a';
@@ -381,6 +433,16 @@ function _shipObject(options){
       var ship = this;
       ship.exploding = true;
 
+      // Clear out any powerups when you die
+      for (var p in ship.powerUps.list) {
+        if (ship.powerUps.list[p].active) {
+          ship.powerUps.list[p].active = false;
+          clearInterval(ship.powerUps.list[p].interval);
+        }
+      }
+
+      ship.powerUps.rebuild();
+
       // Trigger first callback
       options.boom({
         id: ship.id,
@@ -476,6 +538,69 @@ function _updateProjectileMovement(){
 }
 
 /**
+ * Private powerUp instantiator function
+ * @param {object} options
+ *   Accepts the following object keys:
+ *     type {string}: specific type of power up to create
+ * @returns {object} instantiated power up object
+ * @see module.exports.addPowerUp
+ */
+function _powerUpObject(options){
+  var powerUps = _gameData.powerUpTypes;
+
+  if (!options) options = {};
+
+  // Take in passed type value
+  if (options.type && powerUps[options.type]) {
+    this.type = powerUps[options.type];
+  } else { // Pick one at random~
+    // TODO: make this a weighted random
+    var id = Math.floor(Math.random() * powerUps.length);
+    this.type = powerUps[id];
+  }
+
+  // Power up object state variables===========
+  this.id = this.type.id;
+  this.pos = options.pos ? options.pos : getRandomPos();
+  delete this.pos.d; // Don't need the rotation
+  this.visible = true;
+
+  // Activate the powerup for a given ship! ===================================
+  this.activate = function(ship) {
+    this.visible = false;
+
+    var pType = this.id;
+
+    // has this user seen this powerup before?
+    if (ship.powerUps.list[pType] && ship.powerUps.list[pType].active) {
+      ship.powerUps.list[pType].counter += this.type.active.time; // Add to the time
+    } else {
+      ship.powerUps.list[pType] = {
+        counter: this.type.active.time,
+        active: true,
+        type: this.type,
+        interval: setInterval(function(){
+          ship.powerUps.list[pType].counter--;
+          if (ship.powerUps.list[pType].counter <= 0) {
+            ship.powerUps.list[pType].active = false;
+            clearInterval(ship.powerUps.list[pType].interval);
+            ship.powerUps.rebuild();
+          }
+        }, 1000)
+      }
+    }
+
+    ship.powerUps.rebuild();
+
+    // Time till the power up orb respawns
+    setTimeout(function(powerUp){
+      powerUp.visible = true;
+      // TODO: randomize position?
+    }, this.type.respawnTime * 1000, this);
+  }
+}
+
+/**
  * Private collision detector. Detects collisions between ships, projectiles,
  * powerups, obstacles and the rest. Currently very broken.
  * @see module.exports.processShipFrame
@@ -484,15 +609,32 @@ function _detectCollision(){
   // Loop through every ship, to every ship, to every projectile
   for(var s in _ships){
     var source = _ships[s];
+
+    // Check for ship intersection with a power up!
+    if (!source.exploding) { // Ship can't be exploding...'
+      for(var p in _powerUps) {
+        var pow = _powerUps[p];
+        if (pow.visible) { // Only currently visible powerups
+          if (_circleIntersects(source.pos, source.width, source.width/2, pow.pos, pow.type.size, pow.type.size/2)){
+            pow.activate(source);
+          }
+        }
+      }
+    }
+
     // Check every ship against this projectile
     for(var t in _ships){
       var target = _ships[t];
-      if (t != s && !target.exploding){ // Ships can't hit themselves
+
+      if (t != s && !target.exploding && source.powerUps.alterSkip('collision_ship2projectile', source, target) !== true){ // Ships can't hit themselves
 
         // Exploding ships can't collide with things
         if (!source.exploding){
+
+          skipcollision = source.powerUps.alterSkip('collision_ship2ship', source, target) === true;
+
           // While we're here, check for ship to ship collision via circular hitbox
-          if (_circleIntersects(source.pos, source.width, source.width/2, target.pos, target.width, target.width/2)){
+          if (_circleIntersects(source.pos, source.width, source.width/2, target.pos, target.width, target.width/2) && !skipcollision){
             // Trigger hit callback (to simplify things.. both should die
             if (target.velocityLength > source.velocityLength){
               console.log(target.name + ' slammed into ' + source.name);
@@ -635,11 +777,11 @@ function _updateShipMovement(){
 
       // Wrap to Play Area (centered on zero)
       var p = _playArea / 2;
-      if (self.pos.y < -p){ self.pos.y = p } // Top to bottom
-      if (self.pos.y > p){ self.pos.y = -p } // Bottom to top
+      if (self.pos.y < -p){self.pos.y = p} // Top to bottom
+      if (self.pos.y > p){self.pos.y = -p} // Bottom to top
 
-      if (self.pos.x < -p){ self.pos.x = p } // Left to right
-      if (self.pos.x > p){ self.pos.x = -p } // Right to left
+      if (self.pos.x < -p){self.pos.x = p} // Left to right
+      if (self.pos.x > p){self.pos.x = -p} // Right to left
     }
   }
 }

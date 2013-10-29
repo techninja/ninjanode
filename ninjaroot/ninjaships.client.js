@@ -50,6 +50,7 @@ String.prototype.spanWrap = function() {
       // Object array of ships and their elements
       this.dummyShips = {};
       this.projectiles = {};
+      this.powerUps = [];
       this.hasConnected = false;
 
       // Audio Resources
@@ -77,6 +78,7 @@ String.prototype.spanWrap = function() {
       this.socket.on('shiptypes', this.buildShipSelect);
       this.socket.on('projstat', this.projectileStatus);
       this.socket.on('projpos', this.updateProjectilePos);
+      this.socket.on('powerupstat', this.updatePowerUpStatus);
     },
 
     // Actually join the game! Happens once connection screen is submitted
@@ -255,10 +257,12 @@ String.prototype.spanWrap = function() {
             $('body').append(
               $('<ship>')
                 .attr('id', 'user_' + id)
-                .attr('class', 'overlay layer2 ship_' + d.style),
+                .attr('class', 'overlay layer2 ship_' + d.style)
+                .addClass(id == ShipSocket.id ? 'self' : 'other'),
               $('<label>')
                 .attr('class', 'overlay layer4 username ship-type-' + d.style)
                 .addClass('style-' + d.shieldStyle)
+                .addClass(id == ShipSocket.id ? 'self' : 'other')
                 .attr('id', 'label_' + id)
                 .text(d.name)
             );
@@ -400,6 +404,16 @@ String.prototype.spanWrap = function() {
             ship.label.fadeIn('slow');
             ShipSocket._updateCompass(id);
           }
+        } else if (d.status == 'powerup'){ // PowerUp! Add or remove classes
+          if (d.addClasses) {
+            ship.element.addClass(d.addClasses);
+            ship.label.addClass(d.addClasses);
+          }
+
+          if (d.removeClasses) {
+            ship.element.removeClass(d.removeClasses);
+            ship.label.removeClass(d.removeClasses);
+          }
         }
       }
     },
@@ -464,6 +478,34 @@ String.prototype.spanWrap = function() {
             left: s.pos.x,
             top: s.pos.y
           });
+        }
+      }
+    },
+
+    // Handle power up status update
+    updatePowerUpStatus : function(data) {
+      // DEBUG
+      updateCount++;
+
+      for (var id in data){
+        var p = data[id];
+
+        // Power up orb not yet created, lets build it!
+        if (!ShipSocket.powerUps[id]){
+          ShipSocket.powerUps[id] = {
+            element: $('<powerup>')
+              .addClass(p.cssClass + ' overlay layer0')
+              .attr('id', 'pu-' + id)
+              .css({left: p.pos.x, top: p.pos.y})
+          };
+
+          ShipSocket.powerUps[id].element.appendTo('body');
+          if (!p.visible) ShipSocket.powerUps[id].element.hide();
+        } else if (!p.visible) { // It does exist, hide it if it should go
+          ShipSocket.powerUps[id].element.fadeOut('slow');
+          // TODO: add sound?
+        } else if (p.visible) { // It does exist, show it!
+          ShipSocket.powerUps[id].element.fadeIn('slow');
         }
       }
     },
