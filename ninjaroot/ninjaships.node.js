@@ -308,9 +308,12 @@ function _shipObject(options){
         this.inactive.push(this.list[p].type.active.cssClass);
       }
     }
-     // Returns true if an alter function returns true, can be used to skip
-     // certain operations based on input
-  }, alterSkip: function(func, arg1, arg2){
+
+  },
+
+  // Returns true if an alter function returns true, can be used to skip
+  // certain operations based on input
+  alterSkip: function(func, arg1, arg2){
     for (var p in _gameData.powerUpTypes) {
       if (_gameData.powerUpTypes[p].skipAlters){
         if (typeof _gameData.powerUpTypes[p].skipAlters[func] == 'function') {
@@ -320,7 +323,21 @@ function _shipObject(options){
     }
 
     return false;
-  }};
+  },
+
+  // Returns a value if an alter function returns a value, default value otherwise
+  alter: function(func, def, arg1, arg2){
+    for (var p in _gameData.powerUpTypes) {
+      if (_gameData.powerUpTypes[p].alters){
+        if (typeof _gameData.powerUpTypes[p].alters[func] == 'function') {
+          return _gameData.powerUpTypes[p].alters[func](def, arg1, arg2);
+        }
+      }
+    }
+
+    return def;
+  }
+};
 
   // Default to style 'a' if not found in shipTypes
   this.style = _gameData.shipTypes[options.style] ? options.style : 'a';
@@ -360,33 +377,49 @@ function _shipObject(options){
 
     this.lastFire[weaponID] = new Date().getTime();
 
-    // Add to the projectile array for the ship object
-    var index = -1;
-
-    // Cull the array position of the first non-active projectile
-    for (var i in this.projectiles){
-      if (!this.projectiles[i].active){
-        index = i;
+    var fireCount = this.powerUps.alter('fire_count', 1, this);
+    switch (fireCount) {
+      case 1:
+        addProjectile(this, this.pos.d);
         break;
+      case 3:
+        addProjectile(this, this.pos.d - 10);
+        addProjectile(this, this.pos.d);
+        addProjectile(this, this.pos.d + 10);
+        break;
+    }
+
+
+    function addProjectile(ship, angle) {
+      // Add to the projectile array for the ship object
+      var index = -1;
+
+      // Cull the array position of the first non-active projectile
+      for (var i in this.projectiles){
+        if (!ship.projectiles[i].active){
+          index = i;
+          break;
+        }
       }
+
+      // If there are nor projectiles, or they're all active, then
+      // index should be added to the end (AKA, array length!)
+      if (index == -1) {
+        index = ship.projectiles.length;
+      }
+
+      ship.projectiles[index] = new _projectileObject({
+        id: index,
+        type: ship.data.weapons[weaponID].type,
+        style: ship.data.weapons[weaponID].style,
+        shipID: ship.id,
+        weaponID: weaponID,
+        pos: {x: ship.pos.x + ship.width/2, y: ship.pos.y + ship.height/2, d: angle},
+        create: createCallback,
+        destroy: destroyCallback
+      });
     }
 
-    // If there are nor projectiles, or they're all active, then
-    // index should be added to the end (AKA, array length!)
-    if (index == -1) {
-      index = this.projectiles.length;
-    }
-
-    this.projectiles[index] = new _projectileObject({
-      id: index,
-      type: this.data.weapons[weaponID].type,
-      style: this.data.weapons[weaponID].style,
-      shipID: this.id,
-      weaponID: weaponID,
-      pos: {x: this.pos.x + this.width/2, y: this.pos.y + this.height/2, d: this.pos.d},
-      create: createCallback,
-      destroy: destroyCallback
-    });
   }
 
   // FUNCTION remove velocity helper

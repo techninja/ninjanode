@@ -203,5 +203,30 @@ module.exports.powerUpTypes = [
         return false;
       }
     }
+  },
+  {
+    id: 'triple', // Machine name and base class
+    name: "Triple Shot", // Name displayed to user
+    rarity: 0.2, // 1 is common, 0 is never spawned
+    respawnTime: 120,
+    size: 64,
+    active: { // Effective time, as soon as it's picked up'
+      time: 15,
+      cssClass: 'triple-active'
+    },
+    end: { // Time at end, removed from effect time
+      time: 5,
+      cssClass: 'triple-end'
+    },
+    alters: {
+      fire_count: function(def, source) {
+
+        if (source.powerUps.list['triple'] && source.powerUps.list['triple'].active) {
+          return 3;
+        }
+
+        return def;
+      }
+    }
   }
 ];
