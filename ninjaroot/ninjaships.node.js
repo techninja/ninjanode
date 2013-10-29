@@ -5,7 +5,7 @@
 
 // all Ships are held here with the key as the user hash
 var _ships = {};
-var _playArea = 2000 // Size of Square where users will wrap to other side
+var _playArea = 10000 // Size of Square where users will wrap to other side
 var _gameData = require('./ninjanode.gamedata.js')
 
 /**
