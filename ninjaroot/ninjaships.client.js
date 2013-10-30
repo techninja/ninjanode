@@ -502,7 +502,7 @@ String.prototype.spanWrap = function() {
           ShipSocket.powerUps[id].element.appendTo('body');
           if (!p.visible) ShipSocket.powerUps[id].element.hide();
         } else if (!p.visible) { // It does exist, hide it if it should go
-          ShipSocket.powerUps[id].element.fadeOut('slow');
+          ShipSocket.powerUps[id].element.fadeOut();
           // TODO: add sound?
         } else if (p.visible) { // It does exist, show it!
           ShipSocket.powerUps[id].element.fadeIn('slow');
