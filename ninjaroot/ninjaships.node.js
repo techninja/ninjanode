@@ -6,7 +6,7 @@
 var _ships = {}; // all Ships are held here with the key as the user hash
 var _powerUps = {}; // All free floating power up orbs are stored with a random hash key
 var powerUpCount = 20;
-var _playArea = 10000 // Size of Square where users will wrap to other side
+var _playArea = 20000 // Size of Square where users will wrap to other side
 var _gameData = require('./ninjanode.gamedata.js')
 
 
@@ -107,9 +107,10 @@ function getRandomPos(angleDivisibleBy){
   var angle = Math.floor((Math.random()*355)+1);
   angle = Math.round(angle / angleDivisibleBy) * angleDivisibleBy;
 
+  var usefulArea = (_playArea / 4) * 3; // Limit spawn pos to 3/4 of the play area
   return {
-    x: Math.floor((Math.random() * _playArea) - (_playArea / 2)),
-    y: Math.floor((Math.random() * _playArea) - (_playArea / 2)),
+    x: Math.floor((Math.random() * usefulArea) - (usefulArea / 2)),
+    y: Math.floor((Math.random() * usefulArea) - (usefulArea / 2)),
     d: angle
   };
 }
