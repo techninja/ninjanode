@@ -435,18 +435,39 @@ function _shipObject(options){
     data.target = this;
 
     if (data.type == 'collision'){
-      // Everyone dies here!
-      data.target.shieldPowerStatus = 0;
-      data.source.shieldPowerStatus = 0;
 
-      // Trigger source hit callback as well cause he's also dying
-      options.hit({
-        type: 'secondary collision',
-        target: data.source
-      });
+      // Same shield, both die
+      if (data.target.shieldPowerStatus == data.source.shieldPowerStatus) {
+        data.target.shieldPowerStatus = 0;
+        data.source.shieldPowerStatus = 0;
+      } else {
+        // Force shield comparison, whoever wins gets only 5 shield points left
+        data.target.shieldPowerStatus -= data.source.shieldPowerStatus;
+        data.source.shieldPowerStatus -= data.target.shieldPowerStatus + 15;
+      }
 
-      data.target.triggerBoom();
-      data.source.triggerBoom();
+      if (data.target.shieldPowerStatus > 0) {
+        // Only leave them with a sliver if they lived
+        data.target.shieldPowerStatus = 5;
+      } else { // Kill em if their shield is out
+        data.target.shieldPowerStatus = 0;
+        data.target.triggerBoom();
+      }
+
+      if (data.source.shieldPowerStatus > 0) {
+        // Only leave them with a sliver if they lived
+        data.source.shieldPowerStatus = 5;
+      } else {
+
+        options.hit({
+          type: 'secondary collision',
+          target: data.source
+        });
+
+        data.source.shieldPowerStatus = 0;
+        data.source.triggerBoom();
+      }
+
     } else if (data.type == 'projectile') {
       // Remove the shield power directly via the weapon damage
       data.target.shieldPowerStatus = data.target.shieldPowerStatus - data.weapon.data.damage;
