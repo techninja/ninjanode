@@ -572,7 +572,7 @@ label.username.shield-95:before{width:95%}label.username.shield-100:before{width
 
 label.username:after { /* Shields! Hacked into the label */
   background-color: transparent;
-  background-image: url("graphics/shield_red.png");
+  background-image: url("graphics/shields/shield_red.png");
   background-size: 90px 90px;
   content: "";
   display: block;
@@ -586,12 +586,12 @@ label.username:after { /* Shields! Hacked into the label */
   width: 90px;
 }
 
-label.username.style-blue:after {background-image: url("graphics/shield_blue.png");}
-label.username.style-green:after {background-image: url("graphics/shield_green.png");}
-label.username.style-orange:after {background-image: url("graphics/shield_orange.png");}
-label.username.style-pink:after {background-image: url("graphics/shield_pink.png");}
-label.username.style-purple:after {background-image: url("graphics/shield_purple.png");}
-label.username.style-yellow:after {background-image: url("graphics/shield_yellow.png");}
+label.username.style-blue:after {background-image: url("graphics/shields/shield_blue.png");}
+label.username.style-green:after {background-image: url("graphics/shields/shield_green.png");}
+label.username.style-orange:after {background-image: url("graphics/shields/shield_orange.png");}
+label.username.style-pink:after {background-image: url("graphics/shields/shield_pink.png");}
+label.username.style-purple:after {background-image: url("graphics/shields/shield_purple.png");}
+label.username.style-yellow:after {background-image: url("graphics/shields/shield_yellow.png");}
 
 label.username.pulse:after {
   animation-name: pulse;
@@ -609,28 +609,28 @@ boom, #preload-boom {
   display: block;
   width: 400px;
   height: 400px;
-  background-image: url('graphics/ship_boom.png');
+  background-image: url('graphics/explosions/ship_boom.png');
 }
 
 .ipad boom, .ipad #preload-boom {
   width: 256px;
   height: 256px;
-  background-image: url('graphics/explosion_wide.png');
+  background-image: url('graphics/explosions/explosion_wide.png');
 }
 
 boom.mine, #preload-boom-mine {
   display: block;
   width: 128px;
   height: 128px;
-  background-image: url('graphics/mine_boom.png');
+  background-image: url('graphics/explosions/mine_boom.png');
 }
 
-ship.ship_a { background-image: url('graphics/ship_a.png'); }
-ship.ship_b { background-image: url('graphics/ship_b.png'); }
-ship.ship_c { background-image: url('graphics/ship_c.png'); }
-ship.ship_d { background-image: url('graphics/ship_d.png'); }
-ship.ship_e { background-image: url('graphics/ship_e.png'); }
-ship.ship_f { background-image: url('graphics/ship_f.png'); }
+ship.ship_a { background-image: url('graphics/ships/ship_a.png'); }
+ship.ship_b { background-image: url('graphics/ships/ship_b.png'); }
+ship.ship_c { background-image: url('graphics/ships/ship_c.png'); }
+ship.ship_d { background-image: url('graphics/ships/ship_d.png'); }
+ship.ship_e { background-image: url('graphics/ships/ship_e.png'); }
+ship.ship_f { background-image: url('graphics/ships/ship_f.png'); }
 
 /* Forward thrust */
 ship.thrusting:before, ship.thrusting:after {
@@ -725,7 +725,7 @@ projectile.energy {
   height: 64px !important;
   width: 64px !important;
   background-size: 64px 64px;
-  background-image: url('graphics/energy_orb_red.gif');
+  background-image: url('graphics/projectiles/energy_orb_red.gif');
   background-color: transparent !important;
 
   animation-name: spin;
@@ -739,28 +739,28 @@ projectile.energy {
   -webkit-animation-timing-function: linear;
 }
 
-projectile.energy.blue {background-image: url('graphics/energy_orb_blue.gif');}
-projectile.energy.green {background-image: url('graphics/energy_orb_green.gif');}
-projectile.energy.orange {background-image: url('graphics/energy_orb_orange.gif');}
-projectile.energy.pink {background-image: url('graphics/energy_orb_pink.gif');}
-projectile.energy.purple {background-image: url('graphics/energy_orb_purple.gif');}
-projectile.energy.yellow {background-image: url('graphics/energy_orb_yellow.gif');}
+projectile.energy.blue {background-image: url('graphics/projectiles/energy_orb_blue.gif');}
+projectile.energy.green {background-image: url('graphics/projectiles/energy_orb_green.gif');}
+projectile.energy.orange {background-image: url('graphics/projectiles/energy_orb_orange.gif');}
+projectile.energy.pink {background-image: url('graphics/projectiles/energy_orb_pink.gif');}
+projectile.energy.purple {background-image: url('graphics/projectiles/energy_orb_purple.gif');}
+projectile.energy.yellow {background-image: url('graphics/projectiles/energy_orb_yellow.gif');}
 
 projectile.mine {
   background-color: transparent !important;
-  background-image: url("graphics/mine_red.gif");
+  background-image: url("graphics/projectiles/mine_red.gif");
   background-size: 40px 40px;
   border-radius: 6px 0 6px 0;
   height: 40px !important;
   width: 40px !important;
 }
 
-projectile.mine.blue { background-image: url("graphics/mine_blue.gif"); }
-projectile.mine.green { background-image: url("graphics/mine_green.gif"); }
-projectile.mine.orange { background-image: url("graphics/mine_orange.gif"); }
-projectile.mine.pink { background-image: url("graphics/mine_pink.gif"); }
-projectile.mine.purple { background-image: url("graphics/mine_purple.gif"); }
-projectile.mine.yellow { background-image: url("graphics/mine_yellow.gif"); }
+projectile.mine.blue { background-image: url("graphics/projectiles/mine_blue.gif"); }
+projectile.mine.green { background-image: url("graphics/projectiles/mine_green.gif"); }
+projectile.mine.orange { background-image: url("graphics/projectiles/mine_orange.gif"); }
+projectile.mine.pink { background-image: url("graphics/projectiles/mine_pink.gif"); }
+projectile.mine.purple { background-image: url("graphics/projectiles/mine_purple.gif"); }
+projectile.mine.yellow { background-image: url("graphics/projectiles/mine_yellow.gif"); }
 
 
 projectile.blue {background-color: blue; border-color: blue;}
