@@ -51,6 +51,7 @@ String.prototype.spanWrap = function() {
       this.dummyShips = {};
       this.projectiles = {};
       this.powerUps = [];
+      this.pnbits = []; // Planets and stars and stuff!
       this.hasConnected = false;
 
       // Audio Resources
@@ -79,6 +80,7 @@ String.prototype.spanWrap = function() {
       this.socket.on('projstat', this.projectileStatus);
       this.socket.on('projpos', this.updateProjectilePos);
       this.socket.on('powerupstat', this.updatePowerUpStatus);
+      this.socket.on('pnbitsstat', this.pnbitsStatus);
     },
 
     // Actually join the game! Happens once connection screen is submitted
@@ -510,6 +512,34 @@ String.prototype.spanWrap = function() {
       }
     },
 
+    // Handle Clestial Body (PNBITS) status updates
+    pnbitsStatus : function(data) {
+      for (var id in data){
+        var p = data[id];
+
+        // Object not created yet!
+        if (!ShipSocket.pnbits[id]){
+          var size = p.radius * 2;
+          ShipSocket.pnbits[id] = {
+            element: $('<pnbits>')
+              .addClass(p.cssClass + ' overlay layer0')
+              .attr('id', 'pnb-' + id)
+              .css({
+                left: p.pos.x,
+                top: p.pos.y,
+                width: size,
+                height: size,
+                backgroundSize: size + 'px ' + size + 'px '
+              })
+          };
+
+          ShipSocket.pnbits[id].element.appendTo('body');
+        } else { // It does exist, move it?
+          // TODO: Add Move code
+        }
+      }
+    },
+
     // Handle ship position data (comes in as [id] : x, y, t, d)
     updatePos : function(data) {
       // DEBUG
@@ -599,15 +629,19 @@ String.prototype.spanWrap = function() {
       var nameSource = ShipSocket.dummyShips[data.id].name.spanWrap();
       var nameTarget = '';
 
-      if (data.target){
+      // Set the name of the target in the message to the sip, if it's available
+      if (data.target && ShipSocket.dummyShips[data.target]){
         nameTarget = ShipSocket.dummyShips[data.target].name.spanWrap();
+      } else { // Otherwise, use it as a literal
+        nameTarget = data.target;
       }
 
       var sysMsgActions = {
         join: '{0} joined the game',
         disconnect: '{0} disconnected',
         projectile: '{0} made {1} explode',
-        collision: '{0} slammed into {1}'
+        collision: '{0} slammed into {1}',
+        pnbcollision: '{0} crashed into {1}'
       }
 
       if (data.type == 'system'){

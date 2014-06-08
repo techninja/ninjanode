@@ -6,6 +6,10 @@
 var _ships = {}; // all Ships are held here with the key as the user hash
 var _powerUps = {}; // All free floating power up orbs are stored with a random hash key
 var powerUpCount = 20;
+
+var _pnbits = {}; // All permanent natural bodies it the sky stored just like poweups
+var pnbitsCount = 30;
+
 var _playArea = 20000 // Size of Square where users will wrap to other side
 var _gameData = require('./ninjanode.gamedata.js')
 
@@ -17,6 +21,10 @@ for (var i = 0; i < powerUpCount; i++) {
   _powerUps['pu-' + Math.floor(Math.random() * 2000)] = new _powerUpObject();
 }
 
+// Create the PNBITS: Planets, suns, etc
+for (var i = 0; i < pnbitsCount; i++) {
+  _pnbits['pn-' + Math.floor(Math.random() * 2000)] = new _pnbitsObject();
+}
 
 /**
  *  Exported function for creating ships
@@ -121,6 +129,13 @@ module.exports.getRandomPos = getRandomPos;
  */
 module.exports.getPowerUps = function(){
   return _powerUps;
+}
+
+/**
+ *  Exported Getter for PNBITS
+ */
+module.exports.getPNBITS = function(){
+  return _pnbits;
 }
 
 /**
@@ -477,6 +492,10 @@ function _shipObject(options){
         data.target.shieldPowerStatus = 0;
         data.target.triggerBoom();
       }
+    } else if (data.type == 'pnbcollision') {
+      // Target hit source (A permanent natural body!)
+      data.target.shieldPowerStatus = 0;
+      data.target.triggerBoom();
     }
 
     options.hit(data);
@@ -654,6 +673,31 @@ function _powerUpObject(options){
 }
 
 /**
+ * Private PNBITS (celestial object) instantiator function
+ * @param {object} options
+ *   Accepts the following object keys:
+ *     (N/A for the moment)
+ * @returns {object} instantiated pnbits object
+ */
+function _pnbitsObject(options){
+  var pnbits = _gameData.pnbitsTypes;
+
+  if (!options) options = {};
+
+  // Pick one at random based on rarity
+  this.type = _getWeightedRandomItem(pnbits);
+
+  // PNBITS state variables===========
+  this.id = this.type.id;
+  this.pos = options.pos ? options.pos : getRandomPos();
+  this.visible = true;
+  this.radius = Math.round(_rand(this.type.ranges.radius));
+  this.density = _rand(this.type.ranges.density);
+
+  this.name = "a type " + this.type.minor.toUpperCase() + ' ' + this.type.major;
+}
+
+/**
  * Private collision detector. Detects collisions between ships, projectiles,
  * powerups, obstacles and the rest. Currently very broken.
  * @see module.exports.processShipFrame
@@ -671,6 +715,17 @@ function _detectCollision(){
           if (_circleIntersects(source.pos, source.width, source.width/2, pow.pos, pow.type.size, pow.type.size/2)){
             pow.activate(source);
           }
+        }
+      }
+    }
+
+    // Check for ship intersection with a celestial body!
+    if (!source.exploding) { // Ship can't be exploding...'
+      for(var p in _pnbits) {
+        var pnb = _pnbits[p];
+        if (_circleIntersects(source.pos, source.width, source.width/2, pnb.pos, pnb.radius*2, pnb.radius)){
+          console.log(source.name + ' slammed into a type ' + pnb.type.minor + ' ' + pnb.type.major);
+          source.hit({type: 'pnbcollision', source: pnb});
         }
       }
     }

@@ -841,3 +841,13 @@ powerup.triple {
   background-color: rosybrown;
   border-color: red;
 }
+
+/* Celestial objects: Permanent natural body in the sky, or PNBITS */
+pnbits {
+  display: block;
+}
+
+pnbits.planet_a { background-image: url("graphics/pnbits/planet_a.png"); }
+pnbits.planet_b { background-image: url("graphics/pnbits/planet_b.png"); }
+pnbits.planet_c { background-image: url("graphics/pnbits/planet_c.png"); }
+pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.png"); }

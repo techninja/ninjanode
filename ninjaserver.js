@@ -67,6 +67,7 @@ io.sockets.on('connection', function (clientSocket) {
   emitAllProjectiles(id);
   emitAllShipTypes(id)
   emitAllPowerUps(id);
+  emitAllPNBITS(id);
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
@@ -177,12 +178,19 @@ io.sockets.on('connection', function (clientSocket) {
       weapon: data.weapon ? data.weapon.type : 'none'
     };
 
-    // Send a system message for death if collision...
+    // Send a system message for death if ship to ship collision...
     if (data.type == 'collision'){
       users[data.source.id].deaths++;
       users[data.target.id].deaths++;
       includeScore = true;
       emitSystemMessage(data.source.id, data.type, data.target.id);
+    }
+
+    // Send a system message for death if ship to PNBITS collision
+    if (data.type == 'pnbcollision'){
+      users[data.target.id].deaths++;
+      includeScore = true;
+      emitSystemMessage(data.target.id, data.type, data.source.name);
     }
 
     // ...or if target shield power is 0
@@ -196,9 +204,13 @@ io.sockets.on('connection', function (clientSocket) {
     // Only if the score has changed... include it with the hit
     if (includeScore) {
       out[data.target.id].scores = {};
-      out[data.target.id].scores[data.source.id] = {
-        kills: users[data.source.id].kills,
-        deaths: users[data.source.id].deaths
+
+      // If the source is a user (not an inamate object)
+      if (users[data.source.id]) {
+        out[data.target.id].scores[data.source.id] = {
+          kills: users[data.source.id].kills,
+          deaths: users[data.source.id].deaths
+        }
       }
 
       out[data.target.id].scores[data.target.id] = {
@@ -410,6 +422,27 @@ function emitAllPowerUps(targetID){
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
     io.sockets.emit('powerupstat', out);
+  }
+}
+
+// Send out pnbitsstat for every PNBITS to everyone (for creation on connect)
+function emitAllPNBITS(targetID){
+  var pnbits = ships.getPNBITS();
+  var out = {};
+
+  for (var id in pnbits){
+    out[id] = {
+      pos: pnbits[id].pos,
+      cssClass: pnbits[id].type.cssClass,
+      radius: pnbits[id].radius
+    }
+  }
+
+  if (Object.keys(out).length) {
+    if (targetID){
+      // TODO: Get targetID to send to JUST that socket.io ID!
+    }
+    io.sockets.emit('pnbitsstat', out);
   }
 }
 
