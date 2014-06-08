@@ -609,9 +609,7 @@ function _powerUpObject(options){
   if (options.type && powerUps[options.type]) {
     this.type = powerUps[options.type];
   } else { // Pick one at random~
-    // TODO: make this a weighted random
-    var id = Math.floor(Math.random() * powerUps.length);
-    this.type = powerUps[id];
+    this.type = _getWeightedRandomItem(powerUps);
   }
 
   // Power up object state variables===========
@@ -837,6 +835,55 @@ function _updateShipMovement(){
 
       if (self.pos.x < -p){self.pos.x = p} // Left to right
       if (self.pos.x > p){self.pos.x = -p} // Right to left
+    }
+  }
+}
+
+/**
+ * Private utility function to get a random within a min/max
+ * @param {int} || {array} min
+ *  Lowest allowed value, or array of min/max
+ * @param {int} max
+ *  Highest allowed value
+ * @returns {float} value between min and max
+ */
+function _rand (min, max) {
+  // If it's an array (object), assume it holds min and max together
+  if (typeof min == 'object') {
+    max = min[1];
+    min = min[0];
+  }
+  return Math.random() * (max - min) + min;
+}
+
+
+/**
+ * Private utility function to get a random item from a list based on weight
+ * @param {array} list
+ *   Array of objects, assumes the following array item object keys:
+ *     rarity {float}: probability for this item to be chosen, 0 to 1
+ * @returns {object} selected from the list
+ */
+function _getWeightedRandomItem(list) {
+  // Compile the weights from rarity in each array item
+  var weight = [];
+  for (var i in list) {
+    weight.push(list[i].rarity);
+  }
+
+  var total_weight = weight.reduce(function (prev, cur, i, arr) {
+    return prev + cur;
+  });
+
+  var random_num = _rand(0, total_weight);
+  var weight_sum = 0;
+
+  for (var i = 0; i < list.length; i++) {
+    weight_sum += weight[i];
+    weight_sum = +weight_sum.toFixed(2);
+
+    if (random_num <= weight_sum) {
+      return list[i];
     }
   }
 }
