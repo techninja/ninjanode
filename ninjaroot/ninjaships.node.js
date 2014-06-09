@@ -750,7 +750,6 @@ function _detectCollision(){
             break;
           }
         }
-        if (!p.active) continue; // Hit a PNBITS?  Next projectile
       }
     }
 
@@ -789,7 +788,7 @@ function _detectCollision(){
         for (var i in source.projectiles){
           var p = source.projectiles[i];
           if (p.active){ // Skip inactive projectiles
-            if (_circleIntersects({x: p.pos.x, y: p.pos.y - p.data.yOffset}, p.data.size.width, p.data.size.hitRadius, target.pos, target.width, target.width/2)){
+            if (_circleIntersects({x: p.pos.x, y: p.pos.y - p.data.yOffset}, p.data.size.hitRadius, target.pos, target.width/2)){
               // Target is within the hit circle fpr projectile! check horizontal
               console.log(source.name + ' shot ' + target.name);
 
