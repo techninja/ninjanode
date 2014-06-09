@@ -908,6 +908,42 @@ function _updateShipMovement(){
 }
 
 /**
+ * Private utility function get angle of the line between two points
+ * @param {object} point1
+ *  X, Y coordinate object of first point
+ * @param {object} point2
+ *  X, Y coordinate object of second point
+ * @returns {float} Angle in absolute radians
+ */
+function _lineAngle(point1, point2) {
+  var theta = Math.atan2(-(point1.y - point2.y), (point1.x - point2.x));
+  if (theta < 0) theta += 2 * Math.PI;
+
+  return theta;
+}
+
+/**
+ * Private utility function get distance between two points
+ * @param {object} point1
+ *  X, Y coordinate object of first point
+ * @param {object} point2
+ *  X, Y coordinate object of second point
+ * @returns {float} distance between first and second point
+ */
+function _lineDistance(point1, point2) {
+  var xs = 0;
+  var ys = 0;
+
+  xs = point2.x - point1.x;
+  xs = xs * xs;
+
+  ys = point2.y - point1.y;
+  ys = ys * ys;
+
+  return Math.sqrt( xs + ys );
+}
+
+/**
  * Private utility function to get a random within a min/max
  * @param {int} || {array} min
  *  Lowest allowed value, or array of min/max
