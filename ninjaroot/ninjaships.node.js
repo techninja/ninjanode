@@ -699,6 +699,9 @@ function _pnbitsObject(options){
   this.radius = Math.round(_rand(this.type.ranges.radius));
   this.density = _rand(this.type.ranges.density);
 
+  this.center = {x: this.pos.x + this.radius, y: this.pos.y + this.radius};
+  this.g = (this.density * this.radius)^2 / 10000000;
+
   this.name = "a type " + this.type.minor.toUpperCase() + ' ' + this.type.major;
 }
 
