@@ -738,6 +738,23 @@ function _detectCollision(){
       }
     }
 
+    // Check for projectile intersection with a celestial body!
+    for (var i in source.projectiles){
+      var p = source.projectiles[i];
+      if (p.active){ // Skip inactive projectiles
+        // Have projectiles hit PNBITS
+        for(var x in _pnbits) {
+          var pnb = _pnbits[x];
+          if (_circleIntersects({x: p.pos.x, y: p.pos.y - p.data.yOffset}, p.data.size.hitRadius, pnb.pos, pnb.radius)){
+            p.destroy();
+            break;
+          }
+        }
+        if (!p.active) continue; // Hit a PNBITS?  Next projectile
+      }
+    }
+
+
     // Check every ship against this projectile
     for(var t in _ships){
       var target = _ships[t];
