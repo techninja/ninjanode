@@ -869,6 +869,32 @@ function _updateShipMovement(){
       self.velocity_y += Math.sin(theta) * amount;
     }
 
+    // Modify Velocity length/angle based on proximity to all PNBITS
+    var pnbitsEffected = false;
+    if (!self.exploding) {
+      for (var i in _pnbits) {
+        var p = _pnbits[i];
+        var selfCenter = {x: self.pos.x + self.width/2, y: self.pos.y + self.height/2};
+        var distance = _lineDistance(selfCenter, p.center) - self.width/2;
+
+        // Only apply gravitational effects within the "effective area" of the object
+        if (distance < p.density * p.radius * 5) {
+          // Find the angle between the ship and the center of the mass
+          var theta = _lineAngle(self.pos, p.center);
+          var shipMass = 100;
+          pnbitsEffected = true;
+
+          // Calculate amount of gravitational pull as log of distance and mass
+          var amount = ((p.g * shipMass / distance ^ 2) / 200);
+          theta = theta - (Math.PI / 2); // Rotate angle 90 degrees
+
+          // Apply gravitational pull to vector
+          self.velocity_x += Math.cos(theta) * amount;
+          self.velocity_y += Math.sin(theta) * amount;
+        }
+      }
+    }
+
     // find the overall velocity length
     self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.data.drag;
 
@@ -880,7 +906,7 @@ function _updateShipMovement(){
     if (self.velocityLength < 0) {
       self.velocityLength = 0;
     } else {
-      if (self.velocityLength > self.data.topSpeed){
+      if (self.velocityLength > self.data.topSpeed && !pnbitsEffected){
         self.velocityLength = self.data.topSpeed;
       }
 
