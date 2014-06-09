@@ -720,7 +720,7 @@ function _detectCollision(){
       for(var p in _powerUps) {
         var pow = _powerUps[p];
         if (pow.visible) { // Only currently visible powerups
-          if (_circleIntersects(source.pos, source.width, source.width/2, pow.pos, pow.type.size, pow.type.size/2)){
+          if (_circleIntersects(source.pos, source.width/2, pow.pos, pow.type.size/2)){
             pow.activate(source);
           }
         }
@@ -731,7 +731,7 @@ function _detectCollision(){
     if (!source.exploding) { // Ship can't be exploding...'
       for(var p in _pnbits) {
         var pnb = _pnbits[p];
-        if (_circleIntersects(source.pos, source.width, source.width/2, pnb.pos, pnb.radius*2, pnb.radius)){
+        if (_circleIntersects(source.pos, source.width/2, pnb.pos, pnb.radius)){
           console.log(source.name + ' slammed into a type ' + pnb.type.minor + ' ' + pnb.type.major);
           source.hit({type: 'pnbcollision', source: pnb});
         }
@@ -750,7 +750,7 @@ function _detectCollision(){
           skipcollision = source.powerUps.alterSkip('collision_ship2ship', source, target) === true;
 
           // While we're here, check for ship to ship collision via circular hitbox
-          if (_circleIntersects(source.pos, source.width, source.width/2, target.pos, target.width, target.width/2) && !skipcollision){
+          if (_circleIntersects(source.pos, source.width/2, target.pos, target.width/2) && !skipcollision){
             // Trigger hit callback (to simplify things.. both should die
             if (target.velocityLength > source.velocityLength){
               console.log(target.name + ' slammed into ' + source.name);
@@ -798,18 +798,23 @@ function _detectCollision(){
 }
 
 // Find out if two circles intersect for hit detection
-function _circleIntersects(pos1, width1, radius1, pos2, width2, radius2){
+function _circleIntersects(pos1, radius1, pos2, radius2){
 
   // Get center of circles (as positions are all top left corner centered)
-  var x0 = pos1.x + width1 / 2;
-  var y0 = pos1.y + width1 / 2;
+  var x0 = pos1.x + radius1;
+  var y0 = pos1.y + radius1;
 
-  var x1 = pos2.x + width2 / 2;
-  var y1 = pos2.y + width2 / 2;
+  var x1 = pos2.x + radius2;
+  var y1 = pos2.y + radius2;
 
   // Find the distance between the centerpoints
   // TODO: Probably use something faster than sqrt...
   var distance = Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
+
+  // If the distance between them is less than the radius, it's inside!
+  if (distance < radius2) {
+    return true;
+  }
 
   // Return true if the distance is shorter than difference between the radii
   if (distance >= (radius1 + radius2) || distance <= Math.abs(radius1 - radius2)){
