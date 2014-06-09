@@ -187,7 +187,7 @@ io.sockets.on('connection', function (clientSocket) {
     }
 
     // Send a system message for death if ship to PNBITS collision
-    if (data.type == 'pnbcollision'){
+    if (data.type == 'pnbcollision' && data.target.shieldPowerStatus == 0){
       users[data.target.id].deaths++;
       includeScore = true;
       emitSystemMessage(data.target.id, data.type, data.source.name);
