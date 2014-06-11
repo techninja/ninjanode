@@ -901,7 +901,7 @@ function _updateShipMovement(){
           pnbitsEffected = true;
 
           // Calculate amount of gravitational pull as log of distance and mass
-          var amount = ((p.g * shipMass / distance ^ 2) / 200);
+          var amount = ((p.g * shipMass / distance ^ 2) / 300);
           theta = theta - (Math.PI / 2); // Rotate angle 90 degrees
 
           // Apply gravitational pull to vector
