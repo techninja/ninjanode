@@ -847,7 +847,7 @@ pnbits {
   display: block;
 }
 
-pnbits.planet_a { background-image: url("graphics/pnbits/planet_1.gif"); }
-pnbits.planet_b { background-image: url("graphics/pnbits/planet_3.gif"); }
-pnbits.planet_c { background-image: url("graphics/pnbits/planet_2.gif"); }
-pnbits.planet_d { background-image: url("graphics/pnbits/planet_4.gif"); }
+pnbits.planet_a { background-image: url("graphics/pnbits/planet_a.gif"); }
+pnbits.planet_b { background-image: url("graphics/pnbits/planet_b.gif"); }
+pnbits.planet_c { background-image: url("graphics/pnbits/planet_c.gif"); }
+pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
