@@ -272,7 +272,7 @@ module.exports.pnbitsTypes = [
     solid: false,  // True is solid material, false is gas giant
     rarity: 0.1, // 1 is common, 0 is never spawned
     ranges: {
-      radius: [250, 300],
+      radius: [280, 400],
       density: [3, 5]
     }
   }
