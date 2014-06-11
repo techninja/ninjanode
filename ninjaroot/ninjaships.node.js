@@ -911,8 +911,9 @@ function _updateShipMovement(){
       }
     }
 
-    // find the overall velocity length
-    self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - self.data.drag;
+    // Find the overall velocity length
+    var dragOption = pnbitsEffected ? 0 : self.data.drag;
+    self.velocityLength = Math.sqrt(Math.pow(self.velocity_x, 2) + Math.pow(self.velocity_y, 2)) - dragOption;
 
     // if exploding, exponential drag!
     if (self.exploding){
