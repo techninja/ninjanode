@@ -94,7 +94,7 @@ module.exports.shipTypes = {
   },
   b: {
     name: 'Cygnuss',
-    topSpeed: 30,
+    topSpeed: 31,
     accelRate: 0.35,
     drag: 0.03,
     rotationSpeed: 8,
@@ -111,16 +111,16 @@ module.exports.shipTypes = {
   c: {
     name: 'Scimitar',
     topSpeed: 22.5,
-    accelRate: 0.9,
+    accelRate: 1.9,
     drag: 0.08,
     rotationSpeed: 15,
     shield: {
       max: 100,
-      regenRate: 0.3,
+      regenRate: 0.5,
       style: 'red'
     },
     weapons: [
-      {type: 'laser', style: 'red', fireRate: 875},
+      {type: 'laser', style: 'red', fireRate: 275},
       {type: 'mine', style: 'red', fireRate: 5000}
     ]
   },
@@ -143,7 +143,7 @@ module.exports.shipTypes = {
   e: {
     name: 'Sulaco',
     topSpeed: 18,
-    accelRate: 0.435,
+    accelRate: 0.4351,
     drag: 0.03,
     rotationSpeed: 18,
     shield: {
@@ -158,13 +158,13 @@ module.exports.shipTypes = {
   },
   f: {
     name: 'Excalibur',
-    topSpeed: 12,
+    topSpeed: 13,
     accelRate: 1.2,
     drag: 0.03,
     rotationSpeed: 13,
     shield: {
       max: 200,
-      regenRate: 0.2,
+      regenRate: 0.15,
       style: 'blue'
     },
     weapons: [

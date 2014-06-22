@@ -65,7 +65,8 @@ String.prototype.spanWrap = function() {
         fire4: audioRoot + "fire4.wav",
         hit1: audioRoot + "hit1.wav",
         hit2: audioRoot + "hit2.wav",
-        mine: audioRoot + "mine_boom.wav"
+        mine: audioRoot + "mine_boom.wav",
+        warning: audioRoot + "warning.wav"
       };
 
       // Preload large resources
@@ -300,7 +301,8 @@ String.prototype.spanWrap = function() {
                   new Audio(ShipSocket.audioPath['hit1']),
                   new Audio(ShipSocket.audioPath['hit2'])
                 ],
-                minehit: new Audio(ShipSocket.audioPath['mine'])
+                minehit: new Audio(ShipSocket.audioPath['mine']),
+				warning: new Audio(ShipSocket.audioPath['warning'])
               },
               height: 64,
               width: 64,
@@ -370,6 +372,8 @@ String.prototype.spanWrap = function() {
 
             if (d.amount <= 30) {
               color = 'red';
+              ship.sound.warning.volume = ShipSocket._getDistanceVolume(id);
+              ship.sound.warning.play();
             }
 
             ship.label.addClass('flash-' + color);
