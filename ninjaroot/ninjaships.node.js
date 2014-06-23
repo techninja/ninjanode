@@ -164,13 +164,18 @@ module.exports.getAllPos = function(){
         y: Math.round(_ships[s].pos.y * 100)/100,
         t: thrustNum,
         d: _ships[s].pos.d
+      },
+      vel: {
+        x: _ships[s].velocity_x,
+        y: _ships[s].velocity_y,
+        l: _ships[s].velocityLength
       }
-    }
+    };
 
-    out[s].str = JSON.stringify(out[s].pos);
+    out[s].str = JSON.stringify(out[s]);
   }
   return out;
-}
+};
 
 /**
  *  Exported Setter for thrust
