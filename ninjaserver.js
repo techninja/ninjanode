@@ -275,6 +275,8 @@ function emitShipPositionUpdates(){
     if (lastData[id] != positions[id].str) {
       lastData[id] = positions[id].str;
       out[id] = positions[id].pos;
+      out[id].vel = positions[id].vel;
+    
     }
   }
 

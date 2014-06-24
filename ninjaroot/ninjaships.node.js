@@ -164,10 +164,17 @@ module.exports.getAllPos = function(){
         y: Math.round(_ships[s].pos.y * 100)/100,
         t: thrustNum,
         d: _ships[s].pos.d
+      },
+      vel: {
+        x: _ships[s].velocity_x,
+        y: _ships[s].velocity_y,
+        l: _ships[s].velocityLength,
+        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x) 
+                    * (180 / Math.PI))
       }
-    }
+    };
 
-    out[s].str = JSON.stringify(out[s].pos);
+    out[s].str = JSON.stringify(out[s]);
   }
   return out;
 }
