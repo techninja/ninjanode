@@ -501,12 +501,12 @@ function _shipObject(options){
       }
     } else if (data.type == 'pnbcollision') {
       // Target hit source (A permanent natural body!)
-      data.target.shieldPowerStatus -= 50;
+      data.target.shieldPowerStatus *= 0.9;
 
       // Kill em if their shield is out
-      if (data.target.shieldPowerStatus <= 0) {
-        data.target.shieldPowerStatus = 0;
-        data.target.triggerBoom();
+      if (data.target.shieldPowerStatus < 1) {
+        data.target.shieldPowerStatus = 1;
+
       }
     }
 
