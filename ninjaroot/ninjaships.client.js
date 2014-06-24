@@ -302,7 +302,7 @@ String.prototype.spanWrap = function() {
                   new Audio(ShipSocket.audioPath['hit2'])
                 ],
                 minehit: new Audio(ShipSocket.audioPath['mine']),
-				warning: new Audio(ShipSocket.audioPath['warning'])
+                warning: new Audio(ShipSocket.audioPath['warning'])
               },
               height: 64,
               width: 64,

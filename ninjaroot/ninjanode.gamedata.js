@@ -5,7 +5,7 @@
 module.exports.projectileTypes = {
   laser: {
     name: "Death Laser",
-    speed: 67.5,
+    speed: 67.6,
     life: 2500, // How many ms till it dies?
     sound: 3,
     damage: 50,
@@ -273,7 +273,7 @@ module.exports.pnbitsTypes = [
     rarity: 0.1, // 1 is common, 0 is never spawned
     ranges: {
       radius: [250, 300],
-      density: [3, 5]
+      density: [3, 5.1]
     }
   }
 ];
