@@ -169,14 +169,15 @@ module.exports.getAllPos = function(){
         x: _ships[s].velocity_x,
         y: _ships[s].velocity_y,
         l: _ships[s].velocityLength,
-        r:  Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x) * (180 / Math.PI)
+        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x) 
+                    * (180 / Math.PI))
       }
     };
 
     out[s].str = JSON.stringify(out[s]);
   }
   return out;
-};
+}
 
 /**
  *  Exported Setter for thrust
