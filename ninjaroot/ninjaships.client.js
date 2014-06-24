@@ -362,6 +362,12 @@ String.prototype.spanWrap = function() {
             return (css.match(/\bshield-\S+/g) || []).join(' ');
           });
 
+          // Reset warning sound once shields above 30
+          if (d.amount > 30) {
+            ship.sound.warning.pause();
+            ship.sound.warning.currentTime = 0;
+          }
+
           // Shields went down! Animate
           if (oldValue > d.amount) {
             // Make Shields pulse (css animation)
@@ -371,8 +377,10 @@ String.prototype.spanWrap = function() {
               color = 'orange';
             }
 
+            // Trigger Red color and warning claxon
             if (d.amount <= 30) {
               color = 'red';
+              ship.sound.warning.loop = true;
               ship.sound.warning.volume = ShipSocket._getDistanceVolume(id);
               ship.sound.warning.play();
             }
@@ -397,6 +405,10 @@ String.prototype.spanWrap = function() {
 
         } else if (d.status == 'boom'){ // BOOM!
           if (d.stage == 'start'){
+            // Kill claxon
+            ship.sound.warning.pause();
+            ship.sound.warning.currentTime = 0;
+
             // Start animation
             ship.sound.boom.volume = ShipSocket._getDistanceVolume(id);
             ship.sound.boom.play();
