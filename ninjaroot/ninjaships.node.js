@@ -501,12 +501,13 @@ function _shipObject(options){
       }
     } else if (data.type == 'pnbcollision') {
       // Target hit source (A permanent natural body!)
-      data.target.shieldPowerStatus -= 50;
+      data.target.shieldPowerStatus *= .5;
 
       // Kill em if their shield is out
       if (data.target.shieldPowerStatus <= 0) {
-        data.target.shieldPowerStatus = 0;
-        data.target.triggerBoom();
+        data.target.shieldPowerStatus = 1;
+     //   data.target.triggerBoom();	//	Commented out, now planetary collisions are not instantly deadly
+
       }
     }
 
