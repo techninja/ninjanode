@@ -244,7 +244,7 @@ div#debug {
   width: 16px;
   height: 16px;
   background-size: 16px 16px;
-  margin-right: 1em;
+  margin-right: 0.5em;
 }
 
 #players player {
@@ -270,7 +270,9 @@ div#debug {
 }
 
 #players player .score {
-  margin-right: 0.5em;
+  margin-right: 0.25em;
+  width: 52px;
+  overflow: hidden;
 }
 
 #players player .compass {

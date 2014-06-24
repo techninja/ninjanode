@@ -863,7 +863,7 @@ String.prototype.spanWrap = function() {
           (kills ? kills / gcd : 0) + ':' +
           (deaths ? deaths  / gcd : 0)
       ).text(
-        kills + '/' + deaths + ' |'
+        kills + '/' + deaths
       );
     },
 
