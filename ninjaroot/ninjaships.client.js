@@ -142,7 +142,8 @@ String.prototype.spanWrap = function() {
         }
 
         // Leave text chat
-        if (e.which == 27) { // 'esc' pressed
+        // 'esc' pressed or empty text box
+        if (e.which == 27 || (!$('#chat-main input').val() && e.which == 13)) {
           $('#chat-main').fadeOut('slow');
           $('#chat-main input').val(''); // Counteract text coming back...
           if ($('#chat-notify li').length){
