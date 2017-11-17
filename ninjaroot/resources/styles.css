@@ -661,6 +661,9 @@ ship.ship_e.thrusting:after { left: 4px; }
 ship.ship_f.thrusting:before { left: 8px; top: 62px; }
 ship.ship_f.thrusting:after { left: 3px; top: 62px; }
 
+ship.ship_g.thrusting:before { left: 18px; top: 62px; }
+ship.ship_g.thrusting:after { left: -8px; top: 55px; }
+
 /* Backward thrust */
 ship.thrusting_back:before, ship.thrusting_back:after {
   content: url("graphics/flame_up.gif");
@@ -684,6 +687,9 @@ ship.ship_e.thrusting_back:after { left: 13px; }
 
 ship.ship_f.thrusting_back:before { left: 12px; top: -23px; }
 ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
+
+ship.ship_g.thrusting_back:before { left: 0px; top: 13px; }
+ship.ship_g.thrusting_back:after { left: 11px; top: 13px; }
 
 /* Projectiles! */
 
