@@ -114,7 +114,7 @@ div#debug {
   cursor: pointer;
   float: left;
   height: 32px;
-  margin: 0.5em 1em 0;
+  margin: 0.5em 0.5em 0;
   padding: 0.3em;
   width: 32px;
   opacity: 0.5;
@@ -132,6 +132,7 @@ div#debug {
 #connection-window .selector .ship_d.selected { background-color: #D34121; }
 #connection-window .selector .ship_e.selected { background-color: #BE5225; }
 #connection-window .selector .ship_f.selected { background-color: #14A6F8; }
+#connection-window .selector .ship_g.selected { background-color: #1400FF; }
 
 #connection-window fieldset {
   border: 1px solid #ddd;
@@ -633,6 +634,7 @@ ship.ship_c { background-image: url('graphics/ships/ship_c.png'); }
 ship.ship_d { background-image: url('graphics/ships/ship_d.png'); }
 ship.ship_e { background-image: url('graphics/ships/ship_e.png'); }
 ship.ship_f { background-image: url('graphics/ships/ship_f.png'); }
+ship.ship_g { background-image: url('graphics/ships/ship_g.png'); }
 
 /* Forward thrust */
 ship.thrusting:before, ship.thrusting:after {
