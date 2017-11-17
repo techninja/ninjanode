@@ -72,6 +72,20 @@ module.exports.projectileTypes = {
     },
     knockBackForce: 5,
     yOffset: 0
+  },
+  fire : {
+    name: "Fire",
+    damage: 30,
+    speed: 10,
+    life: 1000,
+    sound: 2,
+    size: {
+      hitRadius: 21,
+      width: 64,
+      height: 64
+    },
+    knockBackForce: 10,
+    yOffset: -8
   }
 };
 
@@ -184,7 +198,7 @@ module.exports.shipTypes = {
       style: 'blue'
     },
     weapons: [
-      {type: 'duallaser', style: 'blue', fireRate: 25},
+      {type: 'fire', style: 'blue', fireRate: 25},
       {type: 'mine', style: 'blue', fireRate: 5000}
     ]
   }

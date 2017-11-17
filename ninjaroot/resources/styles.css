@@ -781,6 +781,24 @@ projectile.purple {background-color: purple; border-color: purple;}
 projectile.red {background-color: red; border-color: red;}
 projectile.yellow {background-color: yellow; border-color: yellow;}
 
+projectile.fire {
+  height: 64px !important;
+  width: 64px !important;
+  background-size: 64px 64px;
+  background-image: url('graphics/projectiles/fire.png');
+  background-color: transparent !important;
+
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+
 /** Power-ups effects! **/
 powerup {
   display: block;
