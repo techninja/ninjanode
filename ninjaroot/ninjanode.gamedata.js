@@ -171,6 +171,22 @@ module.exports.shipTypes = {
       {type: 'energy', style: 'blue', fireRate: 325},
       {type: 'mine', style: 'blue', fireRate: 5000}
     ]
+  },
+  g: {
+    name: 'Falcon',
+    topSpeed: 20,
+    accelRate: 1.2,
+    drag: 0.03,
+    rotationSpeed: 20,
+    shield: {
+      max: 50,
+      regenRate: 0.2,
+      style: 'blue'
+    },
+    weapons: [
+      {type: 'duallaser', style: 'blue', fireRate: 25},
+      {type: 'mine', style: 'blue', fireRate: 5000}
+    ]
   }
 };
 
