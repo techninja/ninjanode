@@ -75,8 +75,8 @@ module.exports.projectileTypes = {
   },
   fire : {
     name: "Fire",
-    damage: 30,
-    speed: 10,
+    damage: 40,
+    speed: 35,
     life: 1000,
     sound: 2,
     size: {
@@ -188,12 +188,12 @@ module.exports.shipTypes = {
   },
   g: {
     name: 'Falcon',
-    topSpeed: 20,
-    accelRate: 1.2,
-    drag: 0.03,
-    rotationSpeed: 20,
+    topSpeed: 50,
+    accelRate: 1.1,
+    drag: 0.06,
+    rotationSpeed: 10,
     shield: {
-      max: 50,
+      max: 75,
       regenRate: 0.2,
       style: 'blue'
     },

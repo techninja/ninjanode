@@ -8,7 +8,7 @@ var _powerUps = {}; // All free floating power up orbs are stored with a random 
 var powerUpCount = 20;
 
 var _pnbits = {}; // All permanent natural bodies it the sky stored just like poweups
-var pnbitsCount = 20;
+var pnbitsCount = 0;
 
 var _playArea = 20000; // Size of Square where users will wrap to other side
 var _gameData = require('./ninjanode.gamedata.js');
@@ -169,7 +169,7 @@ module.exports.getAllPos = function(){
         x: _ships[s].velocity_x,
         y: _ships[s].velocity_y,
         l: _ships[s].velocityLength,
-        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x) 
+        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x)
                     * (180 / Math.PI))
       }
     };
