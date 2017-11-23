@@ -169,7 +169,7 @@ module.exports.getAllPos = function(){
         x: _ships[s].velocity_x,
         y: _ships[s].velocity_y,
         l: _ships[s].velocityLength,
-        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x) 
+        t:  parseInt(Math.atan2(_ships[s].velocity_y, _ships[s].velocity_x)
                     * (180 / Math.PI))
       }
     };

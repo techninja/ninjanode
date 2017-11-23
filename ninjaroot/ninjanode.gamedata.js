@@ -72,6 +72,20 @@ module.exports.projectileTypes = {
     },
     knockBackForce: 5,
     yOffset: 0
+  },
+  fire : {
+    name: "Fire",
+    damage: 40,
+    speed: 35,
+    life: 1000,
+    sound: 5,
+    size: {
+      hitRadius: 21,
+      width: 64,
+      height: 64
+    },
+    knockBackForce: 10,
+    yOffset: -8
   }
 };
 
@@ -169,6 +183,22 @@ module.exports.shipTypes = {
     },
     weapons: [
       {type: 'energy', style: 'blue', fireRate: 325},
+      {type: 'mine', style: 'blue', fireRate: 5000}
+    ]
+  },
+  g: {
+    name: 'Falcon',
+    topSpeed: 50,
+    accelRate: 1.1,
+    drag: 0.06,
+    rotationSpeed: 10,
+    shield: {
+      max: 75,
+      regenRate: 0.2,
+      style: 'blue'
+    },
+    weapons: [
+      {type: 'fire', style: 'blue', fireRate: 25},
       {type: 'mine', style: 'blue', fireRate: 5000}
     ]
   }

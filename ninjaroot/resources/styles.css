@@ -114,7 +114,7 @@ div#debug {
   cursor: pointer;
   float: left;
   height: 32px;
-  margin: 0.5em 1em 0;
+  margin: 0.5em 0.5em 0;
   padding: 0.3em;
   width: 32px;
   opacity: 0.5;
@@ -132,6 +132,7 @@ div#debug {
 #connection-window .selector .ship_d.selected { background-color: #D34121; }
 #connection-window .selector .ship_e.selected { background-color: #BE5225; }
 #connection-window .selector .ship_f.selected { background-color: #14A6F8; }
+#connection-window .selector .ship_g.selected { background-color: #1400FF; }
 
 #connection-window fieldset {
   border: 1px solid #ddd;
@@ -633,6 +634,7 @@ ship.ship_c { background-image: url('graphics/ships/ship_c.png'); }
 ship.ship_d { background-image: url('graphics/ships/ship_d.png'); }
 ship.ship_e { background-image: url('graphics/ships/ship_e.png'); }
 ship.ship_f { background-image: url('graphics/ships/ship_f.png'); }
+ship.ship_g { background-image: url('graphics/ships/ship_g.png'); }
 
 /* Forward thrust */
 ship.thrusting:before, ship.thrusting:after {
@@ -659,6 +661,9 @@ ship.ship_e.thrusting:after { left: 4px; }
 ship.ship_f.thrusting:before { left: 8px; top: 62px; }
 ship.ship_f.thrusting:after { left: 3px; top: 62px; }
 
+ship.ship_g.thrusting:before { left: 18px; top: 62px; }
+ship.ship_g.thrusting:after { left: -8px; top: 55px; }
+
 /* Backward thrust */
 ship.thrusting_back:before, ship.thrusting_back:after {
   content: url("graphics/flame_up.gif");
@@ -682,6 +687,9 @@ ship.ship_e.thrusting_back:after { left: 13px; }
 
 ship.ship_f.thrusting_back:before { left: 12px; top: -23px; }
 ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
+
+ship.ship_g.thrusting_back:before { left: 0px; top: 13px; }
+ship.ship_g.thrusting_back:after { left: 11px; top: 13px; }
 
 /* Projectiles! */
 
@@ -772,6 +780,24 @@ projectile.pink {background-color: magenta; border-color: magenta;}
 projectile.purple {background-color: purple; border-color: purple;}
 projectile.red {background-color: red; border-color: red;}
 projectile.yellow {background-color: yellow; border-color: yellow;}
+
+projectile.fire {
+  height: 64px !important;
+  width: 64px !important;
+  background-size: 64px 64px;
+  background-image: url('graphics/projectiles/fire.png');
+  background-color: transparent !important;
+
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
 
 /** Power-ups effects! **/
 powerup {
