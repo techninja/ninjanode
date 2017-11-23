@@ -78,6 +78,9 @@ io.sockets.on('connection', function (clientSocket) {
       users.playerCount++;
 
       data.name = sanitizer.escape(data.name);
+      if (data.name.length == 0) {
+        return;
+      }
       console.log('Creating ship for user: ' + id + ': ' + data.name);
       data.style = sanitizer.sanitize(data.style);
       data.id = id;
