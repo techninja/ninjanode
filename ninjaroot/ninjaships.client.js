@@ -63,6 +63,7 @@ String.prototype.spanWrap = function() {
         fire2: audioRoot + "fire2.wav",
         fire3: audioRoot + "fire3.wav",
         fire4: audioRoot + "fire4.wav",
+        fire5: audioRoot + "fire5.wav",
         hit1: audioRoot + "hit1.wav",
         hit2: audioRoot + "hit2.wav",
         mine: audioRoot + "mine_boom.wav",

@@ -78,7 +78,7 @@ module.exports.projectileTypes = {
     damage: 40,
     speed: 35,
     life: 1000,
-    sound: 2,
+    sound: 5,
     size: {
       hitRadius: 21,
       width: 64,
