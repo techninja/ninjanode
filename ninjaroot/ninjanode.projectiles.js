@@ -67,7 +67,7 @@ module.exports = {
     name: "Mine",
     damage: 100,
     speed: 0,
-    life: 86400000,
+    life: 30 * 60 * 1000, // 30 Minutes
     sound: 4,
     size: {
       hitRadius: 20,
