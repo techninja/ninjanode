@@ -6,5 +6,3 @@ module.exports.projectileTypes = require('./ninjanode.projectiles');
 module.exports.shipTypes = require('./ninjanode.shiptypes');
 module.exports.powerUpTypes = require('./ninjanode.powerups');
 module.exports.pnbitsTypes = require('./ninjanode.pnbits');
-
-console.log('DATA', module.exports);
