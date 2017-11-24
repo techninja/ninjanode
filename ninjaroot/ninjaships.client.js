@@ -15,7 +15,6 @@ String.prototype.format = function() {
   });
 };
 
-
 // String Prototype for wrapping with spans
 String.prototype.spanWrap = function() {
   return '<span>' + this + '</span>';
@@ -158,7 +157,7 @@ String.prototype.spanWrap = function() {
       // Bind mouse and touch events for alternate control scheme
       this._bindPushEvents(function(e){ // Touch Start / Mouse move
         // Find the angle relative to the center of the screen
-        var center = {x: $(document).width() / 2, y: $(document).height() / 2}
+        var center = {x: $(window).width() / 2, y: $(window).height() / 2}
 
         // TODO: Remove hardcoded ship width / height to allow for larger ships!
         var touchAngle = (Math.atan2(
@@ -1019,62 +1018,60 @@ String.prototype.spanWrap = function() {
 
     // Bind callbacks to both mouse and touch events for input
     _bindPushEvents: function(positionCallback, endCallback, triggerCallback){
-      if (document.body.ontouchstart === undefined){ // For desktop browsers
-        $(document).bind('mousedown', function(e){
+      // Mouse bindings....
+      $(document).bind('mousedown', function(e){
+        positionCallback({x:e.pageX, y:e.pageY});
+        ShipSocket.mousedown = e.which;
+        return false;
+      });
+
+      $(document).bind('mousemove', function(e){
+        if (ShipSocket.mousedown == 1){
           positionCallback({x:e.pageX, y:e.pageY});
-          ShipSocket.mousedown = e.which;
           return false;
-        });
+        }
+      });
 
-        $(document).bind('mousemove', function(e){
-          if (ShipSocket.mousedown == 1){
-            positionCallback({x:e.pageX, y:e.pageY});
-            return false;
-          }
-        });
+      $(document).bind('mouseup', function(e){
+        endCallback({x:e.pageX, y:e.pageY});
+        ShipSocket.mousedown = 0;
+        return false;
+      });
 
-        $(document).bind('mouseup', function(e){
-          endCallback({x:e.pageX, y:e.pageY});
-          ShipSocket.mousedown = 0;
-          return false;
-        });
+      // Touch device beindings...
+      $(document).bind('touchstart', function(e){
+        var orig = e.originalEvent;
+        if (orig.touches.length != 1){
+          triggerCallback(orig.touches.length);
+        }
+      });
 
-      }else{  // For all touch devices
+      $(document).bind('touchstart touchmove', function(e){
+        var orig = e.originalEvent;
 
-        $(document).bind('touchstart', function(e){
-          var orig = e.originalEvent;
-          if (orig.touches.length != 1){
-            triggerCallback(orig.touches.length);
-          }
-        });
+        // Ignore any touchstart / touchmove here except the first
+        if (orig.touches.length == 1){
+          positionCallback({
+            x: orig.changedTouches[0].pageX,
+            y: orig.changedTouches[0].pageY
+          });
+        }
+        return false;
+      });
 
-        $(document).bind('touchstart touchmove', function(e){
-          var orig = e.originalEvent;
+      $(document).bind('touchend', function(e){
+        var orig = e.originalEvent;
 
-          // Ignore any touchstart / touchmove here except the first
-          if (orig.touches.length == 1){
-            positionCallback({
-              x: orig.changedTouches[0].pageX,
-              y: orig.changedTouches[0].pageY
-            });
-          }
-          return false;
-        });
+        // Ignore any touchend except the last one
+        if (orig.changedTouches.length == 1){
+          endCallback({
+            x: orig.changedTouches[0].pageX,
+            y: orig.changedTouches[0].pageY
+          });
+        }
 
-        $(document).bind('touchend', function(e){
-          var orig = e.originalEvent;
-
-          // Ignore any touchend except the last one
-          if (orig.changedTouches.length == 1){
-            endCallback({
-              x: orig.changedTouches[0].pageX,
-              y: orig.changedTouches[0].pageY
-            });
-          }
-
-          return false;
-        });
-      }
+        return false;
+      });
     },
 
     // Center the view onto a given ship
