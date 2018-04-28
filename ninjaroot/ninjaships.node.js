@@ -410,6 +410,13 @@ function _shipObject(options){
         addProjectile(this, this.pos.d);
         addProjectile(this, this.pos.d + 10);
         break;
+      case 5:
+        addProjectile(this, this.pos.d - 20);
+        addProjectile(this, this.pos.d - 10);
+        addProjectile(this, this.pos.d);
+        addProjectile(this, this.pos.d + 10);
+        addProjectile(this, this.pos.d + 20);
+        break;
     }
 
 
