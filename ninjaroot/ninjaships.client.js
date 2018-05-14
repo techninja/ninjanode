@@ -1091,8 +1091,5 @@ String.prototype.spanWrap = function() {
         });
       }
     },
-
-    xxx: {}
-
   };
 }());
