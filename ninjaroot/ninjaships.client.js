@@ -37,7 +37,7 @@ String.prototype.spanWrap = function() {
       this.socket = io.connect(socketURL, {reconnect: false});
       this.socket.on('connect', function(){
         // Shortcut to our session id
-        ShipSocket.id = ShipSocket.socket.socket.sessionid;
+        ShipSocket.id = ShipSocket.socket.id;
       });
 
       this.socket.on('disconnect', function(){
