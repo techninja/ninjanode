@@ -6,7 +6,7 @@ module.exports = [
   {
     id: 'ghost', // Machine name and base class
     name: "Space Ghost", // Name displayed to user
-    rarity: 0.75, // 1 is common, 0 is never spawned
+    rarity: 0.5, // 1 is common, 0 is never spawned
     respawnTime: 120,
     size: 64,
     active: { // Effective time, as soon as it's picked up'
@@ -35,7 +35,7 @@ module.exports = [
   {
     id: 'triple', // Machine name and base class
     name: "Triple Shot", // Name displayed to user
-    rarity: 0.2, // 1 is common, 0 is never spawned
+    rarity: 0.5, // 1 is common, 0 is never spawned
     respawnTime: 120,
     size: 64,
     active: { // Effective time, as soon as it's picked up'
