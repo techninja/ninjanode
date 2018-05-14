@@ -93,12 +93,13 @@ String.prototype.spanWrap = function() {
 
       // Key command bindings
       this.keys = {
-        l: 37, // Left
-        u: 38, // Up
-        r: 39, // Right
-        d: 40, // Down
-        f: 32, // Primary Fire (space)
-        s: 77  // Secondary Fire (m)
+        l: 37,  // Left
+        u: 38,  // Up
+        r: 39,  // Right
+        d: 40,  // Down
+        f: 32,  // Primary Fire (space)
+        s: 77,  // Secondary Fire (m)
+        b: 83,  // Set Spawn Beacon (s)
       };
 
       // Bind to the window global keyup & keydown events

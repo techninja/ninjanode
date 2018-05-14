@@ -134,6 +134,11 @@ io.sockets.on('connection', function (clientSocket) {
       case 'l':
       case 'r': // Turn Right/Left
         ships.shipSetTurn(id, data.s ? data.c : false); break;
+      case 'b': // Set/unset spawn beacon to current position
+        if (data.s) {
+          ships.shipSetSpawn(id);
+        }
+        break;
       case 's':
       case 'f': // Main/Secondary Fire
         if (data.s) {
