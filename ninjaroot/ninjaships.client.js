@@ -79,6 +79,7 @@ String.prototype.spanWrap = function() {
       this.socket.on('chat', this.chat);
       this.socket.on('pos', this.updatePos);
       this.socket.on('shipstat', this.shipStatus);
+      this.socket.on('shipbeaconstat', this.updateBeacons);
       this.socket.on('shiptypes', this.buildShipSelect);
       this.socket.on('projstat', this.projectileStatus);
       this.socket.on('projpos', this.updateProjectilePos);
@@ -271,7 +272,12 @@ String.prototype.spanWrap = function() {
                 .addClass('style-' + d.shieldStyle)
                 .addClass(id == ShipSocket.id ? 'self' : 'other')
                 .attr('id', 'label_' + id)
-                .text(d.name)
+                .text(d.name),
+              $('<beacon>')
+                .attr('class', 'overlay hidden layer0 ship-type-' + d.style)
+                .addClass('style-' + d.shieldStyle)
+                .addClass(id == ShipSocket.id ? 'self' : 'other')
+                .attr('id', 'beacon_' + id)
             );
 
             // Add player list element, mini ship and player compass
@@ -293,6 +299,7 @@ String.prototype.spanWrap = function() {
             ShipSocket.dummyShips[id] = {
               element: $('ship#user_' + id),
               label: $('#label_' + id),
+              beacon: $('#beacon_' + id),
               name: d.name,
               sound: {
                 boom: new Audio(ShipSocket.audioPath['boom']),
@@ -306,12 +313,17 @@ String.prototype.spanWrap = function() {
                   new Audio(ShipSocket.audioPath['hit2'])
                 ],
                 minehit: new Audio(ShipSocket.audioPath['mine']),
-                warning: new Audio(ShipSocket.audioPath['warning'])
+                warning: new Audio(ShipSocket.audioPath['warning']),
+                beacon: {
+                  set: new Audio(ShipSocket.audioPath['spawnSet']),
+                  unset: new Audio(ShipSocket.audioPath['spawnUnset'])
+                }
               },
               height: 64,
               width: 64,
               pos: d.pos,
-              style: d.style
+              style: d.style,
+              spawnPoint: d.spawnPoint,
             }
 
             ShipSocket._updateScore(id, d.score.kills, d.score.deaths);
@@ -320,6 +332,11 @@ String.prototype.spanWrap = function() {
             var u = {};
             u[id] = d.pos;
             ShipSocket.updatePos(u);
+
+            // Update Beacon for ship
+            u = {};
+            u[id] = d.spawnPoint;
+            ShipSocket.updateBeacons(u, true);
           }
         } else if (d.status == 'destroy'){ // Destroy!
           // Remove element, projectile elements, and data
@@ -327,6 +344,7 @@ String.prototype.spanWrap = function() {
             $('.ship-id-' + id).remove();
             ShipSocket.dummyShips[id].element.remove();
             ShipSocket.dummyShips[id].label.remove();
+            ShipSocket.dummyShips[id].beacon.remove();
             delete ShipSocket.dummyShips[id];
           }
         } else if (d.status == 'hit'){ // Hit
@@ -349,7 +367,6 @@ String.prototype.spanWrap = function() {
           }, 300);
 
           // If someone exploded, we've got to update the scores!
-          console.log(d);
           if (d.scores) {
             for (var i in d.scores){
               ShipSocket._updateScore(i, d.scores[i].kills, d.scores[i].deaths);
@@ -556,6 +573,37 @@ String.prototype.spanWrap = function() {
           ShipSocket.pnbits[id].element.appendTo('body');
         } else { // It does exist, move it?
           // TODO: Add Move code
+        }
+      }
+    },
+
+    // Handle ship beacon updates (comes in as [id] : x, y, or [id]: null)
+    updateBeacons: function(data, batch) {
+      for (var id in data) {
+        if (ShipSocket.dummyShips[id]) {
+          var d = data[id];
+          var s = ShipSocket.dummyShips[id];
+
+          // Set beacon position.
+          if (d) {
+            if (!batch) {
+              s.sound.beacon.set.volume = ShipSocket._getDistanceVolume(id) / 8;
+              s.sound.beacon.set.play();
+            }
+            s.beacon
+              .css({
+                left: d.x + (s.width / 2) - 20,
+                top: d.y + (s.height / 2) - 20,
+              })
+              .show('fast');
+          } else {
+            // Hide Beacon!
+            if (!batch) {
+              s.sound.beacon.unset.volume = ShipSocket._getDistanceVolume(id) / 8;
+              s.sound.beacon.unset.play();
+            }
+            s.beacon.hide('slow');
+          }
         }
       }
     },
