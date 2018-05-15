@@ -106,6 +106,24 @@ module.exports.getActiveProjectiles = function(){
   return out;
 }
 
+
+/**
+ *  Exported Getter for a ship spawn position
+ */
+function getShipSpawnPos(ship){
+  if (!ship.spawnPoint) {
+    return getRandomPos(ship.data.rotationSpeed);
+  } else {
+    return {
+      x: ship.spawnPoint.x,
+      y: ship.spawnPoint.y,
+      d: ship.spawnPoint.d
+    };
+  }
+}
+module.exports.getShipSpawnPos = getShipSpawnPos;
+
+
 /**
  *  Exported Getter for a random starting position
  */
@@ -219,6 +237,28 @@ shipSetTurn = function(id, direction){
   }
 }
 module.exports.shipSetTurn = shipSetTurn;
+
+/**
+ *  Exported Setter for spawn point
+ */
+shipSetSpawn = function(id){
+  if (_ships[id]){
+    if (_ships[id].spawnPoint) {
+      _ships[id].spawnPoint = null;
+    } else {
+      _ships[id].spawnPoint = {
+        x: _ships[id].pos.x,
+        y: _ships[id].pos.y,
+        d: 0,
+      };
+    }
+
+    return true;
+  } else {
+    return false;
+  }
+}
+module.exports.shipSetSpawn = shipSetSpawn;
 
 /**
  *  Exported Setter for thrust & direction via xy input
@@ -549,7 +589,7 @@ function _shipObject(options){
       // Respawn & reset ship
       setTimeout(function(){
         ship.kill_velocity();
-        ship.pos = getRandomPos(ship.data.rotationSpeed);
+        ship.pos = getShipSpawnPos(ship);
         ship.exploding = false;
         ship.shieldPowerStatus = ship.data.shield.max;
 

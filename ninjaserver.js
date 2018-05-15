@@ -134,6 +134,12 @@ io.sockets.on('connection', function (clientSocket) {
       case 'l':
       case 'r': // Turn Right/Left
         ships.shipSetTurn(id, data.s ? data.c : false); break;
+      case 'b': // Set/unset spawn beacon to current position
+        if (data.s) {
+          ships.shipSetSpawn(id);
+          emitBeaconUpdate(id);
+        }
+        break;
       case 's':
       case 'f': // Main/Secondary Fire
         if (data.s) {
@@ -247,6 +253,7 @@ function emitAllShips(targetID){
       style: listShips[id].style,
       shieldStyle: listShips[id].data.shield.style,
       pos: listShips[id].pos,
+      spawnPoint: listShips[id].spawnPoint,
       score: {kills: users[id].kills, deaths: users[id].deaths}
     }
   }
@@ -276,7 +283,7 @@ function emitShipPositionUpdates(){
       lastData[id] = positions[id].str;
       out[id] = positions[id].pos;
       out[id].vel = positions[id].vel;
-    
+
     }
   }
 
@@ -377,6 +384,17 @@ function emitProjectilePositionUpdates(){
   if (Object.keys(out).length) {
     io.sockets.emit('projpos', out);
   }
+}
+
+
+// Send out positions for beacon updates
+function emitBeaconUpdate(id) {
+  var ship = ships.shipGet(id)
+  var out = {};
+
+  out[id] = ship.spawnPoint;
+
+  io.sockets.emit('shipbeaconstat', out);
 }
 
 // Send out projstat for every projectile to everyone (for creation on connect)

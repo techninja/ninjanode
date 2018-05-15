@@ -5,9 +5,12 @@
   "main": "ninjaserver.js",
   "author": "techninja",
   "license": "MIT",
+  "scripts": {
+    "start": "node ninjaserver"
+  },
   "dependencies": {
     "express": "~3.0.0",
-    "socket.io": "~0.9.10",
-    "sanitizer": "~0.0.15"
+    "socket.io": "~2.1.0",
+    "sanitizer": "~0.1.3"
   }
 }

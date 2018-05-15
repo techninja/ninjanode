@@ -701,6 +701,36 @@ ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
 ship.ship_g.thrusting_back:before { left: 0px; top: 13px; }
 ship.ship_g.thrusting_back:after { left: 11px; top: 13px; }
 
+
+/* Ship Beacon/Spawn Point */
+beacon {
+  transform: rotate(45deg) skew(12deg, 12deg);
+  height: 40px !important;
+  width: 40px !important;
+  display: none;
+  border-width: 9px;
+  border-style: solid;
+  box-sizing: border-box;
+  animation: diamond-spin 3s infinite linear;
+}
+
+beacon.style-blue {background-color: blue; border-color: DarkBlue;}
+beacon.style-green {background-color: green; border-color: SpringGreen;}
+beacon.style-orange {background-color: orange; border-color: OrangeRed;}
+beacon.style-pink {background-color: magenta; border-color: MediumPurple;}
+beacon.style-purple {background-color: purple; border-color: BlueViolet;}
+beacon.style-red {background-color: red; border-color: FireBrick;}
+beacon.style-yellow {background-color: yellow; border-color: orange;}
+
+@keyframes diamond-spin {
+  from {
+    transform: rotateY(0deg) rotate(45deg) skew(12deg, 12deg);
+  }
+  to {
+    transform: rotateY(360deg) rotate(45deg) skew(12deg, 12deg);
+  }
+}
+
 /* Projectiles! */
 
 /* keyframes for spinning energy animation;  simple 0 to 360 */
