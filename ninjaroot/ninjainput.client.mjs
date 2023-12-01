@@ -37,8 +37,26 @@ class ShipInput {
     $(window).bind('keyup keydown', (e) => {
       // Check for each gameplay key binding (not when chat visible)
       const chatHidden = !$('#chat-main:visible').length;
+      const connectionHidden = !$('#connection-window:visible').length;
       const { renderer, socket } = this;
 
+      if (!connectionHidden){
+        if (e.type == 'keyup' && e.which == 27) { // 'esc' pressed
+          renderer.toggleConnectionWindow(false);
+          return;
+        }
+        return;
+      }
+
+      if (chatHidden && connectionHidden) {
+        if (e.type == 'keyup' && e.which == 27) {
+          renderer.toggleConnectionWindow(true);
+          return;
+        }
+      }
+
+
+      // Check for each gameplay key binding
       if (chatHidden){
         for(var name in this.keys){
           if (e.which == this.keys[name]){
@@ -71,7 +89,7 @@ class ShipInput {
 
       // Leave text chat
       // 'esc' pressed or empty text box
-      if (e.which == 27 || (!$('#chat-main input').val() && e.which == 13)) {
+      if ((e.type == 'keyup' && e.which == 27) || (!$('#chat-main input').val() && e.which == 13)) {
         renderer.toggleChat(false);
         $('#chat-main input').val(''); // Counteract text coming back...
         if ($('#chat-notify li').length){

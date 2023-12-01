@@ -57,19 +57,6 @@
         const mainSocket = new ShipSocket(`http://${location.host}/`);
         const renderer = new ShipRenderer(mainSocket, $('body'));
 
-        window.game = { mainSocket, renderer };
-
-        // But only *in* game if data submitted
-        $('#connection-window button').click(() => {
-          // TODO: Validate form input
-          mainSocket.join({
-            name: $('input.name').val(),
-            style: $('input[name=ship]:checked').val()
-          });
-
-          $('#connection-window').fadeOut('slow');
-          return false;
-        });
       });
     </script>
 

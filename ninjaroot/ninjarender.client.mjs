@@ -64,6 +64,14 @@ class ShipRenderer {
     $('#chat-main').toggle(toggle, 'slow');
   }
 
+  toggleConnectionWindow(toggle, cb) {
+    if (toggle) {
+      $('#connection-window').fadeIn('slow', cb);
+    } else {
+      $('#connection-window').fadeOut('slow', cb);
+    }
+  }
+
   setDummyShip(d, id) {
     const root = audio.rootPath; 
     this.dummyShips[id] = {
@@ -732,9 +740,24 @@ class ShipRenderer {
     // Set the initially selected classes
     $('input[name=ship]:checked').parent().addClass('selected');
 
-    $('#connection-window').fadeIn('slow', function(){
+
+    // But only *in* game if data submitted
+    $('#connection-window button').click(() => {
+      // TODO: Validate form input
+      this.socket.join({
+        name: $('input.name').val(),
+        style: $('input[name=ship]:checked').val()
+      });
+
+      $('#connection-window').fadeOut('slow');
+      return false;
+    });
+
+    // Show it and set focus!
+    this.toggleConnectionWindow(true, () => {
+      $('#connection-window').find('input')[0].focus();
       $('.selector ship.ship_' + $('input[name=ship]:checked').val()).addClass('selected').click();
-    }).find('input')[0].focus();
+    });
   }
 
   // Center the view onto a given ship
