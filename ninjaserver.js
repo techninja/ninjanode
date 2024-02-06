@@ -107,7 +107,7 @@ io.sockets.on('connection', function (clientSocket) {
 
       // Send ship destroy and disconnect message
       var shipStat = {};
-      shipStat[id] = {status: 'destroy'};
+      shipStat[id] = {status: 'destroy' };
       emitSystemMessage(id, 'disconnect'); // Must send before delete...
       io.sockets.emit('shipstat', shipStat);
       ships.shipRemove(id);
@@ -181,6 +181,7 @@ io.sockets.on('connection', function (clientSocket) {
     out[data.target.id] = {
       status: 'hit',
       type: data.type,
+      source: data.source.id,
       weapon: data.weapon ? data.weapon.type : 'none'
     };
 
