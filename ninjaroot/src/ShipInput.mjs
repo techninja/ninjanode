@@ -13,7 +13,7 @@ const defaultKeyBindings = {
   b: 83,  // Set Spawn Beacon (s)
 };
 
-class ShipInput {
+export class ShipInput {
   renderer;
   $body;
   socket;

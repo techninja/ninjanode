@@ -44,25 +44,18 @@
       </fieldset>
     </div>
     <script type="module">
-      import ShipRenderer from './ninjarender.client.mjs';
-      import ShipSocket from './ninjaships.client.mjs';
-      import BotController from './ninjabot.client.mjs';
+      import { ShipRenderer, ShipSocket, BotController } from './src/index.mjs' ;
 
       $(document).ready(() => {
-        // Cheap iPad Detection
-        // if (navigator.userAgent.match(/iPad/i) != null) {
-        //   $('html').addClass('ipad');
-        // }
-
         // Connect immediately...
         const mainSocket = new ShipSocket(`http://${location.host}/`);
         const renderer = new ShipRenderer(mainSocket, $('body'));
         
         // Setup the Bot
         const botSocket = new ShipSocket(`http://${location.host}/`);
-        const botController = new BotController(botSocket, 'BroboBot');
+        const botController = new BotController(botSocket);
 
-        window.game = { mainSocket, renderer,  botSocket };
+        window.game = { mainSocket, renderer,  botSocket, botController };
       });
     </script>
 

@@ -3,7 +3,7 @@
  * communication and html element management.
  */
 
-class ShipSocket {
+export class ShipSocket {
   // Socket ID and base controller
   id;
   socket;
@@ -20,7 +20,7 @@ class ShipSocket {
 
     // Bind disconnect.
     this.socket.on('disconnect', function(){
-      this.socket.disconnect();
+      // ???
     });
   }
 

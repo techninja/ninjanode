@@ -1,0 +1,43 @@
+{
+  "target_locked": [
+    "I see you %TARGET%, you are mine!",
+    "How dumb can you be to come up against me %TARGET%?!",
+    "Come get some!",
+    "Do you smell that? Smells like %TARGET% is scared!",
+    "FEE FI FOE FUM!! Come get blasted %TARGET%!!1",
+    "%TARGET%, I think your mom is calling!"
+  ],
+  "target_hit": [
+    "Not so fast, are ya %TARGET%?",
+    "Gotta move faster than that %TARGET%!",
+    "A tasty laser lunch for you %TARGET%",
+    "Ping!",
+    "Noice.",
+    "Are you even trying, %TARGET%?"
+  ],
+  "target_boom": [
+    "Thanks for seeing things my way, %TARGET%",
+    "%TARGET%?! Are you there? Did you get my present?",
+    "You got it, thanks.",
+    "Do you smell that? Smells like %TARGET% jerky!",
+    "Nice catch!",
+    "Hey %TARGET%, you might want a doctor to look at that..."
+  ],
+  "target_disconnect": [
+    "Wow, ok. Leave, see if I care... 😭",
+    "Rage quit from %TARGET%! They can't take it. Who's next?",
+    "Cya at your mom's later %TARGET%! 👋"
+  ],
+  "banter": [
+
+  ],
+  "self_hit": [
+    "Ow",
+    "Hey, quit it!",
+    "%SOURCE%!!"
+  ],
+  "self_boom": [
+    "OH NO COME ON %SOURCE%",
+    "I was totally going to get you %TARGET%. Swear."
+  ]
+}

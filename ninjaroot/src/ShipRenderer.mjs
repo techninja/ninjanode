@@ -2,13 +2,13 @@
  * @file NinjaNode Render Library
  * Clientside abstraction to separate networking response logic from game rendering.
  */
-import ShipInput from './ninjainput.client.mjs';
-import audio from './resources/audio/audio.mjs';
+import ShipInput from './ShipInput.mjs';
+import audio from '../resources/audio/audio.json' assert { type: 'json' };
 
 const spanWrap = (msg) => `<span>${msg}</span>`;
 const gcd = (a, b) => (b == 0) ? a : gcd(b, a % b);
 
-class ShipRenderer {
+export class ShipRenderer {
   $body;
   socket;
 
@@ -41,6 +41,10 @@ class ShipRenderer {
       this._centerView(this.socket.id);
     });
 
+    // Cheap iPad Detection
+    if (navigator.userAgent.match(/iPad/i) != null) {
+      $('html').addClass('ipad');
+    }
   }
 
   initializeChat() {
