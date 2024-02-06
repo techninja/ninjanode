@@ -1,4 +1,4 @@
-const audio = {
+{
   "rootPath": "/resources/audio",
   "boom": "explosion.wav",
   "thrust": "thrust.wav",
@@ -13,6 +13,4 @@ const audio = {
   "spawnUnset": "spawn_unset.wav",
   "mine": "mine_boom.wav",
   "warning": "warning.wav"
-};
-
-export default audio;
+}
