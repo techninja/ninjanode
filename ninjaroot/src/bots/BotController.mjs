@@ -65,7 +65,7 @@ export class BotController extends BotControllerBase {
 
   // Pick a target (first for now), return ID.
   findTarget() {
-    console.log('Find target...', Object.keys(this.ships).length, this.target);
+    // console.log('Find target...', Object.keys(this.ships).length, this.target);
     // Short circuit for no ships.
     if (!Object.keys(this.ships).length) return;
 
