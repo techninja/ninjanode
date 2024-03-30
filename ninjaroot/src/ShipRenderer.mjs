@@ -10,6 +10,7 @@ const gcd = (a, b) => (b == 0) ? a : gcd(b, a % b);
 
 export class ShipRenderer {
   $body;
+  $map;
   socket;
 
   // ID keyed object of dummy ship render info and elements.
@@ -21,6 +22,9 @@ export class ShipRenderer {
   chatVisible = false;
   shipSelectBuilt = false;
 
+  mapVisible = true;
+  mapScale = 0.15;
+
   constructor(socket, $body) {
     this.socket = socket;
     this.$body = $body;
@@ -29,6 +33,155 @@ export class ShipRenderer {
     this.initializeBody();
     this.bindRenderers();
     this.initializeChat();
+    this.initializeMap();
+  }
+
+  initializeMap() {
+    const $wrap = $('#map-wrapper');
+    const mapWidth = 200;
+    const blipWidth = 16;
+    const $map = $('#map');
+    const items = {};
+    const mapScales = [0.01, 0.015, 0.025, 0.125, 0.25, 0.5];
+    let scaleIndex = 3;
+    let scale = mapScales[scaleIndex];
+
+    const getSelfMapOffset = ({ x, y }) => ({
+      x: (mapWidth / 2) - (x * scale) - (blipWidth + 8),
+      y: (mapWidth / 2) - (y * scale) - (blipWidth + 8),
+    });
+
+    const updateScale = () => {
+      // Move through all items on the map and move them based on scale.
+      Object.entries(items).forEach(([key, item]) => {
+        const { x, y, radius } = item.data('pos');
+
+        item.css({
+          left: x * scale,
+          top: y * scale,
+        });
+
+        if (radius) {
+          const size = (radius * 2) * scale;
+          item.css({
+            width: size,
+            height: size,
+          });
+        }
+
+        // Reset center map position for self-ship.
+        if (key === `ship-${this.socket.id}`) {
+          const offset = getSelfMapOffset({ x, y });
+          $map.css({
+            margin: `${offset.y}px ${offset.x}px`,
+          });
+
+          $wrap.css({
+            backgroundPosition: `${offset.x}px ${offset.y}px`,
+          });
+        }
+      });
+    };
+
+    // Move zoom scale.
+    $('#map-controls span').click((e) => {
+      switch ($(e.currentTarget).text()) {
+        case '-':
+          scaleIndex--;
+          if (scaleIndex < 0) scaleIndex = 0;
+          break;
+
+        case '+':
+          scaleIndex++;
+          if (!mapScales[scaleIndex]) scaleIndex = mapScales.length - 1;
+          break;
+
+        default:
+          break;
+      }
+
+      $('#map-controls label em').text(scaleIndex + 1);
+      scale = mapScales[scaleIndex];
+      updateScale();
+    });
+
+    const binds = {
+      pos: (ships) => {
+        Object.entries(ships).forEach(([id, { x, y, d }]) => {
+          const itemId = `ship-${id}`;
+
+          if (items[itemId]) {
+            items[itemId]
+              .data('pos', {x, y})
+              .rotate(d - 45);
+          }
+        });
+
+        updateScale();
+      },
+      shipstat: (ships) => {
+        Object.entries(ships).forEach(([id, { style, status, stage }]) => {
+          const itemId = `ship-${id}`;
+          if (status === 'create') {
+            if (!items[itemId]) {
+              const self = id === this.socket.id ? ' self' : '';
+              const $ship = $(`<ship class="map_ship ship_${style}${self}"></ship>`);
+              items[itemId] = $ship;
+              $map.append($ship);
+            }
+          }
+
+          // Not doing anything after this if we don't know the ship.
+          if (!items[itemId]) return;
+
+          if (status === 'destroy') {
+            items[itemId].remove();
+            delete items[itemId];
+          } else if (status === 'boom') {
+            if (stage === 'middle') {
+              items[itemId].fadeOut('slow');
+            } else if (stage === 'complete') {
+              items[itemId].fadeIn('slow');
+            }
+          }
+        })
+      },
+      //shipbeaconstat: this.onBeaconsStatusUpdate,
+      projstat: (projectiles) => {
+        Object.entries(projectiles).forEach(([id, { status, pos, style, type }]) => {
+          if (type === 'mine') {
+            if (status == 'create'){
+              if (!items[id]) {
+                // console.log('Make mine');
+                const $mine = $(`<projectile class="map_mine ${style} mine"></projectile>`)
+                $mine.data('pos', pos);
+                items[id] = $mine;
+                $map.append($mine);
+              }
+            } else { // Destroy!
+              items[id].remove();
+              delete items[id];
+            }
+          }
+        });
+      },
+      //projpos: this.updateProjectilePos,
+      //powerupstat: this.onPowerUpStatusUpdate,
+      pnbitsstat: (pnbits) => {
+        Object.entries(pnbits).forEach(([id, { pos, cssClass, radius }]) => {
+          if (!items[id]) {
+            const $bit = $(`<pnbits class="map_pnbits ${cssClass}"></pnbits>`);
+            items[id] = $bit;
+            $bit.data('pos', { ...pos, radius });
+            $map.append($bit);
+          }
+        });
+        updateScale();
+      },
+      //disconnect: this.onDisconnect,
+    };
+
+    this.bindSocketEvents(binds);
   }
 
   initializeBody() {
@@ -77,7 +230,7 @@ export class ShipRenderer {
   }
 
   setDummyShip(d, id) {
-    const root = audio.rootPath; 
+    const root = audio.rootPath;
     this.dummyShips[id] = {
       element: $('ship#user_' + id),
       label: $('#label_' + id),
@@ -166,7 +319,7 @@ export class ShipRenderer {
       }
 
       this.$body.append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' ship-type-' + this.dummyShips[d.shipID].style + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
-      
+
       this.projectiles[id] = {
         element: $('#proj_' + id),
         type: d.type,
@@ -209,6 +362,10 @@ export class ShipRenderer {
       disconnect: this.onDisconnect,
     };
 
+    this.bindSocketEvents(binds);
+  }
+
+  bindSocketEvents(binds) {
     Object.entries(binds).forEach(([key, callback]) => {
       this.socket.socket.on(key, (d) => {
         callback.call(this, d);

@@ -20,6 +20,15 @@
       <h3>Currently Online</h3>
     </div>
 
+    <div id="map-controls">
+      <span>-</span>
+      <label>🔎 <em>4</em></label>
+      <span>+</span>
+    </div>
+    <div id="map-wrapper" class="window layer4">
+      <div id="map"></div>
+    </div>
+
     <div id="chat-main" class="chat window layer5 hidden">
       <ol></ol>
       <input type="text" />
@@ -50,7 +59,7 @@
         // Connect immediately...
         const mainSocket = new ShipSocket(`http://${location.host}/`);
         const renderer = new ShipRenderer(mainSocket, $('body'));
-        
+
         // Setup the Bot
         const botSocket = new ShipSocket(`http://${location.host}/`);
         const botController = new BotController(botSocket);
