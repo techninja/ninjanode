@@ -56,12 +56,14 @@
       import { ShipRenderer, ShipSocket, BotController } from './src/index.mjs' ;
 
       $(document).ready(() => {
+        const server = `${location.protocol}//${location.host}/`;
+
         // Connect immediately...
-        const mainSocket = new ShipSocket(`://${location.host}/`);
+        const mainSocket = new ShipSocket(server);
         const renderer = new ShipRenderer(mainSocket, $('body'));
 
         // Setup the Bot
-        const botSocket = new ShipSocket(`://${location.host}/`);
+        const botSocket = new ShipSocket(server);
         const botController = new BotController(botSocket);
 
         window.game = { mainSocket, renderer,  botSocket, botController };
