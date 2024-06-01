@@ -3,7 +3,7 @@
   <head>
     <title>ninjanode</title>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="resources/styles.css">
     <link rel="stylesheet" href="resources/forkme.css">
     <script src="libs/jquery.js"></script>
@@ -57,11 +57,11 @@
 
       $(document).ready(() => {
         // Connect immediately...
-        const mainSocket = new ShipSocket(`http://${location.host}/`);
+        const mainSocket = new ShipSocket(`://${location.host}/`);
         const renderer = new ShipRenderer(mainSocket, $('body'));
 
         // Setup the Bot
-        const botSocket = new ShipSocket(`http://${location.host}/`);
+        const botSocket = new ShipSocket(`://${location.host}/`);
         const botController = new BotController(botSocket);
 
         window.game = { mainSocket, renderer,  botSocket, botController };
