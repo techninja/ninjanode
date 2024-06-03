@@ -13,7 +13,9 @@ var sanitizer = require('sanitizer');
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server, {log: false});
+var { Server: SocketServer } = require('socket.io');
+var io = new SocketServer(server, {log: false});
+
 var ships = require('./ninjaroot/ninjaships.node.js');
 var lastData = {}; // Ensures duplicate data for positions isn't sent
 var lastShieldData = {}; // Ensures duplicate data for shield values isn't sent
