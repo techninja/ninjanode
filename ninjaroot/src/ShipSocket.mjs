@@ -3,6 +3,8 @@
  * communication and html element management.
  */
 
+import { io } from "/socket.io/socket.io.esm.min.js";
+
 export class ShipSocket {
   // Socket ID and base controller
   id;
@@ -11,7 +13,7 @@ export class ShipSocket {
   hasConnected = false;
 
   constructor(socketURL) {
-    this.socket = io.connect(socketURL, { reconnect: false });
+    this.socket = io(socketURL, { reconnect: false, transports: ["websocket"] });
     this.socket.on('connect', () => {
       // Shortcut to our session id
       this.id = this.socket.id;
