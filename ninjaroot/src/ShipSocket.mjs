@@ -7,7 +7,7 @@ export class ShipSocket {
   // Socket ID and base controller
   id;
   socket;
-  
+
   hasConnected = false;
 
   constructor(socketURL) {
@@ -19,8 +19,8 @@ export class ShipSocket {
     });
 
     // Bind disconnect.
-    this.socket.on('disconnect', function(){
-      // ???
+    this.socket.on('disconnect', (reason, details) => {
+      console.error(`Connection failed: ${reason}`, details);
     });
   }
 
