@@ -1,6 +1,6 @@
-import data from './data/names.json' assert { type: 'json' };
+import data from './data/names.json' with { type: 'json' };
 
-export const getName = () => 
+export const getName = () =>
   '🤖 ' +
   data.prefix[Math.floor(Math.random() * data.prefix.length)] +
   data.suffix[Math.floor(Math.random() * data.suffix.length)];

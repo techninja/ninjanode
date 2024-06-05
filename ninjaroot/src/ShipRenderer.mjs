@@ -3,7 +3,7 @@
  * Clientside abstraction to separate networking response logic from game rendering.
  */
 import ShipInput from './ShipInput.mjs';
-import audio from '../resources/audio/audio.json' assert { type: 'json' };
+import audio from '../resources/audio/audio.json' with { type: 'json' };
 
 const spanWrap = (msg) => `<span>${msg}</span>`;
 const gcd = (a, b) => (b == 0) ? a : gcd(b, a % b);
