@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "http2-express-bridge": "^1.0.7",
     "sanitizer": "~0.1.3",
     "socket.io": "^4.7.5"
   }

@@ -7,12 +7,22 @@
  *
  */
 
-var arguments = process.argv.splice(2);
-var port = arguments[0] ? arguments[0] : 4242;
 var sanitizer = require('sanitizer');
 var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
+const { readFileSync } = require('node:fs');
+var http2Express = require('http2-express-bridge');
+var http2 = require('node:http2');
+
+var arguments = process.argv.splice(2);
+var port = arguments[0] ? arguments[0] : 4242;
+
+// Setup Http2 Server
+var app = http2Express(express);
+var server = http2.createSecureServer({
+  key: readFileSync('certs/key.pem'),
+  cert: readFileSync('certs/fullchain.pem'),
+  allowHTTP1: true,
+}, app);
 var { Server: SocketServer } = require('socket.io');
 var io = new SocketServer(server, {log: false});
 
