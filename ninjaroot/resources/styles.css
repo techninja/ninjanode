@@ -14,6 +14,12 @@ body * {
                                    supported by Chrome and Opera */
 }
 
+/* Reset select for items we do care about */
+body #name,
+body form button {
+  user-select: all;
+}
+
 body {
    font-family: sans-serif;
    width: 100%;
@@ -240,7 +246,7 @@ div#debug {
   padding: 1em;
   right: 1em;
   top: 1em;
-  width: 200px;
+  width: 250px;
 }
 
 #players h3 {
@@ -259,11 +265,11 @@ div#debug {
 }
 
 #players player {
-  height: 0.8em;
+  height: 1.1em;
   position: relative;
   display: block;
   margin-top: 0.5em;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
@@ -275,7 +281,7 @@ div#debug {
 }
 
 #players player label {
-  max-width: 7.5em;
+  max-width: 55%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
