@@ -1,0 +1,8 @@
+services:
+  ninjaserver:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4242:4242
