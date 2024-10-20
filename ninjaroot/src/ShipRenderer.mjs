@@ -43,7 +43,7 @@ export class ShipRenderer {
     const $map = $('#map');
     const items = {};
     const mapScales = [0.01, 0.015, 0.025, 0.125, 0.25, 0.5];
-    let scaleIndex = 3;
+    let scaleIndex = 2;
     let scale = mapScales[scaleIndex];
 
     const getSelfMapOffset = ({ x, y }) => ({
