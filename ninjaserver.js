@@ -13,7 +13,9 @@ var sanitizer = require('sanitizer');
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server, {log: false});
+var { Server: SocketServer } = require('socket.io');
+var io = new SocketServer(server, {log: false});
+
 var ships = require('./ninjaroot/ninjaships.node.js');
 var lastData = {}; // Ensures duplicate data for positions isn't sent
 var lastShieldData = {}; // Ensures duplicate data for shield values isn't sent
@@ -107,7 +109,7 @@ io.sockets.on('connection', function (clientSocket) {
 
       // Send ship destroy and disconnect message
       var shipStat = {};
-      shipStat[id] = {status: 'destroy'};
+      shipStat[id] = {status: 'destroy' };
       emitSystemMessage(id, 'disconnect'); // Must send before delete...
       io.sockets.emit('shipstat', shipStat);
       ships.shipRemove(id);
@@ -181,6 +183,7 @@ io.sockets.on('connection', function (clientSocket) {
     out[data.target.id] = {
       status: 'hit',
       type: data.type,
+      source: data.source.id,
       weapon: data.weapon ? data.weapon.type : 'none'
     };
 

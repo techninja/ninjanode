@@ -919,3 +919,86 @@ pnbits.planet_a { background-image: url("graphics/pnbits/planet_a.gif"); }
 pnbits.planet_b { background-image: url("graphics/pnbits/planet_b.gif"); }
 pnbits.planet_c { background-image: url("graphics/pnbits/planet_c.gif"); }
 pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
+
+
+/** MINIMAP **/
+
+#map-wrapper {
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  width: 200px;
+  height: 200px;
+  border-radius: 115px;
+  border: 16px inset #1C6EA4;
+  box-sizing: border-box;
+  background-image: url('graphics/grid.png');
+  backdrop-filter: blur(5px);
+  background-color: rgba(150, 255, 151, 0.6);
+
+}
+
+#map {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#map .map_ship {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-image: none;
+  border-radius: 12px 0 12px 12px;
+  /* border: 1px solid; */
+  background-color: red;
+  /* outline: 3px dashed #fff; */
+}
+
+#map .map_pnbits {
+  position: absolute;
+  background-size: cover;
+}
+
+#map projectile.map_mine {
+  position: absolute;
+  background-size: cover;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+#map .map_ship.self {
+  background-color: #00F;
+}
+
+#map-controls {
+  position: fixed;
+  font-size: 1.2em;
+  bottom: 0;
+  right: 7px;
+  z-index: 140;
+}
+
+#map-controls label {
+  background-color: brown;
+  color: white;
+  position: absolute;
+  right: 65px;
+  bottom: 0;
+  padding: 3px;
+  display: inline-block;
+  width: 43px;
+  text-align: center;
+  border-radius: 22px;
+}
+
+#map-controls span {
+  background-color: white;
+  display: inline-block;
+  border-radius: 29px;
+  width: 22px;
+  text-align: center;
+  border: 7px inset #FF6EA4;
+  margin-left: 107px;
+  cursor: pointer;
+}

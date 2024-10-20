@@ -523,7 +523,8 @@ function _shipObject(options){
 
         options.hit({
           type: 'secondary collision',
-          target: data.source
+          target: data.source,
+          source: data.target,
         });
 
         data.source.shieldPowerStatus = 0;

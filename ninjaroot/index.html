@@ -2,13 +2,12 @@
 <html>
   <head>
     <title>ninjanode</title>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="resources/styles.css">
+    <link rel="stylesheet" href="resources/forkme.css">
     <script src="libs/jquery.js"></script>
     <script src="libs/jquery.spritely-0.6.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <script type="text/javascript" src="ninjaships.client.js"></script>
   </head>
   <body class="fixed space">
     <div id="debug" class="hidden">
@@ -18,6 +17,15 @@
 
     <div id="players" class="window layer5">
       <h3>Currently Online</h3>
+    </div>
+
+    <div id="map-controls">
+      <span>-</span>
+      <label>🔎 <em>4</em></label>
+      <span>+</span>
+    </div>
+    <div id="map-wrapper" class="window layer4">
+      <div id="map"></div>
     </div>
 
     <div id="chat-main" class="chat window layer5 hidden">
@@ -30,7 +38,7 @@
     </div>
 
     <div id="connection-window" class="window layer5 hidden">
-      <a href="https://github.com/techninja/ninjanode" title="ninjanode on GitHub"><img width="100" style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+      <a class="github-fork-ribbon" href="https://github.com/techninja/ninjanode" data-ribbon="Fork me on GitHub" title="Fork ninjanode on GitHub">Fork me on GitHub</a>
       <h1>ninjanode</h1>
       <aside>A fuly open source web browser space ship game, for the hell of it.</aside>
       <fieldset><legend>Pick a name and a ship...</legend>
@@ -43,6 +51,24 @@
         </form>
       </fieldset>
     </div>
+    <script type="module">
+      import { ShipRenderer, ShipSocket, BotController } from './src/index.mjs' ;
+
+      $(document).ready(() => {
+        const server = `${location.protocol}//${location.host}/`;
+
+        // Connect immediately...
+        const mainSocket = new ShipSocket(server);
+        const renderer = new ShipRenderer(mainSocket, $('body'));
+
+        // Setup the Bot
+        const botSocket = new ShipSocket(server);
+        const botController = new BotController(botSocket);
+
+        window.game = { mainSocket, renderer,  botSocket, botController };
+      });
+    </script>
+
     <script type="text/javascript">
       (function( $ ){
         $.fn.rotate = function(degree) {
@@ -52,32 +78,6 @@
           );
         };
       })( jQuery );
-
-      Math.gcd = function gcd (a, b) {
-        return (b == 0) ? a : Math.gcd(b, a%b);
-      }
-
-      $(document).ready(function() {
-        // Cheap iPad Detection
-        if (navigator.userAgent.match(/iPad/i) != null){
-          $('html').addClass('ipad');
-        }
-
-        // Connect immediately...
-        ShipSocket.initialize('http://' + window.location.host + '/');
-
-        // But only *in* game if data submitted
-        $('#connection-window button').click(function(){
-          // TODO: Validate form input
-          ShipSocket.join({
-            name: $('input.name').val(),
-            style: $('input[name=ship]:checked').val()
-          });
-
-          $('#connection-window').fadeOut('slow');
-          return false;
-        });
-      });
     </script>
   </body>
 </html>
