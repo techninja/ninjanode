@@ -189,6 +189,7 @@ io.sockets.on('connection', function (clientSocket) {
     const p = {};
     p[id + '_' + this.id] = {
       status: 'destroy',
+      type: this.type,
     };
     io.sockets.emit('projstat', p);
   }
