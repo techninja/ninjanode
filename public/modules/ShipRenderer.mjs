@@ -3,10 +3,11 @@
  * Clientside abstraction to separate networking response logic from game rendering.
  */
 import ShipInput from './ShipInput.mjs';
+import { shipTypes, projectileTypes } from '../data/index.mjs';
 import audio from '../resources/audio/audio.json' with { type: 'json' };
 
 const spanWrap = (msg) => `<span>${msg}</span>`;
-const gcd = (a, b) => (b == 0) ? a : gcd(b, a % b);
+const gcd = (a, b) => (b == 0 ? a : gcd(b, a % b));
 
 export class ShipRenderer {
   $body;
@@ -34,6 +35,7 @@ export class ShipRenderer {
     this.bindRenderers();
     this.initializeChat();
     this.initializeMap();
+    this.buildShipSelect();
   }
 
   initializeMap() {
@@ -47,8 +49,8 @@ export class ShipRenderer {
     let scale = mapScales[scaleIndex];
 
     const getSelfMapOffset = ({ x, y }) => ({
-      x: (mapWidth / 2) - (x * scale) - (blipWidth + 8),
-      y: (mapWidth / 2) - (y * scale) - (blipWidth + 8),
+      x: mapWidth / 2 - x * scale - (blipWidth + 8),
+      y: mapWidth / 2 - y * scale - (blipWidth + 8),
     });
 
     const updateScale = () => {
@@ -62,7 +64,7 @@ export class ShipRenderer {
         });
 
         if (radius) {
-          const size = (radius * 2) * scale;
+          const size = radius * 2 * scale;
           item.css({
             width: size,
             height: size,
@@ -111,9 +113,7 @@ export class ShipRenderer {
           const itemId = `ship-${id}`;
 
           if (items[itemId]) {
-            items[itemId]
-              .data('pos', {x, y})
-              .rotate(d - 45);
+            items[itemId].data('pos', { x, y }).rotate(d - 45);
           }
         });
 
@@ -125,7 +125,9 @@ export class ShipRenderer {
           if (status === 'create') {
             if (!items[itemId]) {
               const self = id === this.socket.id ? ' self' : '';
-              const $ship = $(`<ship class="map_ship ship_${style}${self}"></ship>`);
+              const $ship = $(
+                `<ship class="map_ship ship_${style}${self}"></ship>`
+              );
               items[itemId] = $ship;
               $map.append($ship);
             }
@@ -144,26 +146,31 @@ export class ShipRenderer {
               items[itemId].fadeIn('slow');
             }
           }
-        })
+        });
       },
       //shipbeaconstat: this.onBeaconsStatusUpdate,
       projstat: (projectiles) => {
-        Object.entries(projectiles).forEach(([id, { status, pos, style, type }]) => {
-          if (type === 'mine') {
-            if (status == 'create'){
-              if (!items[id]) {
-                // console.log('Make mine');
-                const $mine = $(`<projectile class="map_mine ${style} mine"></projectile>`)
-                $mine.data('pos', pos);
-                items[id] = $mine;
-                $map.append($mine);
+        Object.entries(projectiles).forEach(
+          ([id, { status, pos, style, type }]) => {
+            if (type === 'mine') {
+              if (status == 'create') {
+                if (!items[id]) {
+                  // console.log('Make mine');
+                  const $mine = $(
+                    `<projectile class="map_mine ${style} mine"></projectile>`
+                  );
+                  $mine.data('pos', pos);
+                  items[id] = $mine;
+                  $map.append($mine);
+                }
+              } else {
+                // Destroy!
+                items[id].remove();
+                delete items[id];
               }
-            } else { // Destroy!
-              items[id].remove();
-              delete items[id];
             }
           }
-        });
+        );
       },
       //projpos: this.updateProjectilePos,
       //powerupstat: this.onPowerUpStatusUpdate,
@@ -203,12 +210,12 @@ export class ShipRenderer {
   initializeChat() {
     // Chat notification manager, check every second.
     setInterval(() => {
-      $('#chat-notify li').each(function(){
+      $('#chat-notify li').each(function () {
         // Remove items older than 10 seconds
         if (new Date().getTime() - $(this).data('time') > 10000) {
-          $(this).hide('slow', function(){
+          $(this).hide('slow', function () {
             $(this).remove();
-            if (!$('#chat-notify li').length){
+            if (!$('#chat-notify li').length) {
               $('#chat-notify').fadeOut('slow');
             }
           });
@@ -231,6 +238,10 @@ export class ShipRenderer {
 
   setDummyShip(d, id) {
     const root = audio.rootPath;
+    const fireSounds = [
+      projectileTypes[shipTypes[d.style].weapons[0].type].sound,
+      projectileTypes[shipTypes[d.style].weapons[1].type].sound,
+    ];
     this.dummyShips[id] = {
       element: $('ship#user_' + id),
       label: $('#label_' + id),
@@ -240,8 +251,8 @@ export class ShipRenderer {
         boom: new Audio(`${root}/${audio.boom}`),
         thrust: new Audio(`${root}/${audio.thrust}`),
         fire: [
-          new Audio(`${root}/${audio['fire' + d.sounds[0]]}`),
-          new Audio(`${root}/${audio['fire' + d.sounds[1]]}`),
+          new Audio(`${root}/${audio['fire' + fireSounds[0]]}`),
+          new Audio(`${root}/${audio['fire' + fireSounds[1]]}`),
         ],
         hit: [
           new Audio(`${root}/${audio.hit1}`),
@@ -251,8 +262,8 @@ export class ShipRenderer {
         warning: new Audio(`${root}/${audio.warning}`),
         beacon: {
           set: new Audio(`${root}/${audio.spawnSet}`),
-          unset: new Audio(`${root}/${audio.spawnUnset}`)
-        }
+          unset: new Audio(`${root}/${audio.spawnUnset}`),
+        },
       },
       height: 64,
       width: 64,
@@ -289,10 +300,8 @@ export class ShipRenderer {
       $('<player>')
         .attr('class', 'ship-id-' + id)
         .append(
-          $('<ship>')
-            .addClass('ship_' + d.style),
-          $('<i>')
-            .addClass('score'),
+          $('<ship>').addClass('ship_' + d.style),
+          $('<i>').addClass('score'),
           $('<div>')
             .attr('title', id == myId ? "It's you!" : 'Follow me!')
             .addClass(id == myId ? 'circle' : 'arrow', 'compass'),
@@ -300,7 +309,6 @@ export class ShipRenderer {
         )
     );
   }
-
 
   destroyDummyShip(id) {
     $('.ship-id-' + id).remove();
@@ -313,18 +321,32 @@ export class ShipRenderer {
   createDummyProjectileElement(d, id) {
     // Only create locally if it doesn't exist.
     if (!this.projectiles[id]) {
-      if (!d.noSound){ // No sound play for bulk updates or the like
-        this.dummyShips[d.shipID].sound.fire[d.weaponID].volume = this._getDistanceVolume(d.shipID);
-        this.dummyShips[d.shipID].sound.fire[d.weaponID].play();
+      if (!d.noSound) {
+        // No sound play for bulk updates or the like
+        this.dummyShips[d.shipId].sound.fire[d.weaponId].volume =
+          this._getDistanceVolume(d.shipId);
+        this.dummyShips[d.shipId].sound.fire[d.weaponId].play();
       }
 
-      this.$body.append('<projectile id="proj_' + id + '" class="ship-id-' + d.shipID + ' ship-type-' + this.dummyShips[d.shipID].style + ' overlay init layer0 ' + d.style + ' ' + d.type + '"/>');
+      this.$body.append(
+        '<projectile id="proj_' +
+          id +
+          '" class="ship-id-' +
+          d.shipId +
+          ' ship-type-' +
+          this.dummyShips[d.shipId].style +
+          ' overlay init layer0 ' +
+          d.style +
+          ' ' +
+          d.type +
+          '"/>'
+      );
 
       this.projectiles[id] = {
         element: $('#proj_' + id),
         type: d.type,
-        pos: d.pos
-      }
+        pos: d.pos,
+      };
 
       // Send to update to ensure it gets drawn
       var u = {};
@@ -335,8 +357,7 @@ export class ShipRenderer {
 
   destroyDummyProjectile(id) {
     // Remove element and data
-    if (this.projectiles[id]){
-
+    if (this.projectiles[id]) {
       // Mines get a special explosion
       // TODO: allow for special animation for each weapon
       if (this.projectiles[id].type == 'mine') {
@@ -354,7 +375,6 @@ export class ShipRenderer {
       pos: this.updatePos,
       shipstat: this.onShipStatusUpdate,
       shipbeaconstat: this.onBeaconsStatusUpdate,
-      shiptypes: (d) => this.buildShipSelect(d),
       projstat: this.onProjectileStatusUpdate,
       projpos: this.updateProjectilePos,
       powerupstat: this.onPowerUpStatusUpdate,
@@ -379,8 +399,8 @@ export class ShipRenderer {
   // Handle ship position data (comes in as [id] : x, y, t, d)
   updatePos(data) {
     // Update each ship position in data
-    for (var id in data){
-      if (this.dummyShips[id]){
+    for (var id in data) {
+      if (this.dummyShips[id]) {
         var d = data[id];
         var s = this.dummyShips[id];
 
@@ -390,33 +410,33 @@ export class ShipRenderer {
         }
 
         // Move explosion sprite with ship
-        if (s.exploding){
-          $('#boom-'+ id).css({
-            left: s.pos.x + s.width / 2 - $('#boom-'+ id).width() / 2,
-            top: s.pos.y + s.height / 2 - $('#boom-'+ id).height() / 2
+        if (s.exploding) {
+          $('#boom-' + id).css({
+            left: s.pos.x + s.width / 2 - $('#boom-' + id).width() / 2,
+            top: s.pos.y + s.height / 2 - $('#boom-' + id).height() / 2,
           });
         }
 
-        s.pos = {x: d.x, y: d.y, d: d.d};
+        s.pos = { x: d.x, y: d.y, d: d.d };
 
         // Set ship element position and rotation
         s.element.rotate(s.pos.d);
         s.element.css({
           left: s.pos.x,
-          top: s.pos.y
+          top: s.pos.y,
         });
 
         s.sound.thrust.loop = true;
         s.sound.thrust.volume = this._getDistanceVolume(id) / 10;
 
         // Show thrust direction
-        if (d.t == 0){
-          s.element.removeClass('thrusting thrusting_back')
+        if (d.t == 0) {
+          s.element.removeClass('thrusting thrusting_back');
           s.sound.thrust.pause();
-        }else if (d.t == 1){
+        } else if (d.t == 1) {
           s.element.addClass('thrusting');
           s.sound.thrust.play();
-        }else if (d.t == 2){
+        } else if (d.t == 2) {
           s.element.addClass('thrusting_back');
           s.sound.thrust.play();
         }
@@ -424,11 +444,11 @@ export class ShipRenderer {
         // Set label position
         s.label.css({
           left: s.pos.x,
-          top: s.pos.y
+          top: s.pos.y,
         });
 
         // Our ship updated its position
-        if (id == this.socket.id){
+        if (id == this.socket.id) {
           // DEBUG
           $('#debug .pos span').html(s.pos.x + ', ' + s.pos.y);
 
@@ -436,33 +456,32 @@ export class ShipRenderer {
           this._centerView(id);
 
           // Update all compasses
-          for (var g in this.dummyShips){
+          for (var g in this.dummyShips) {
             this._updateCompass(g);
           }
-
-        } else { // Update This players compass!
-            this._updateCompass(id);
+        } else {
+          // Update This players compass!
+          this._updateCompass(id);
         }
-
       }
     }
   }
 
-   // Handle projectile position data (comes in as [id] : x, y, d)
+  // Handle projectile position data (comes in as [id] : x, y, d)
   updateProjectilePos(data) {
     // Update each projectile position in data
-    for (var id in data){
-      if (this.projectiles[id]){
+    for (var id in data) {
+      if (this.projectiles[id]) {
         var d = data[id];
         var s = this.projectiles[id];
-        s.pos = {x: d.x, y: d.y, d: d.d};
+        s.pos = { x: d.x, y: d.y, d: d.d };
 
         // Set ship element position and rotation
         s.element.removeClass('init');
         s.element.rotate(s.pos.d);
         s.element.css({
           left: s.pos.x,
-          top: s.pos.y
+          top: s.pos.y,
         });
       }
     }
@@ -470,10 +489,11 @@ export class ShipRenderer {
 
   // Create / remove local dummy render ships.
   onShipStatusUpdate(data) {
-    for (var id in data){
-      var d = data[id];
-      var ship = this.dummyShips[id];
-      if (d.status == 'create'){ // Create new ship object
+    for (var id in data) {
+      const d = data[id];
+      const ship = this.dummyShips[id];
+      if (d.status == 'create') {
+        // Create new ship object
         // Only create locally if it doesn't exist.
         if (!ship) {
           this.createDummyShipElements(d, id);
@@ -489,13 +509,19 @@ export class ShipRenderer {
           u = {};
           u[id] = d.spawnPoint;
           this.onBeaconsStatusUpdate(u, true);
+        } else {
+          // Ensure name and ship style type stay synced.
+          this.dummyShips[id].style = d.style;
+          this.dummyShips[id].name = d.name;
         }
-      } else if (d.status == 'destroy'){ // Destroy!
+      } else if (d.status == 'destroy') {
+        // Destroy!
         // Remove element, projectile elements, and data
-        if (ship){
+        if (ship) {
           this.destroyDummyShip(id);
         }
-      } else if (d.status == 'hit'){ // Hit
+      } else if (d.status == 'hit') {
+        // Hit
 
         // Play hit sounds
         // TODO: Genralize this to allow custom hit sounds for every weapon
@@ -510,18 +536,18 @@ export class ShipRenderer {
 
         // Make Shields pulse (css animation)
         ship.label.addClass('pulse');
-        setTimeout(function(){
+        setTimeout(function () {
           ship.label.removeClass('pulse');
         }, 300);
 
         // If someone exploded, we've got to update the scores!
         if (d.scores) {
-          for (var i in d.scores){
+          for (var i in d.scores) {
             this._updateScore(i, d.scores[i].kills, d.scores[i].deaths);
           }
         }
-
-      } else if (d.status == 'shield'){ // Shield status (up or down!)
+      } else if (d.status == 'shield') {
+        // Shield status (up or down!)
         // Shield amounts already rounded to nearest 5% by the server
         var oldValue = ship.label.data('shields');
 
@@ -557,7 +583,7 @@ export class ShipRenderer {
 
           // Red flash sticks around to make it obvious that this is BAD
           if (color != 'red') {
-            setTimeout(function(){
+            setTimeout(function () {
               ship.label.removeClass('flash-' + color);
             }, 500);
           }
@@ -569,10 +595,10 @@ export class ShipRenderer {
         }
 
         // Set data and class for width
-        ship.label.addClass('shield-'+d.amount).data('shields', d.amount);
-
-      } else if (d.status == 'boom'){ // BOOM!
-        if (d.stage == 'start'){
+        ship.label.addClass('shield-' + d.amount).data('shields', d.amount);
+      } else if (d.status == 'boom') {
+        // BOOM!
+        if (d.stage == 'start') {
           // Kill claxon
           ship.sound.warning.pause();
           ship.sound.warning.currentTime = 0;
@@ -585,13 +611,22 @@ export class ShipRenderer {
           // Fade out...
           ship.element.fadeOut();
           ship.label.fadeOut();
-        } else { // Complete!
-          // Fade back in
-          ship.element.fadeIn('slow');
-          ship.label.fadeIn('slow');
-          this._updateCompass(id);
+        } else {
+          // Complete!
+          // Validate ship type classes in case change after boom.
+          if (ship.element.is(`:not(.ship_${ship.style})`)) {
+            console.log('Rebuilding ship for change...');
+            console.log({ d, ship });
+            this.destroyDummyShip(id);
+          } else {
+            // Fade back in
+            ship.element.fadeIn('slow');
+            ship.label.fadeIn('slow');
+            this._updateCompass(id);
+          }
         }
-      } else if (d.status == 'powerup'){ // PowerUp! Add or remove classes
+      } else if (d.status == 'powerup') {
+        // PowerUp! Add or remove classes
         if (d.addClasses) {
           ship.element.addClass(d.addClasses);
           ship.label.addClass(d.addClasses);
@@ -609,39 +644,41 @@ export class ShipRenderer {
   onProjectileStatusUpdate(data) {
     for (var id in data) {
       var d = data[id];
-      if (d.status == 'create'){
+      if (d.status == 'create') {
         this.createDummyProjectileElement(d, id);
-      } else { // Destroy!
+      } else {
+        // Destroy!
         this.destroyDummyProjectile(id);
       }
     }
   }
 
-   // Handle power up status update
+  // Handle power up status update
   onPowerUpStatusUpdate(data) {
-    for (var id in data){
+    for (var id in data) {
       var p = data[id];
 
       // Power up orb not yet created, lets build it!
-      if (!this.powerUps[id]){
+      if (!this.powerUps[id]) {
         this.powerUps[id] = {
           element: $('<powerup>')
             .addClass(p.cssClass + ' overlay layer0')
             .attr('id', 'pu-' + id)
-            .css({left: p.pos.x, top: p.pos.y})
+            .css({ left: p.pos.x, top: p.pos.y }),
         };
 
         this.powerUps[id].element.appendTo('body');
         if (!p.visible) this.powerUps[id].element.hide();
-      } else if (!p.visible) { // It does exist, hide it if it should go
+      } else if (!p.visible) {
+        // It does exist, hide it if it should go
         this.powerUps[id].element.fadeOut();
         // TODO: add sound?
-      } else if (p.visible) { // It does exist, show it!
+      } else if (p.visible) {
+        // It does exist, show it!
         this.powerUps[id].element.fadeIn('slow');
       }
     }
   }
-
 
   // Handle chat / system messages
   onNewMessage(data) {
@@ -657,9 +694,10 @@ export class ShipRenderer {
     var nameTarget = '';
 
     // Set the name of the target in the message to the sip, if it's available
-    if (data.target && this.dummyShips[data.target]){
+    if (data.target && this.dummyShips[data.target]) {
       nameTarget = spanWrap(this.dummyShips[data.target].name);
-    } else { // Otherwise, use it as a literal
+    } else {
+      // Otherwise, use it as a literal
       nameTarget = data.target;
     }
 
@@ -668,10 +706,10 @@ export class ShipRenderer {
       disconnect: `${nameSource} disconnected`,
       projectile: `${nameSource} made ${nameTarget} explode`,
       collision: `${nameSource} slammed into ${nameTarget}`,
-      pnbcollision: `${nameSource} crashed into ${nameTarget}`
-    }
+      pnbcollision: `${nameSource} crashed into ${nameTarget}`,
+    };
 
-    if (data.type == 'system'){
+    if (data.type == 'system') {
       classType = 'sys';
       data.msg = sysMsgActions[data.action];
     } else if (data.type == 'chat') {
@@ -688,27 +726,34 @@ export class ShipRenderer {
     var $notifyList = $('#chat-notify ol');
 
     $chatList.append(out); // Add element
-    $chatList.find('li:last').hide().show('slow', function(){
-      $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll to bottom
-    });
+    $chatList
+      .find('li:last')
+      .hide()
+      .show('slow', function () {
+        $chatList[0].scrollTop = $chatList[0].scrollHeight; // Scroll to bottom
+      });
 
     // Manage notifications system =================================
     $notifyList.append(out);
-    $notifyList.find('li:last').data('time', new Date().getTime()).hide().show('slow');
+    $notifyList
+      .find('li:last')
+      .data('time', new Date().getTime())
+      .hide()
+      .show('slow');
 
     // Only show notify if chat window isn't visible
-    if (!$('#chat-main:visible').length){
+    if (!$('#chat-main:visible').length) {
       $('#chat-notify').fadeIn('slow');
     }
   }
 
   // Handle Clestial Body (PNBITS) status updates
   onPnbitsStatusUpdate(data) {
-    for (var id in data){
+    for (var id in data) {
       var p = data[id];
 
       // Object not created yet!
-      if (!this.pnbits[id]){
+      if (!this.pnbits[id]) {
         var size = p.radius * 2;
         this.pnbits[id] = {
           element: $('<pnbits>')
@@ -719,12 +764,13 @@ export class ShipRenderer {
               top: p.pos.y,
               width: size,
               height: size,
-              backgroundSize: size + 'px ' + size + 'px '
-            })
+              backgroundSize: size + 'px ' + size + 'px ',
+            }),
         };
 
         this.pnbits[id].element.appendTo('body');
-      } else { // It does exist, move it?
+      } else {
+        // It does exist, move it?
         // TODO: Add Move code
       }
     }
@@ -745,8 +791,8 @@ export class ShipRenderer {
           }
           s.beacon
             .css({
-              left: d.x + (s.width / 2) - 20,
-              top: d.y + (s.height / 2) - 20,
+              left: d.x + s.width / 2 - 20,
+              top: d.y + s.height / 2 - 20,
             })
             .show('fast');
         } else {
@@ -762,27 +808,29 @@ export class ShipRenderer {
   }
 
   onDisconnect() {
-    this.$body.append('<div class="window fixed disconnected">Connection to server lost, refresh the page to reconnect</div>');
+    this.$body.append(
+      '<div class="window fixed disconnected">Connection to server lost, refresh the page to reconnect</div>'
+    );
   }
 
   // Build out the main ship select menu and initialize the connect window
-  buildShipSelect(data) {
+  buildShipSelect() {
     if (this.shipSelectBuilt) {
       return; // This stuff should only happen once
     } else {
       this.shipSelectBuilt = true;
     }
 
-    var ships = data.ships;
+    const ships = shipTypes;
     var $menu = $('#connection-window .ship-select');
     var $selector = $('<div>').addClass('selector');
     $menu.before($selector);
 
     // Use the data sent from the server and build out the ship selection
-    for (var s in ships){
+    for (var s in ships) {
       var weapons = [
-        data.projectiles[ships[s].weapons[0].type],
-        data.projectiles[ships[s].weapons[1].type]
+        projectileTypes[ships[s].weapons[0].type],
+        projectileTypes[ships[s].weapons[1].type],
       ];
 
       var $item = $('<label>');
@@ -792,7 +840,7 @@ export class ShipRenderer {
           type: 'radio',
           name: 'ship',
           id: 'ship-' + s,
-          value: s
+          value: s,
         }),
         $('<ship>').addClass('ship_' + s)
       );
@@ -813,7 +861,9 @@ export class ShipRenderer {
           $('<tr>').append(
             $('<th>').text('Ship Stats').attr('colspan', 2),
             $('<td>').text(' ').addClass('spacer'),
-            $('<th>').text(weapons[0].name + ' (space)').attr('colspan', 2),
+            $('<th>')
+              .text(weapons[0].name + ' (space)')
+              .attr('colspan', 2),
             $('<th>').text(weapons[1].name + ' (m)')
           ),
           $('<tr>').append(
@@ -826,7 +876,9 @@ export class ShipRenderer {
           ),
           $('<tr>').append(
             $('<td>').text('Rotation Speed'),
-            $('<td>').text(Math.round((ships[s].rotationSpeed*16)/360*60) + ' rpm'),
+            $('<td>').text(
+              Math.round(((ships[s].rotationSpeed * 16) / 360) * 60) + ' rpm'
+            ),
             $('<td>').text(' ').addClass('spacer'),
             $('<td>').text('Speed'),
             $('<td>').text(weapons[0].speed),
@@ -834,27 +886,33 @@ export class ShipRenderer {
           ),
           $('<tr>').append(
             $('<td>').text('Acceleration'),
-            $('<td>').html(((ships[s].accelRate*16)*42.5).toFixed(2) + ' cps<sup>2</sup>'),
+            $('<td>').html(
+              (ships[s].accelRate * 16 * 42.5).toFixed(2) + ' cps<sup>2</sup>'
+            ),
             $('<td>').text(' ').addClass('spacer'),
             $('<td>').text('Pushback'),
-            $('<td>').text(weapons[0].knockBackForce*42),
-            $('<td>').text(weapons[1].knockBackForce*42)
+            $('<td>').text(weapons[0].knockBackForce * 42),
+            $('<td>').text(weapons[1].knockBackForce * 42)
           ),
           $('<tr>').append(
             $('<td>').text('Drag'),
-            $('<td>').html(((ships[s].drag*16)*42.5).toFixed(2) + ' cps<sup>2</sup>'),
+            $('<td>').html(
+              (ships[s].drag * 16 * 42.5).toFixed(2) + ' cps<sup>2</sup>'
+            ),
             $('<td>').text(' ').addClass('spacer'),
             $('<td>').text('Lifetime'),
-            $('<td>').text(weapons[0].life/1000 + ' sec'),
-            $('<td>').text(weapons[1].life/1000 + ' sec')
+            $('<td>').text(weapons[0].life / 1000 + ' sec'),
+            $('<td>').text(weapons[1].life / 1000 + ' sec')
           ),
           $('<tr>').append(
             $('<td>').text('Shield (' + ships[s].shield.max + ')'),
-            $('<td>').html('Regen Rate: ' + (ships[s].shield.regenRate*16) + ' jps'),
+            $('<td>').html(
+              'Regen Rate: ' + ships[s].shield.regenRate * 16 + ' jps'
+            ),
             $('<td>').text(' ').addClass('spacer'),
             $('<td>').text('Reload Rate'),
-            $('<td>').text(ships[s].weapons[0].fireRate/1000 + ' sec'),
-            $('<td>').text(ships[s].weapons[1].fireRate/1000 + ' sec')
+            $('<td>').text(ships[s].weapons[0].fireRate / 1000 + ' sec'),
+            $('<td>').text(ships[s].weapons[1].fireRate / 1000 + ' sec')
           )
         )
       );
@@ -863,51 +921,58 @@ export class ShipRenderer {
       $menu.append($item);
     }
 
-
     // Load previous preferences & bind change save
     var prefs = this._cookiePrefs();
-    if (prefs){
+    if (prefs) {
       $('#name').val(prefs.name);
       $('input[value=' + prefs.ship + ']').prop('checked', true);
-    } else { // default ship selection if no cookie
+    } else {
+      // default ship selection if no cookie
       $('input[type=radio]:first').prop('checked', true);
     }
 
     $('#connection-window input').change(() => {
       this._cookiePrefs({
         name: $('#name').val(),
-        ship: $('input[name=ship]:checked').val()
+        ship: $('input[name=ship]:checked').val(),
       });
-    })
+    });
 
     // Bind click for the the selector tabs
-    $('.selector ship').click(function(){
-      $('input#ship-' + $(this).data('type')).prop('checked', true).change();
-    })
+    $('.selector ship').click(function () {
+      $('input#ship-' + $(this).data('type'))
+        .prop('checked', true)
+        .change();
+    });
 
     // Bind to change to add / remove select class
-    $('input[name=ship]').change(function(){
-      if ($(this).is(':checked')){
+    $('input[name=ship]').change(function () {
+      if ($(this).is(':checked')) {
         $('#connection-window label, .selector ship').removeClass('selected');
-        $('.selector ship.ship_'+$(this).val()).addClass('selected');
+        $('.selector ship.ship_' + $(this).val()).addClass('selected');
         $(this).parent().addClass('selected');
 
-        $('.ship-select').animate({
-          scrollTop: $(this).parent()[0].offsetTop - $('.selector ship:first')[0].offsetTop - 43
-        }, 'slow');
+        $('.ship-select').animate(
+          {
+            scrollTop:
+              $(this).parent()[0].offsetTop -
+              $('.selector ship:first')[0].offsetTop -
+              43,
+          },
+          'slow'
+        );
       }
     });
 
     // Set the initially selected classes
     $('input[name=ship]:checked').parent().addClass('selected');
 
-
     // But only *in* game if data submitted
     $('#connection-window button').click(() => {
       // TODO: Validate form input
       this.socket.join({
         name: $('input.name').val(),
-        style: $('input[name=ship]:checked').val()
+        style: $('input[name=ship]:checked').val(),
       });
 
       $('#connection-window').fadeOut('slow');
@@ -917,7 +982,9 @@ export class ShipRenderer {
     // Show it and set focus!
     this.toggleConnectionWindow(true, () => {
       $('#connection-window').find('input')[0].focus();
-      $('.selector ship.ship_' + $('input[name=ship]:checked').val()).addClass('selected').click();
+      $('.selector ship.ship_' + $('input[name=ship]:checked').val())
+        .addClass('selected')
+        .click();
     });
   }
 
@@ -927,8 +994,8 @@ export class ShipRenderer {
 
     if (s) {
       // TODO: Support non-<body> $body.
-      const x = ($(window).width() / 2) - s.pos.x - 32;
-      const y = ($(window).height() / 2) - s.pos.y - 32;
+      const x = $(window).width() / 2 - s.pos.x - 32;
+      const y = $(window).height() / 2 - s.pos.y - 32;
 
       this.$body.css({
         margin: `${y}px ${x}px`,
@@ -940,21 +1007,28 @@ export class ShipRenderer {
   // Utility function for updating player compass directions
   _updateCompass(target) {
     const myId = this.socket.id;
-    if (this.dummyShips[myId] && target != myId){
+    if (this.dummyShips[myId] && target != myId) {
       var myPos = this.dummyShips[myId].pos;
       var t = this.dummyShips[target].pos;
       var angle = 0;
       var color = 'gray'; // Default far away
 
-      if (this.dummyShips[target].exploding){
+      if (this.dummyShips[target].exploding) {
         color = 'dead';
       } else {
-        var theta = Math.atan2((t.y + 32) - (myPos.y + 32), (t.x + 32) - (myPos.x + 32));
-        if (theta < 0) {theta += 2 * Math.PI;}
+        var theta = Math.atan2(
+          t.y + 32 - (myPos.y + 32),
+          t.x + 32 - (myPos.x + 32)
+        );
+        if (theta < 0) {
+          theta += 2 * Math.PI;
+        }
         angle = theta * (180 / Math.PI) + 90;
 
         // Change color based on distance
-        var dist = Math.sqrt( Math.pow(t.x - myPos.x, 2) + Math.pow(t.y - myPos.y, 2));
+        var dist = Math.sqrt(
+          Math.pow(t.x - myPos.x, 2) + Math.pow(t.y - myPos.y, 2)
+        );
 
         if (dist < 4000) {
           color = 'green';
@@ -980,13 +1054,18 @@ export class ShipRenderer {
   // Utility function to update the player scores
   _updateScore(id, kills, deaths) {
     var gcdVal = gcd(deaths, kills);
-    $('player.ship-id-' + id + ' i').attr('title',
-      kills + ' kills / ' + deaths + ' deaths | Ratio: ' +
-        (kills ? kills / gcdVal : 0) + ':' +
-        (deaths ? deaths  / gcdVal : 0)
-    ).text(
-      kills + '/' + deaths
-    );
+    $('player.ship-id-' + id + ' i')
+      .attr(
+        'title',
+        kills +
+          ' kills / ' +
+          deaths +
+          ' deaths | Ratio: ' +
+          (kills ? kills / gcdVal : 0) +
+          ':' +
+          (deaths ? deaths / gcdVal : 0)
+      )
+      .text(kills + '/' + deaths);
   }
 
   // Utility function to return a volume from 0 to 1 as a factor
@@ -1002,15 +1081,17 @@ export class ShipRenderer {
     var target = this.dummyShips[id].pos;
 
     // If after connection... get pos from current user location
-    if (this.dummyShips[this.socket.id]){
+    if (this.dummyShips[this.socket.id]) {
       source = this.dummyShips[this.socket.id].pos;
     }
 
-    var dist = Math.sqrt( Math.pow(target.x - source.x, 2) + Math.pow(target.y - source.y, 2));
+    var dist = Math.sqrt(
+      Math.pow(target.x - source.x, 2) + Math.pow(target.y - source.y, 2)
+    );
 
-    if (dist < minDistance){
+    if (dist < minDistance) {
       return 1;
-    } else if (dist > maxDistance){
+    } else if (dist > maxDistance) {
       return 0;
     }
 
@@ -1020,8 +1101,7 @@ export class ShipRenderer {
     dist = dist - minDistance;
 
     // Straight linear scale for now... though it should be log
-    return 1 - (dist / range);
-
+    return 1 - dist / range;
   }
 
   _animateBoom(id) {
@@ -1031,50 +1111,51 @@ export class ShipRenderer {
 
     var frame = {
       rate: 24,
-      number: 120
+      number: 120,
     };
 
     var ipad = false;
 
     // Use the old explosion if ipad
-    if ($('html').is('.ipad')){
+    if ($('html').is('.ipad')) {
       ipad = true;
       frame.rate = 20;
       frame.number = 56;
     }
 
     this.$body.append('<boom id="boom-' + id + '" class="layer5 overlay" />');
-    $('#boom-'+ id)
+    $('#boom-' + id)
       .css({
-        left: ship.pos.x + ship.width / 2 - $('#boom-'+ id).width() / 2,
-        top: ship.pos.y + ship.height / 2 - $('#boom-'+ id).height() / 2
+        left: ship.pos.x + ship.width / 2 - $('#boom-' + id).width() / 2,
+        top: ship.pos.y + ship.height / 2 - $('#boom-' + id).height() / 2,
       })
       .destroy()
       .sprite({
         fps: frame.rate,
         no_of_frames: frame.number,
-        on_frame: { // note - on_frame is an object not a function
-          19: function(obj) {
+        on_frame: {
+          // note - on_frame is an object not a function
+          19: function (obj) {
             if (!ipad) obj.spState(2);
           },
-          39: function(obj) {
+          39: function (obj) {
             if (!ipad) obj.spState(3);
           },
-          59: function(obj) {
+          59: function (obj) {
             if (!ipad) obj.spState(4);
           },
-          79: function(obj) {
+          79: function (obj) {
             if (!ipad) obj.spState(5);
           },
-          99: function(obj) {
+          99: function (obj) {
             if (!ipad) obj.spState(6);
-          }
+          },
         },
-        on_last_frame: function(obj) {
+        on_last_frame: function (obj) {
           obj.spStop();
           ship.exploding = false;
-          $('#boom-'+ id).remove();
-        }
+          $('#boom-' + id).remove();
+        },
       });
   }
 
@@ -1082,46 +1163,49 @@ export class ShipRenderer {
     var minePos = this.projectiles[projectileID].pos;
     var mineSize = 40;
 
-    this.$body.append('<boom id="mineboom-' + projectileID + '" class="layer5 overlay mine" />');
+    this.$body.append(
+      '<boom id="mineboom-' + projectileID + '" class="layer5 overlay mine" />'
+    );
     $('#mineboom-' + projectileID)
       .css({
         left: minePos.x - mineSize / 2 - 32,
-        top: minePos.y + mineSize / 2 - 64
+        top: minePos.y + mineSize / 2 - 64,
       })
       .destroy()
       .sprite({
         fps: 24,
         no_of_frames: 37,
-        on_last_frame: function(obj) {
+        on_last_frame: function (obj) {
           obj.spStop();
           $('#mineboom-' + projectileID).remove();
-        }
+        },
       });
   }
 
   _cookiePrefs(prefs) {
     var d = new Date();
 
-    if (prefs) { // Set Data
+    if (prefs) {
+      // Set Data
       d.setDate(d.getDate() + 100);
-      var data = escape(JSON.stringify(prefs)) + "; expires=" + d.toUTCString();
-      document.cookie = "ninjaprefs=" + data;
-    } else { // Get Data
-      var nameEQ = "ninjaprefs=";
+      var data = escape(JSON.stringify(prefs)) + '; expires=' + d.toUTCString();
+      document.cookie = 'ninjaprefs=' + data;
+    } else {
+      // Get Data
+      var nameEQ = 'ninjaprefs=';
       var ca = document.cookie.split(';');
-      for(var i=0;i < ca.length;i++) {
+      for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0)==' '){
-          c = c.substring(1,c.length);
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1, c.length);
         }
-        if (c.indexOf(nameEQ) == 0){
-          return JSON.parse(unescape(c.substring(nameEQ.length,c.length)));
+        if (c.indexOf(nameEQ) == 0) {
+          return JSON.parse(unescape(c.substring(nameEQ.length, c.length)));
         }
       }
       return false;
     }
   }
-
 }
 
 export default ShipRenderer;

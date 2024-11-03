@@ -2,8 +2,7 @@
  * @file ninjanode Ship type configuration.
  */
 
-module.exports = {
-
+export const shipTypes = {
   a: {
     name: 'Legionnaire',
     topSpeed: 21,
@@ -13,12 +12,12 @@ module.exports = {
     shield: {
       max: 100,
       regenRate: 0.3,
-      style: 'yellow'
+      style: 'yellow',
     },
     weapons: [
-      {type: 'biglaser', style: 'yellow', fireRate: 475},
-      {type: 'mine', style: 'yellow', fireRate: 5000}
-    ]
+      { type: 'biglaser', style: 'yellow', fireRate: 475 },
+      { type: 'mine', style: 'yellow', fireRate: 5000 },
+    ],
   },
 
   b: {
@@ -30,12 +29,12 @@ module.exports = {
     shield: {
       max: 100,
       regenRate: 0.2,
-      style: 'green'
+      style: 'green',
     },
     weapons: [
-      {type: 'energy', style: 'green', fireRate: 250},
-      {type: 'mine', style: 'green', fireRate: 5000}
-    ]
+      { type: 'energy', style: 'green', fireRate: 250 },
+      { type: 'mine', style: 'green', fireRate: 5000 },
+    ],
   },
 
   c: {
@@ -47,12 +46,12 @@ module.exports = {
     shield: {
       max: 100,
       regenRate: 0.3,
-      style: 'red'
+      style: 'red',
     },
     weapons: [
-      {type: 'laser', style: 'red', fireRate: 875},
-      {type: 'mine', style: 'red', fireRate: 5000}
-    ]
+      { type: 'laser', style: 'red', fireRate: 875 },
+      { type: 'mine', style: 'red', fireRate: 5000 },
+    ],
   },
 
   d: {
@@ -64,12 +63,12 @@ module.exports = {
     shield: {
       max: 75,
       regenRate: 0.4,
-      style: 'pink'
+      style: 'pink',
     },
     weapons: [
-      {type: 'biglaser', style: 'pink', fireRate: 375},
-      {type: 'mine', style: 'pink', fireRate: 5000}
-    ]
+      { type: 'biglaser', style: 'pink', fireRate: 375 },
+      { type: 'mine', style: 'pink', fireRate: 5000 },
+    ],
   },
 
   e: {
@@ -81,12 +80,12 @@ module.exports = {
     shield: {
       max: 125,
       regenRate: 0.3,
-      style: 'purple'
+      style: 'purple',
     },
     weapons: [
-      {type: 'duallaser', style: 'purple', fireRate: 325},
-      {type: 'mine', style: 'purple', fireRate: 5000}
-    ]
+      { type: 'duallaser', style: 'purple', fireRate: 325 },
+      { type: 'mine', style: 'purple', fireRate: 5000 },
+    ],
   },
 
   f: {
@@ -98,12 +97,12 @@ module.exports = {
     shield: {
       max: 200,
       regenRate: 0.2,
-      style: 'blue'
+      style: 'blue',
     },
     weapons: [
-      {type: 'energy', style: 'blue', fireRate: 325},
-      {type: 'mine', style: 'blue', fireRate: 5000}
-    ]
+      { type: 'energy', style: 'blue', fireRate: 325 },
+      { type: 'mine', style: 'blue', fireRate: 5000 },
+    ],
   },
 
   g: {
@@ -115,11 +114,11 @@ module.exports = {
     shield: {
       max: 75,
       regenRate: 0.2,
-      style: 'blue'
+      style: 'blue',
     },
     weapons: [
-      {type: 'fire', style: 'blue', fireRate: 25},
-      {type: 'mine', style: 'blue', fireRate: 5000}
-    ]
-  }
+      { type: 'fire', style: 'blue', fireRate: 25 },
+      { type: 'mine', style: 'blue', fireRate: 5000 },
+    ],
+  },
 };

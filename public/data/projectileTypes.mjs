@@ -2,9 +2,9 @@
  * @file ninjanode main weapon/projectile definitions.
  */
 
-module.exports = {
+export const projectileTypes = {
   laser: {
-    name: "Death Laser",
+    name: 'Death Laser',
     speed: 67.5,
     life: 2500, // How many ms till it dies?
     sound: 3,
@@ -12,14 +12,14 @@ module.exports = {
     size: {
       hitRadius: 20,
       width: 8,
-      height: 70
+      height: 70,
     },
     knockBackForce: 2,
-    yOffset: -30
+    yOffset: -30,
   },
 
   biglaser: {
-    name: "Super Laser",
+    name: 'Super Laser',
     damage: 40,
     speed: 60,
     life: 5000,
@@ -27,14 +27,14 @@ module.exports = {
     size: {
       hitRadius: 20,
       width: 8,
-      height: 70
+      height: 70,
     },
     knockBackForce: 4,
-    yOffset: -50
+    yOffset: -50,
   },
 
   duallaser: {
-    name: "Dual Laser",
+    name: 'Dual Laser',
     damage: 30,
     speed: 53,
     life: 2500,
@@ -42,14 +42,14 @@ module.exports = {
     size: {
       hitRadius: 25,
       width: 25,
-      height: 50
+      height: 50,
     },
     knockBackForce: 3,
-    yOffset: -50
+    yOffset: -50,
   },
 
-  energy : {
-    name: "Energy Orb",
+  energy: {
+    name: 'Energy Orb',
     damage: 30,
     speed: 20,
     life: 5500,
@@ -57,14 +57,14 @@ module.exports = {
     size: {
       hitRadius: 21,
       width: 64,
-      height: 64
+      height: 64,
     },
     knockBackForce: 6,
-    yOffset: -8
+    yOffset: -8,
   },
 
-  mine : {
-    name: "Mine",
+  mine: {
+    name: 'Mine',
     damage: 100,
     speed: 0,
     life: 30 * 60 * 1000, // 30 Minutes
@@ -72,14 +72,14 @@ module.exports = {
     size: {
       hitRadius: 20,
       width: 40,
-      height: 40
+      height: 40,
     },
     knockBackForce: 5,
-    yOffset: 0
+    yOffset: 0,
   },
 
-  fire : {
-    name: "Fire",
+  fire: {
+    name: 'Fire',
     damage: 40,
     speed: 35,
     life: 1000,
@@ -87,9 +87,9 @@ module.exports = {
     size: {
       hitRadius: 21,
       width: 64,
-      height: 64
+      height: 64,
     },
     knockBackForce: 10,
-    yOffset: -8
-  }
+    yOffset: -8,
+  },
 };

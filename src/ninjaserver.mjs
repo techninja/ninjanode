@@ -4,61 +4,62 @@
  * - Run with 'node ninjaserver.js [port]' replace "[port]" with HTTP port,
  * if run without argument, defaults to port 4242
  * - Once running, visit localhost:[port] and you'll be up and running!
- *
  */
 
-var arguments = process.argv.splice(2);
-var port = arguments[0] ? arguments[0] : 4242;
-var sanitizer = require('sanitizer');
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var { Server: SocketServer } = require('socket.io');
-var io = new SocketServer(server, {log: false});
+import sanitizer from 'sanitizer';
+import express from 'express';
+import { Server as SocketServer } from 'socket.io';
+import http from 'http';
 
-var ships = require('./ninjaroot/ninjaships.node.js');
-var lastData = {}; // Ensures duplicate data for positions isn't sent
-var lastShieldData = {}; // Ensures duplicate data for shield values isn't sent
-var lastPowerUpData = {}; // Ensures duplicate data for powerup values isn't sent
-var lastPowerUpOrbData = {}; // Ensures duplicate data for powerup orbs isn't sent
-var users = {count:0, playerCount:0} // ID keyed object to hold on to user data for stats
+import { Game } from './game/Game.mjs';
+
+const args = process.argv.splice(2);
+const port = args[0] ? args[0] : 4242;
+const app = express();
+const server = http.createServer(app);
+const io = new SocketServer(server, { log: false });
+
+let lastData = {}; // Ensures duplicate data for positions isn't sent
+const lastShieldData = {}; // Ensures duplicate data for shield values isn't sent
+const lastPowerUpData = {}; // Ensures duplicate data for powerup values isn't sent
+const lastPowerUpOrbData = {}; // Ensures duplicate data for powerup orbs isn't sent
+const users = { count: 0, playerCount: 0 }; // ID keyed object to hold on to user data for stats
+const game = new Game();
 
 // Start express hosting the site from "ninjaroot" folder on the given port
 server.listen(port);
-app.use("/", express.static(__dirname + '/ninjaroot'));
+app.use('/', express.static('public'));
 console.log('ninjanode server listening on localhost:' + port);
 
 // ninjanode API!
 // Return the entire users object, with players, names, kill/death stats etc.
-app.get("/users", function(req, res){
+app.get('/users', function (req, res) {
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(users));
 });
 
 // Return just the numbers of playing and lobby users
-app.get("/users/count", function(req, res){
+app.get('/users/count', function (req, res) {
   res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify(
-  {
-    lobby: users.count - users.playerCount,
-    players: users.playerCount
-  }
-  ));
+  res.send(
+    JSON.stringify({
+      lobby: users.count - users.playerCount,
+      players: users.playerCount,
+    })
+  );
 });
-
-
 
 // All websockets client connect/disconnect management
 io.sockets.on('connection', function (clientSocket) {
-  var id = clientSocket.id;
+  const id = clientSocket.id;
 
   users.count++;
   users[id] = {
     status: 'lobby',
     name: '',
     type: '',
-    started: new Date().getTime()
-  }
+    started: new Date().getTime(),
+  };
 
   // User is expected to 'connect' immediately, but isn't in game until they send
   // their name, ship type, etc.
@@ -67,52 +68,61 @@ io.sockets.on('connection', function (clientSocket) {
   // Send out list of existing ships & projectiles for this new client (gets sent to everyone)
   emitAllShips(id);
   emitAllProjectiles(id);
-  emitAllShipTypes(id)
   emitAllPowerUps(id);
   emitAllPNBITS(id);
 
   // This client's new ship data recieved! Create it.
   clientSocket.on('shipstat', function (data) {
-    if (data.status == 'create'){ // New ship!
-      users[id].status = 'playing';
-      users[id].deaths = 0;
-      users[id].kills = 0;
-      users.playerCount++;
+    if (data.status == 'create') {
+      // New ship!
 
+      // Populate data fields.
       data.name = sanitizer.escape(data.name);
-      console.log('Creating ship for user: ' + id + ': ' + data.name);
       data.style = sanitizer.sanitize(data.style);
       data.id = id;
-      data.hit = shipHit;
-      data.boom = shipBoom;
-      ships.addShip(data);
+
+      // Existing user, setting new ship.
+      if (users[id].status !== 'lobby') {
+        console.log('Changing ship type for user: ' + id + ': ' + data.name);
+        game.ships[id].changeStyle(data.style);
+      } else {
+        // New user ship.
+        console.log('Creating ship for user: ' + id + ': ' + data.name);
+
+        users.playerCount++;
+        users[id].deaths = 0;
+        users[id].kills = 0;
+        users[id].status = 'playing';
+        game.addShip({ ...data, callbacks: { hit: shipHit, boom: shipBoom } });
+
+        emitSystemMessage(id, 'join'); // Must send after create...
+      }
 
       // Only store verified and cleaned user input data
-      var s = ships.shipGet(id);
+      const s = game.ships[id];
       users[id].name = s.name;
-      users[id].type = s.data.name;
+      users[id].type = s.config.name;
 
       emitAllShips();
-      emitSystemMessage(id, 'join'); // Must send after create...
     }
   });
 
   // Client disconnected! Let everyone else know...
-  clientSocket.on('disconnect', function (){
+  clientSocket.on('disconnect', function () {
     console.log('Disconnected user: ' + id);
 
     users.count--; // Remove from total user count
 
     // Only if the connected socket was playing...
-    if (users[id].status == 'playing'){
+    if (users[id].status == 'playing') {
       users.playerCount--; // Remove from player count
 
       // Send ship destroy and disconnect message
-      var shipStat = {};
-      shipStat[id] = {status: 'destroy' };
+      const shipStat = {};
+      shipStat[id] = { status: 'destroy' };
       emitSystemMessage(id, 'disconnect'); // Must send before delete...
       io.sockets.emit('shipstat', shipStat);
-      ships.shipRemove(id);
+      game.removeShip(id);
     }
     delete users[id];
   });
@@ -122,73 +132,80 @@ io.sockets.on('connection', function (clientSocket) {
     io.sockets.emit('chat', {
       type: 'chat',
       msg: sanitizer.escape(data.msg),
-      id: id
+      id: id,
     });
   });
 
   // Keypresses from individual clients
   clientSocket.on('key', function (data) {
-    switch (data.c){
+    const ship = game.ships[id];
+    if (!ship) return;
+
+    switch (data.c) {
       case 'u': // Up (thrust forward)
-        ships.shipSetThrust(id, data.s ? 1 : 0); break;
+        ship.setThrust(data.s ? 1 : 0);
+        break;
       case 'd': // Down (thrust back)
-        ships.shipSetThrust(id, data.s ? -1 : 0); break;
+        ship.setThrust(data.s ? -1 : 0);
+        break;
       case 'l':
       case 'r': // Turn Right/Left
-        ships.shipSetTurn(id, data.s ? data.c : false); break;
+        ship.setTurn(data.s ? data.c : false);
+        break;
       case 'b': // Set/unset spawn beacon to current position
         if (data.s) {
-          ships.shipSetSpawn(id);
+          ship.setSpawn();
           emitBeaconUpdate(id);
         }
         break;
       case 's':
       case 'f': // Main/Secondary Fire
         if (data.s) {
-          ships.shipSetFire(id, projectileCreate, projectileDestroy, data.c == 'f' ? 0 : 1);
+          ship.fire(projectileCreate, projectileDestroy, data.c == 'f' ? 0 : 1);
         }
         break;
       case 'm': // Mouse / touch control
-        ships.shipSetTouch(id, data.s ? data.d : false);
+        ship.setTouch(data.s ? data.d : false);
     }
   });
 
   // Handle projectile creation emit
-  function projectileCreate(data){
-    var p = {};
-    p[id + '_' + data.id] = {
-      shipID: id,
+  function projectileCreate() {
+    const p = {};
+
+    p[id + '_' + this.id] = {
+      shipId: id,
       status: 'create',
-      pos: data.pos,
-      weaponID: data.weaponID,
-      style: data.style,
-      type: data.type
+      pos: this.pos,
+      weaponId: this.weaponId,
+      style: this.style,
+      type: this.type,
     };
     io.sockets.emit('projstat', p);
   }
 
   // Handle projectile destruction emit
-  function projectileDestroy(data){
-    var p = {};
-    p[id + '_' + data.id] = {
-      status: 'destroy'
+  function projectileDestroy() {
+    const p = {};
+    p[id + '_' + this.id] = {
+      status: 'destroy',
     };
     io.sockets.emit('projstat', p);
   }
 
   // Send out ship hit status
-  function shipHit(data){
-    var out = {};
-    var includeScore = false;
+  function shipHit(data) {
+    const out = {};
+    let includeScore = false;
     out[data.target.id] = {
       status: 'hit',
       type: data.type,
       source: data.source.id,
-      weapon: data.weapon ? data.weapon.type : 'none'
+      weapon: data.weapon ? data.weapon.type : 'none',
     };
 
     // Send a system message for death if ship to ship collision...
-    if (data.type == 'collision'){
+    if (data.type == 'collision') {
       users[data.source.id].deaths++;
       users[data.target.id].deaths++;
       includeScore = true;
@@ -196,14 +213,14 @@ io.sockets.on('connection', function (clientSocket) {
     }
 
     // Send a system message for death if ship to PNBITS collision
-    if (data.type == 'pnbcollision' && data.target.shieldPowerStatus == 0){
+    if (data.type == 'pnbcollision' && data.target.shieldPowerStatus == 0) {
       users[data.target.id].deaths++;
       includeScore = true;
       emitSystemMessage(data.target.id, data.type, data.source.name);
     }
 
     // ...or if target shield power is 0
-    if (data.type == 'projectile' && data.target.shieldPowerStatus == 0){
+    if (data.type == 'projectile' && data.target.shieldPowerStatus == 0) {
       users[data.source.id].kills++;
       users[data.target.id].deaths++;
       includeScore = true;
@@ -218,75 +235,66 @@ io.sockets.on('connection', function (clientSocket) {
       if (users[data.source.id]) {
         out[data.target.id].scores[data.source.id] = {
           kills: users[data.source.id].kills,
-          deaths: users[data.source.id].deaths
-        }
+          deaths: users[data.source.id].deaths,
+        };
       }
 
       out[data.target.id].scores[data.target.id] = {
         kills: users[data.target.id].kills,
-        deaths: users[data.target.id].deaths
-      }
+        deaths: users[data.target.id].deaths,
+      };
     }
 
     io.sockets.emit('shipstat', out);
   }
 
   // Send out ship exploding status
-  function shipBoom(data){
-    var out = {};
+  function shipBoom(data) {
+    const out = {};
     out[data.id] = {
       status: 'boom',
-      stage: data.stage
+      stage: data.stage,
     };
     io.sockets.emit('shipstat', out);
   }
-
 });
 
 // Send out shipstat for every ship to everyone (for creation)
-function emitAllShips(targetID){
-  var listShips = ships.shipGet();
-  var out = {};
+function emitAllShips(targetID) {
+  const listShips = game.ships;
+  const out = {};
 
-  for (var id in listShips){
+  for (const id in listShips) {
     out[id] = {
       status: 'create',
       name: listShips[id].name,
-      sounds: [listShips[id].data.weapons[0].data.sound, listShips[id].data.weapons[1].data.sound],
       style: listShips[id].style,
-      shieldStyle: listShips[id].data.shield.style,
+      shieldStyle: listShips[id].config.shield.style,
       pos: listShips[id].pos,
       spawnPoint: listShips[id].spawnPoint,
-      score: {kills: users[id].kills, deaths: users[id].deaths}
-    }
+      score: { kills: users[id].kills, deaths: users[id].deaths },
+    };
   }
 
-  if (Object.keys(out).length){
-    if (targetID){
+  if (Object.keys(out).length) {
+    if (targetID) {
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
     io.sockets.emit('shipstat', out);
   }
 }
 
-// Send out ship types to all users (really uneccesary)
-function emitAllShipTypes(id){
-  // TODO: Tweak/Add to data?
-  io.sockets.emit('shiptypes', ships.shipTypesGet());
-}
-
 // Send out positions for every new ship position to everyone
-function emitShipPositionUpdates(){
-  var positions = ships.getAllPos();
-  var out = {};
+function emitShipPositionUpdates() {
+  const positions = game.getAllPos();
+  const out = {};
 
   // Only add to the output json that has changed since last send
-  for (var id in positions){
+  for (const id in positions) {
     if (lastData[id] != positions[id].str) {
       lastData[id] = positions[id].str;
       out[id] = positions[id].pos;
       out[id].vel = positions[id].vel;
-
     }
   }
 
@@ -297,20 +305,23 @@ function emitShipPositionUpdates(){
 }
 
 // Send out shield amounts for every new shield change to everyone
-function emitShipShieldUpdates(){
-  var vessels = ships.shipGet();
-  var out = {};
+function emitShipShieldUpdates() {
+  const { ships } = game;
+  const out = {};
 
   // Only add to the output json that has changed since last send
-  for (var id in vessels){
-    var roundedPercent = (vessels[id].shieldPowerStatus * 100) / vessels[id].data.shield.max;
+  for (const id in ships) {
+    const ship = ships[id];
+    let roundedPercent =
+      (ship.shieldPowerStatus * 100) / ship.config.shield.max;
+
     roundedPercent = Math.round(roundedPercent / 5) * 5;
 
     if (lastShieldData[id] != roundedPercent) {
       lastShieldData[id] = roundedPercent;
       out[id] = {
         status: 'shield',
-        amount: roundedPercent
+        amount: roundedPercent,
       };
     }
   }
@@ -321,18 +332,17 @@ function emitShipShieldUpdates(){
   }
 }
 
-
 // Send out updates on powerup orb visibility
-function emitPowerUpOrbUpdates(){
-  var powerUps = ships.powerUpGet();
-  var out = {};
+function emitPowerUpOrbUpdates() {
+  const { powerups } = game;
+  const out = {};
 
   // Only add to the output json that has changed since last send
-  for (var i in powerUps){
-    if (lastPowerUpOrbData[i] != powerUps[i].visible) {
-      lastPowerUpOrbData[i] = powerUps[i].visible;
+  for (const i in powerups) {
+    if (lastPowerUpOrbData[i] != powerups[i].visible) {
+      lastPowerUpOrbData[i] = powerups[i].visible;
       out[i] = {
-        visible: powerUps[i].visible
+        visible: powerups[i].visible,
       };
     }
   }
@@ -344,19 +354,19 @@ function emitPowerUpOrbUpdates(){
 }
 
 // Send out updates on powerup use
-function emitShipPowerUpUpdates(){
-  var vessels = ships.shipGet();
-  var out = {};
+function emitShipPowerUpUpdates() {
+  const { ships } = game;
+  const out = {};
 
   // Only add to the output json that has changed since last send
-  for (var id in vessels){
-    var list = vessels[id].powerUps.active.join(' ');
+  for (const id in ships) {
+    const list = ships[id].powerups.active.join(' ');
     if (lastPowerUpData[id] != list) {
       lastShieldData[id] = list;
       out[id] = {
         status: 'powerup',
         addClasses: list,
-        removeClasses: vessels[id].powerUps.inactive.join(' ')
+        removeClasses: ships[id].powerups.inactive.join(' '),
       };
     }
   }
@@ -368,18 +378,18 @@ function emitShipPowerUpUpdates(){
 }
 
 // Send out positions for every projectile position to everyone
-function emitProjectilePositionUpdates(){
-  var projectiles = ships.getActiveProjectiles();
-  var out = {};
+function emitProjectilePositionUpdates() {
+  const projectiles = game.getActiveProjectiles();
+  const out = {};
 
   // Filter out non-moving projectiles, and simplify output to just positions
-  for (var i in projectiles) {
-    var proj = projectiles[i];
-    if (proj.data.speed){
+  for (const i in projectiles) {
+    const proj = projectiles[i];
+    if (proj.config.speed) {
       out[i] = {
-        x: Math.round(proj.pos.x * 100)/100,
-        y: Math.round(proj.pos.y * 100)/100,
-        d: proj.pos.d
+        x: Math.round(proj.pos.x * 100) / 100,
+        y: Math.round(proj.pos.y * 100) / 100,
+        d: proj.pos.d,
       };
     }
   }
@@ -389,11 +399,10 @@ function emitProjectilePositionUpdates(){
   }
 }
 
-
 // Send out positions for beacon updates
 function emitBeaconUpdate(id) {
-  var ship = ships.shipGet(id)
-  var out = {};
+  const ship = game.ships[id];
+  const out = {};
 
   out[id] = ship.spawnPoint;
 
@@ -401,26 +410,28 @@ function emitBeaconUpdate(id) {
 }
 
 // Send out projstat for every projectile to everyone (for creation on connect)
-function emitAllProjectiles(targetID){
-  var projectiles = ships.getActiveProjectiles();
-  var out = {};
+function emitAllProjectiles(targetID) {
+  const projectiles = game.getActiveProjectiles();
+  const out = {};
 
-  for (var id in projectiles){
-    var proj = projectiles[id];
+  for (const id in projectiles) {
+    const proj = projectiles[id];
 
     out[id] = {
-      shipID: proj.shipID,
+      shipId: proj.shipId,
       status: 'create',
       pos: proj.pos,
       noSound: true, // Don't play the sound for bulk create
-      weaponID: proj.weaponID,
+      weaponId: proj.weaponId,
       style: proj.style,
-      type: proj.type
-    }
+      type: proj.type,
+    };
   }
 
+  console.log('sending projectiles: ', Object.values(out).length);
+
   if (Object.keys(out).length) {
-    if (targetID){
+    if (targetID) {
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
     io.sockets.emit('projstat', out);
@@ -428,20 +439,20 @@ function emitAllProjectiles(targetID){
 }
 
 // Send out pustat for every powerup to everyone (for creation on connect)
-function emitAllPowerUps(targetID){
-  var powerUps = ships.getPowerUps();
-  var out = {};
+function emitAllPowerUps(targetID) {
+  const { powerups } = game;
+  const out = {};
 
-  for (var id in powerUps){
+  for (const id in powerups) {
     out[id] = {
-      pos: powerUps[id].pos,
-      cssClass: powerUps[id].type.id,
-      visible: powerUps[id].visible
-    }
+      pos: powerups[id].pos,
+      cssClass: powerups[id].type.id,
+      visible: powerups[id].visible,
+    };
   }
 
   if (Object.keys(out).length) {
-    if (targetID){
+    if (targetID) {
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
     io.sockets.emit('powerupstat', out);
@@ -449,20 +460,20 @@ function emitAllPowerUps(targetID){
 }
 
 // Send out pnbitsstat for every PNBITS to everyone (for creation on connect)
-function emitAllPNBITS(targetID){
-  var pnbits = ships.getPNBITS();
-  var out = {};
+function emitAllPNBITS(targetID) {
+  const { pnbits } = game;
+  const out = {};
 
-  for (var id in pnbits){
+  for (const id in pnbits) {
     out[id] = {
       pos: pnbits[id].pos,
-      cssClass: pnbits[id].type.cssClass,
-      radius: pnbits[id].radius
-    }
+      cssClass: pnbits[id].config.cssClass,
+      radius: pnbits[id].radius,
+    };
   }
 
   if (Object.keys(out).length) {
-    if (targetID){
+    if (targetID) {
       // TODO: Get targetID to send to JUST that socket.io ID!
     }
     io.sockets.emit('pnbitsstat', out);
@@ -470,20 +481,20 @@ function emitAllPNBITS(targetID){
 }
 
 // Send out system messages
-function emitSystemMessage(id, action, target){
-  var out = {
+function emitSystemMessage(id, action, target) {
+  const out = {
     type: 'system',
     action: action,
     id: id,
-    target: target
-  }
+    target: target,
+  };
   io.sockets.emit('chat', out);
 }
 
 // Main loop to run processing for all ship positions, collisions, projectiles
 // Also compiles changed positions and sends out to all clients
-setInterval(function(){
-  ships.processShipFrame();
+setInterval(function () {
+  game.processFrame();
   emitShipShieldUpdates();
   emitShipPositionUpdates();
   emitProjectilePositionUpdates();
@@ -491,8 +502,10 @@ setInterval(function(){
   emitPowerUpOrbUpdates();
 }, 60);
 
-
 // Every 5 Minutes clear out lastData cache (frees memory from disconnected clients)
-setInterval(function(){
-  lastData = {};
-}, 5 * 60 * 1000);
+setInterval(
+  function () {
+    lastData = {};
+  },
+  5 * 60 * 1000
+);

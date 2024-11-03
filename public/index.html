@@ -1,13 +1,20 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html>
   <head>
     <title>ninjanode</title>
-    <link href='https://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="resources/styles.css">
-    <link rel="stylesheet" href="resources/forkme.css">
+    <link
+      href="https://fonts.googleapis.com/css?family=Black+Ops+One"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="resources/styles.css" />
+    <link rel="stylesheet" href="resources/forkme.css" />
     <script src="libs/jquery.js"></script>
     <script src="libs/jquery.spritely-0.6.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
   </head>
   <body class="fixed space">
     <div id="debug" class="hidden">
@@ -38,21 +45,34 @@
     </div>
 
     <div id="connection-window" class="window layer5 hidden">
-      <a class="github-fork-ribbon" href="https://github.com/techninja/ninjanode" data-ribbon="Fork me on GitHub" title="Fork ninjanode on GitHub">Fork me on GitHub</a>
+      <a
+        class="github-fork-ribbon"
+        href="https://github.com/techninja/ninjanode"
+        data-ribbon="Fork me on GitHub"
+        title="Fork ninjanode on GitHub"
+        >Fork me on GitHub</a
+      >
       <h1>ninjanode</h1>
-      <aside>A fuly open source web browser space ship game, for the hell of it.</aside>
-      <fieldset><legend>Pick a name and a ship...</legend>
+      <aside>
+        A fuly open source web browser space ship game, for the hell of it.
+      </aside>
+      <fieldset>
+        <legend>Pick a name and a ship...</legend>
         <form>
           <button>Join the Fun &gt;&gt;</button>
           <label for="name">Nickname:</label>
-          <input type="text" class="name" value="NinjaNoob" id="name"/>
+          <input type="text" class="name" value="NinjaNoob" id="name" />
 
           <div class="ship-select"></div>
         </form>
       </fieldset>
     </div>
     <script type="module">
-      import { ShipRenderer, ShipSocket, BotController } from './src/index.mjs' ;
+      import {
+        ShipRenderer,
+        ShipSocket,
+        BotController,
+      } from './modules/index.mjs';
 
       $(document).ready(() => {
         const server = `${location.protocol}//${location.host}/`;
@@ -62,22 +82,25 @@
         const renderer = new ShipRenderer(mainSocket, $('body'));
 
         // Setup the Bot
-        const botSocket = new ShipSocket(server);
-        const botController = new BotController(botSocket);
+        // const botSocket = new ShipSocket(server);
+        // const botController = new BotController(botSocket);
 
-        window.game = { mainSocket, renderer,  botSocket, botController };
+        // const botSocket2 = new ShipSocket(server);
+        // const botController2 = new BotController(botSocket2);
+
+        window.game = { mainSocket, renderer };
       });
     </script>
 
     <script type="text/javascript">
-      (function( $ ){
-        $.fn.rotate = function(degree) {
+      (function ($) {
+        $.fn.rotate = function (degree) {
           this.css({
             WebkitTransform: 'rotate(' + degree + 'deg)',
-            'transform': 'rotate(' + degree + 'deg)'}
-          );
+            transform: 'rotate(' + degree + 'deg)',
+          });
         };
-      })( jQuery );
+      })(jQuery);
     </script>
   </body>
 </html>
