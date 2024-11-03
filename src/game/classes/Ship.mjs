@@ -33,6 +33,7 @@ export class Ship extends DynamicObject {
     super(options);
     this.name = options.name;
     this.setStyle(options.style);
+    this.pos = this.getSpawnPos();
     this.bindpowerups();
   }
 
