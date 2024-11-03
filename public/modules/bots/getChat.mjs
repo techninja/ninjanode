@@ -10,7 +10,6 @@ const getChat = (action, target) => {
   }
 
   return msg;
-}
-
+};
 
 export default getChat;

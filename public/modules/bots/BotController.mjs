@@ -8,7 +8,7 @@ import BotControllerBase from './BotControllerBase.mjs';
 
 /**
  * Plane Flight Notes: Nov 2023
- * 
+ *
  * Behavior loop:
  * - Pick target if none
  * - Turn towards selected target
@@ -21,11 +21,11 @@ import BotControllerBase from './BotControllerBase.mjs';
  * - Set behavior state with Emoji? (patrolling, seeking, happy, etc)
  * - Defensive option, same team?
  * - Quake style chat for events
- *  
+ *
  * General todo:
  * - UI renderer component (renderer takes )
- * 
- * 
+ *
+ *
  */
 
 export class BotController extends BotControllerBase {
@@ -49,9 +49,12 @@ export class BotController extends BotControllerBase {
   }
 
   mine() {
-    this.socket.key({
-      type: 'keydown'
-    }, 'm');
+    this.socket.key(
+      {
+        type: 'keydown',
+      },
+      'm'
+    );
   }
 
   goALittleForward() {
@@ -132,7 +135,7 @@ export class BotController extends BotControllerBase {
 
     this.goALittleForward();
 
-    return ;
+    return;
   }
 
   thoughtTick() {
@@ -144,9 +147,7 @@ export class BotController extends BotControllerBase {
     } else {
       actions.move = this.getMoveToTarget(this.target);
     }
-    
   }
-
 }
 
 export default BotController;

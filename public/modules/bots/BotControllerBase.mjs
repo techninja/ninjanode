@@ -16,7 +16,7 @@ export class BotControllerBase {
     f: false,
     s: false,
     b: false,
-  }
+  };
   target;
 
   constructor(socket) {
@@ -26,14 +26,13 @@ export class BotControllerBase {
   }
 
   initializeBindings() {
-
     // TODO: Setup binds to fill/update the base object with streamed
-    // data from sockets, anything it might want. 
+    // data from sockets, anything it might want.
     const binds = {
       // chat: this.onNewMessage,
       pos: this.onUpdatePos,
       shipstat: this.onShipStatusUpdate,
-      connect: () => this.id = this.socket.id,
+      connect: () => (this.id = this.socket.id),
       // shipbeaconstat: this.onBeaconsStatusUpdate,
       // shiptypes: (d) => this.buildShipSelect(d),
       // projstat: this.onProjectileStatusUpdate,
@@ -65,8 +64,9 @@ export class BotControllerBase {
           break;
         case 'boom':
           if (d.stage === 'start') this.setShipData(id, { exploding: true });
-          if (d.stage === 'complete') this.setShipData(id, { exploding: false });
-          
+          if (d.stage === 'complete')
+            this.setShipData(id, { exploding: false });
+
           if (this.target === id && d.stage === 'start') {
             console.log('Death', id, this.target, d);
             this.onTargetBoom();
@@ -76,7 +76,7 @@ export class BotControllerBase {
           if (this.target === id) {
             this.onTargetHit(d);
           }
-      
+
         default:
           break;
       }
@@ -151,7 +151,11 @@ export class BotControllerBase {
     const targetPos = this.ships[this.target].pos;
     const mePos = this.me.pos;
 
-    return Math.round(Math.sqrt(Math.pow(targetPos.x - mePos.x, 2) + Math.pow(targetPos.y - mePos.y, 2)));
+    return Math.round(
+      Math.sqrt(
+        Math.pow(targetPos.x - mePos.x, 2) + Math.pow(targetPos.y - mePos.y, 2)
+      )
+    );
   }
 
   isPointingAtTarget() {
@@ -168,7 +172,10 @@ export class BotControllerBase {
   getAngleToTarget() {
     const targetPos = this.ships[this.target].pos;
     const mePos = this.me.pos;
-    const targetAngle = Math.atan2(targetPos.y - mePos.y, targetPos.x - mePos.x);
+    const targetAngle = Math.atan2(
+      targetPos.y - mePos.y,
+      targetPos.x - mePos.x
+    );
     let targetAngleDeg = targetAngle * (180 / Math.PI) + 90;
 
     if (targetAngleDeg < 0) {
@@ -189,10 +196,13 @@ export class BotControllerBase {
     this.keyState[command] = state;
 
     // Set keydown/keyup with change.
-    this.socket.key({
-      type: state ? 'keydown' : 'keyup',
-    }, command);
-  } 
+    this.socket.key(
+      {
+        type: state ? 'keydown' : 'keyup',
+      },
+      command
+    );
+  }
 }
 
 export default BotControllerBase;
