@@ -9,12 +9,22 @@
   "main": "ninjaserver.js",
   "author": "techninja",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node ninjaserver"
+    "start": "node --env-file=.env src/ninjaserver.mjs"
   },
   "dependencies": {
     "express": "^4.19.2",
     "sanitizer": "~0.1.3",
     "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "prettier-eslint": "^16.3.0"
   }
 }
