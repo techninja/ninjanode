@@ -429,8 +429,6 @@ function emitAllProjectiles(targetID) {
     };
   }
 
-  console.log('sending projectiles: ', Object.values(out).length);
-
   if (Object.keys(out).length) {
     if (targetID) {
       // TODO: Get targetID to send to JUST that socket.io ID!
