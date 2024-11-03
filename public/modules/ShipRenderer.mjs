@@ -662,8 +662,8 @@ export class ShipRenderer {
       if (!this.powerUps[id]) {
         this.powerUps[id] = {
           element: $('<powerup>')
-            .addClass(p.cssClass + ' overlay layer0')
-            .attr('id', 'pu-' + id)
+            .addClass(`${p.cssClass} overlay layer0`)
+            .attr('id', id)
             .css({ left: p.pos.x, top: p.pos.y }),
         };
 

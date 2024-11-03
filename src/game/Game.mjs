@@ -161,7 +161,7 @@ export class Game {
                 source.pos,
                 source.width / 2,
                 pow.pos,
-                pow.type.size / 2
+                pow.width / 2
               )
             ) {
               pow.activate(source);

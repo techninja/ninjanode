@@ -445,7 +445,7 @@ function emitAllPowerUps(targetID) {
   for (const id in powerups) {
     out[id] = {
       pos: powerups[id].pos,
-      cssClass: powerups[id].type.id,
+      cssClass: powerups[id].type,
       visible: powerups[id].visible,
     };
   }

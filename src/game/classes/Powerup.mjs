@@ -12,14 +12,14 @@ export class Powerup extends SimpleObject {
       powerupTypes.find(({ id }) => id == options.type) ||
       getWeightedRandomItem(powerupTypes);
 
-    super({ ...options, config });
+    super({ ...options, config, width: config.size, height: config.size });
     this.type = config.id;
   }
 
   // Activate the powerup for a given ship!
   activate(ship) {
     this.visible = false;
-    const pType = this.id;
+    const pType = this.type;
 
     // has this user seen this powerup before?
     if (ship.powerups.list[pType] && ship.powerups.list[pType].active) {
