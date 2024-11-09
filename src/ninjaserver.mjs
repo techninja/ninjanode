@@ -372,7 +372,7 @@ function emitShipPowerUpUpdates() {
   // Only add to the output json that has changed since last send
   for (const id in ships) {
     const list = ships[id].powerups.active.join(' ');
-    if (lastPowerUpData[id] != list) {
+    if (lastPowerUpData[id] != list && list) {
       lastShieldData[id] = list;
       out[id] = {
         status: 'powerup',
