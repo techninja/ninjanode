@@ -5,6 +5,7 @@
 import getChat from './getChat.mjs';
 import getName from './getName.mjs';
 import BotControllerBase from './BotControllerBase.mjs';
+import { shipTypes } from '../../data/shipTypes.mjs';
 
 /**
  * Plane Flight Notes: Nov 2023
@@ -35,10 +36,12 @@ export class BotController extends BotControllerBase {
     super(socket);
 
     // Bot joins immediately for now.
+    const types = Object.keys(shipTypes);
+    const style = types[Math.floor(Math.random() * types.length)];
     this.socket.socket.on('connect', () => {
       this.socket.join({
         name: name ?? getName(),
-        style: 'b',
+        style,
       });
     });
 
