@@ -19,12 +19,21 @@
   <body>
     <div id="framerate"></div>
     <canvas id="stage" width="400" height="400"></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "pixi.js": "/pixi/pixi.mjs",
+          "pixi-viewport": "/pixi-viewport/pixi_viewport.js",
+          "data": "/data/index.mjs",
+          "emitters": "/data/emitters/index.mjs",
+          "pixirender": "/modules/pixi/index.mjs",
+          "modules": "/modules/index.mjs"
+        }
+      }
+    </script>
     <script type="module">
-      import {
-        ShipSocket,
-        PixiRenderer,
-        BotController,
-      } from './modules/index.mjs';
+      import { Viewport } from 'pixi-viewport';
+      import { ShipSocket, PixiRenderer, BotController } from 'modules';
       const server = `${location.protocol}//${location.host}/`;
 
       // Connect immediately...

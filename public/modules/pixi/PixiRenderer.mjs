@@ -6,7 +6,7 @@
 // Assume PIXI global namespace.
 // eslint-disable-next-line no-undef
 const { Application } = PIXI;
-import { PixiShip } from './pixi/index.mjs';
+import { PixiShip } from 'pixirender';
 
 export class PixiRenderer {
   app;

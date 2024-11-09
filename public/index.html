@@ -14,6 +14,18 @@
     <script src="/pixi/pixi.js"></script>
     <script src="/pixi-filters/pixi-filters.js"></script>
     <script src="/particle-emitter/dist/particle-emitter.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "pixi.js": "/pixi/pixi.mjs",
+          "pixi-viewport": "/pixi-viewport/pixi_viewport.js",
+          "data": "/data/index.mjs",
+          "emitters": "/data/emitters/index.mjs",
+          "pixirender": "/modules/pixi/index.mjs",
+          "modules": "/modules/index.mjs"
+        }
+      }
+    </script>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
@@ -71,11 +83,7 @@
       </fieldset>
     </div>
     <script type="module">
-      import {
-        ShipRenderer,
-        ShipSocket,
-        BotController,
-      } from './modules/index.mjs';
+      import { ShipRenderer, ShipSocket, BotController } from 'modules';
 
       $(document).ready(() => {
         const server = `${location.protocol}//${location.host}/`;

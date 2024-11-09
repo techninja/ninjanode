@@ -4,4 +4,4 @@ export * from './ShipRenderer.mjs';
 export * from './ShipSocket.mjs';
 export * from './ShipInput.mjs';
 export * from '../data/shipTypes.mjs';
-export * from './PixiRenderer.mjs';
+export * from 'pixirender';

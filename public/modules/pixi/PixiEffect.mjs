@@ -4,7 +4,7 @@
  *   and their logic.
  */
 
-import { emitters } from '../../data/emitters/index.mjs';
+import { emitters } from 'emitters';
 
 const {
   Assets,

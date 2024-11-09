@@ -3,8 +3,8 @@
  *   Manages sprite and other effect abstractions within the app stage
  */
 
-import { shipTypes } from '../index.mjs';
-import { PixiEffect } from './PixiEffect.mjs';
+import { shipTypes } from 'data';
+import { PixiEffect } from 'pixirender';
 
 // Assume PIXI global namespace.
 const {
