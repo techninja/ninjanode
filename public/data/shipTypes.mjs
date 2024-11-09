@@ -9,6 +9,14 @@ export const shipTypes = {
     accelRate: 0.375,
     drag: 0.09,
     rotationSpeed: 9,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 100,
       regenRate: 0.3,
@@ -26,6 +34,14 @@ export const shipTypes = {
     accelRate: 0.35,
     drag: 0.03,
     rotationSpeed: 8,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 100,
       regenRate: 0.2,
@@ -43,6 +59,20 @@ export const shipTypes = {
     accelRate: 0.9,
     drag: 0.08,
     rotationSpeed: 15,
+    thrusterPositions: {
+      front: [
+        { angle: -130, distance: 25 },
+        { angle: -40, distance: 25 },
+      ],
+      rear: [
+        { angle: 60, distance: 35 },
+        { angle: 110, distance: 35 },
+      ],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 100,
       regenRate: 0.3,
@@ -60,6 +90,14 @@ export const shipTypes = {
     accelRate: 0.375,
     drag: 0.03,
     rotationSpeed: 15,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 75,
       regenRate: 0.4,
@@ -77,6 +115,14 @@ export const shipTypes = {
     accelRate: 0.435,
     drag: 0.03,
     rotationSpeed: 18,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 125,
       regenRate: 0.3,
@@ -94,6 +140,14 @@ export const shipTypes = {
     accelRate: 1.2,
     drag: 0.03,
     rotationSpeed: 13,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 200,
       regenRate: 0.2,
@@ -111,6 +165,14 @@ export const shipTypes = {
     accelRate: 1.1,
     drag: 0.06,
     rotationSpeed: 10,
+    thrusterPositions: {
+      front: [{ angle: -90, distance: 40 }],
+      rear: [{ angle: 90, distance: 35 }],
+    },
+    size: {
+      width: 64,
+      height: 64,
+    },
     shield: {
       max: 75,
       regenRate: 0.2,
