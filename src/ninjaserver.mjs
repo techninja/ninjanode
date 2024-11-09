@@ -24,11 +24,21 @@ const lastShieldData = {}; // Ensures duplicate data for shield values isn't sen
 const lastPowerUpData = {}; // Ensures duplicate data for powerup values isn't sent
 const lastPowerUpOrbData = {}; // Ensures duplicate data for powerup orbs isn't sent
 const users = { count: 0, playerCount: 0 }; // ID keyed object to hold on to user data for stats
+
+// Ninjanode game simulation controller class.
 const game = new Game();
 
-// Start express hosting the site from "ninjaroot" folder on the given port
+// Start express hosting the site from "public" folder on the given port
 server.listen(port);
 app.use('/', express.static('public'));
+
+// Give access to local pixi js build.
+app.use('/pixi', express.static('node_modules/pixi.js/dist'));
+app.use('/pixi-filters', express.static('node_modules/pixi-filters/dist'));
+app.use(
+  '/particle-emitter',
+  express.static('node_modules/@barvynkoa/particle-emitter')
+);
 console.log('ninjanode server listening on localhost:' + port);
 
 // ninjanode API!
