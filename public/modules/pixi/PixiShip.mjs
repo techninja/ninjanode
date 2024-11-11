@@ -73,24 +73,31 @@ export class PixiShip {
     this.container.pivot.y = height / 2;
 
     // Add the ship to the scene we are building
-    this.app.stage.addChild(this.container);
+    options.parent.addChild(this.container);
 
     // Init thrusters.
     this.initThrusters();
 
-    // Add a filter!
-    this.addFilter('motionblur', new MotionBlurFilter());
+    // Add motion blur
+    if (options.blur) {
+      this.addFilter('motionblur', new MotionBlurFilter());
+    }
 
+    const fps = 120;
+    const serverFps = 1000 / 60;
     this.app.ticker.add(() => {
-      // TODO: Fake glide between updates
-      // this.setPos({
-      //   x: this.pos.x - this.velocity.x * 0.1,
-      //   y: this.pos.y + this.velocity.y * 0.1,
-      //   d: this.pos.d,
-      // });
+      // Glide between vector velocity length updates.
+      // TODO: move to absolute time based calculation for better accuracy.
+      this.container.updateTransform({
+        x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
+        y: this.container.y - this.velocity.y * ((1 / fps) * serverFps),
+      });
     });
 
     this.setPos(pos);
+
+    // Init callback.
+    if (options.onInit) options.onInit();
   }
 
   addFilter(name, filter) {
@@ -159,7 +166,7 @@ export class PixiShip {
         app: this.app,
         type: 'thruster',
         pos: this.pos,
-        parent: this.app.stage,
+        parent: this.container.parent,
       });
 
     this.emitters.thrusters = {
@@ -190,8 +197,10 @@ export class PixiShip {
 
     if (vel) this.setVel(vel);
 
-    this.container.x = x;
-    this.container.y = y;
+    // Reset position once no velocity
+    if (vel?.l === 0) {
+      this.container.updateTransform({ x, y });
+    }
     this.container.rotation = degToRad(d);
   }
 
@@ -203,8 +212,8 @@ export class PixiShip {
 
     if (this.filters['motionblur']) {
       this.filters['motionblur'].velocity = {
-        x: this.velocity.x * 0.5,
-        y: this.velocity.y * 0.5,
+        x: this.velocity.x * 1,
+        y: this.velocity.y * 1,
       };
     }
   }

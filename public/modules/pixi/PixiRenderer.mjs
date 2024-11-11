@@ -6,11 +6,13 @@
 // Assume PIXI global namespace.
 // eslint-disable-next-line no-undef
 const { Application } = PIXI;
-import { PixiShip } from 'pixirender';
+import { PixiShip, PixiCamera } from 'pixirender';
 
 export class PixiRenderer {
   app;
   socket;
+  camera;
+  stage;
 
   // ID keyed object of ship render info and elements.
   ships = {};
@@ -26,6 +28,10 @@ export class PixiRenderer {
 
     const pixiOpts = { canvas, resizeTo: window };
     this.app.init(pixiOpts).then(async () => {
+      // Setup camera and stage where things are drawn onto the stage.
+      this.camera = new PixiCamera(this.app);
+      this.stage = this.camera.getStage();
+
       // window.ship = new PixiShip(this.app, {
       //   style: 'a',
       //   pos: { x: 150, y: 150, d: 0, t: 1 },
@@ -42,7 +48,15 @@ export class PixiRenderer {
 
       switch (update.status) {
         case 'create':
-          this.ships[id] = new PixiShip(this.app, update);
+          this.ships[id] = new PixiShip(this.app, {
+            parent: this.stage,
+            ...update,
+            onInit: () => {
+              this.camera.follow(this.ships[id].container);
+              this.camera.setZoom(1);
+            },
+          });
+
           break;
 
         case 'boom':
