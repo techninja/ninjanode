@@ -476,21 +476,29 @@ export class Ship extends DynamicObject {
       this.pos.y += this.velocity.x;
       this.pos.x += this.velocity.y;
 
-      // Wrap to Play Area (centered on zero)
-      const p = gameConfig.playArea / 2;
-      if (this.pos.y < -p) {
-        this.pos.y = p;
-      } // Top to bottom
-      if (this.pos.y > p) {
-        this.pos.y = -p;
-      } // Bottom to top
+      // Wrap to play area around center and complete transfer
+      const p = gameConfig.playArea;
+      const half = this.width / 2;
 
-      if (this.pos.x < -p) {
-        this.pos.x = p;
-      } // Left to right
-      if (this.pos.x > p) {
-        this.pos.x = -p;
-      } // Right to left
+      // Top to bottom.
+      if (this.pos.y < -half) {
+        this.pos.y = p - half;
+      }
+
+      // Bottom to top
+      if (this.pos.y > p + half) {
+        this.pos.y = half;
+      }
+
+      // Left to right.
+      if (this.pos.x < -half) {
+        this.pos.x = p - half;
+      }
+
+      // Right to left
+      if (this.pos.x > p + half) {
+        this.pos.x = half;
+      }
     }
   }
 
