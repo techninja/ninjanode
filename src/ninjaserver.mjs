@@ -40,6 +40,7 @@ app.use(
   '/particle-emitter',
   express.static('node_modules/@barvynkoa/particle-emitter')
 );
+
 console.log('ninjanode server listening on localhost:' + port);
 
 // ninjanode API!
@@ -47,6 +48,12 @@ console.log('ninjanode server listening on localhost:' + port);
 app.get('/users', function (req, res) {
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(users));
+});
+
+// Return base game data
+app.get('/game', function (req, res) {
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(game.config));
 });
 
 // Return just the numbers of playing and lobby users
