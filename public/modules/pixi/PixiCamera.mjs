@@ -5,20 +5,16 @@
 
 import { Viewport } from 'pixi-viewport';
 
-// TODO: Get these from the server
-const WORLD_WIDTH = 2000;
-const WORLD_HEIGHT = 2000;
-
 export class PixiCamera {
   viewport;
   target;
 
-  constructor(app, options) {
+  constructor(app, { playArea }) {
     const viewport = new Viewport({
       // screenWidth: window.innerWidth,              // screen width used by viewport (eg, size of canvas)
       // screenHeight: window.innerHeight,            // screen height used by viewport (eg, size of canvas)
-      worldWidth: WORLD_WIDTH, // world width used by viewport (automatically calculated based on container width)
-      worldHeight: WORLD_HEIGHT, // world height used by viewport (automatically calculated based on container height)
+      worldWidth: playArea, // world width used by viewport (automatically calculated based on container width)
+      worldHeight: playArea, // world height used by viewport (automatically calculated based on container height)
       // threshold: 5,                                // number of pixels to move to trigger an input event (e.g., drag, pinch) or disable a clicked event
       passiveWheel: false, // whether the 'wheel' event is set to passive (note: if false, e.preventDefault() will be called when wheel is used over the viewport)
       events: app.renderer.events,
