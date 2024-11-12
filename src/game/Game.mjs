@@ -25,6 +25,7 @@ export class Game {
 
   // Initial gameplay area setup.
   initialize(config) {
+    this.config = config;
     this.playArea = config.playArea;
 
     // Create the powerups
