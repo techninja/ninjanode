@@ -12,8 +12,8 @@ export const getRandomPos = (angleDivisibleBy) => {
   const usefulArea = (gameConfig.playArea / 4) * 3; // Limit spawn pos to 3/4 of the play area
 
   return {
-    x: Math.floor(Math.random() * usefulArea - usefulArea / 2),
-    y: Math.floor(Math.random() * usefulArea - usefulArea / 2),
+    x: Math.floor(Math.random() * usefulArea),
+    y: Math.floor(Math.random() * usefulArea),
     d: angle,
   };
 };
