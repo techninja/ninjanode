@@ -17,15 +17,17 @@ const {
 const degToRad = (degrees) => degrees * (Math.PI / 180);
 
 export class PixiEffect {
-  effect;
+  app;
   container;
   emitter;
   active = false;
   started;
   type;
   pos = { x: 0, y: 0, d: 0 };
+  ticker;
 
   constructor({ app, type, parent, pos = {}, active = false }) {
+    this.app = app;
     this.type = type;
     this.pos = { ...this.pos, ...pos };
     this.started = Date.now();
@@ -35,17 +37,32 @@ export class PixiEffect {
     this.loadAssets().then(() => {
       this.setActive(active);
 
-      app.ticker.add(() => {
-        if (this.emitter) {
-          this.emitter.update((Date.now() - this.started) * 0.00001);
-
-          // Cull inactive and empty emitters.
-          if (this.emitter.particleCount === 0 && !this.active) {
-            this.destroyEmitter();
-          }
-        }
-      });
+      // Manage ticker updates.
+      this.initTicker();
     });
+  }
+
+  initTicker() {
+    this.ticker = this.app.ticker.add(() => {
+      this.tickerCallback();
+    });
+  }
+
+  tickerCallback() {
+    if (this.emitter) {
+      this.emitter.update((Date.now() - this.started) * 0.00001);
+
+      // Cull inactive and empty emitters.
+      if (this.emitter.particleCount === 0 && !this.active) {
+        this.destroyEmitter();
+      }
+    }
+  }
+
+  destroy() {
+    // TODO: Anything else to clean up?
+    this.app.ticker.remove(this.ticker);
+    this.destroyEmitter();
   }
 
   destroyEmitter() {
