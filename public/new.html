@@ -32,6 +32,7 @@
       }
     </script>
     <script type="module">
+      import gameConfig from '/game' with { type: 'json' };
       import { ShipSocket, PixiRenderer, BotController } from 'modules';
       const server = `${location.protocol}//${location.host}/`;
 
@@ -41,6 +42,7 @@
         socket,
         stageId: 'stage',
         framerateId: 'framerate',
+        gameConfig,
       });
 
       // Setup the Bots

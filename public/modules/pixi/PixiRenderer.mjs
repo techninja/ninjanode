@@ -21,9 +21,15 @@ export class PixiRenderer {
   powerUps = {};
   pnbits = {};
   gameConfig = {};
+  world = {};
 
   constructor(options) {
     this.socket = options.socket;
+    this.gameConfig = options.gameConfig;
+    this.world = {
+      width: this.gameConfig.playArea,
+      height: this.gameConfig.playArea,
+    };
 
     const canvas = document.getElementById(options.stageId);
     this.app = new Application();
@@ -36,7 +42,6 @@ export class PixiRenderer {
       this.bindUpdateEvents();
 
       // Setup camera and stage where layer containers are held and then added to.
-      this.gameConfig = await (await fetch('/game')).json();
       this.camera = new PixiCamera(this.app, this.gameConfig);
       this.stage.base = this.camera.getStage();
 
