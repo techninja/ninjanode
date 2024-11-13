@@ -72,6 +72,7 @@ export class PixiRenderer {
         case 'create':
           this.ships[id] = new PixiShip(this.app, {
             parent: this.stage.ships,
+            world: this.world,
             ...update,
             onInit: () => {
               this.camera.follow(this.ships[id].container);

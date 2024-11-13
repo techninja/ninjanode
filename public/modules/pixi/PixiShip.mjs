@@ -24,21 +24,17 @@ export class PixiShip {
   container;
   width;
   height;
+  style;
   config;
   thrust = 0;
   sprite;
   emitters = {};
   filters = {};
-
-  explode() {
-    new PixiEffect({
-      app: this.app,
-      type: 'explosion',
-      parent: this.container,
-      pos: { x: this.width / 2, y: this.height / 2 },
-      active: true,
-    });
-  }
+  parent;
+  isMirror;
+  mirror;
+  world;
+  ticker;
 
   constructor(app, options) {
     this.app = app;
@@ -47,11 +43,14 @@ export class PixiShip {
   }
 
   async init(options) {
-    const { style, pos } = options;
+    const { style, pos, isMirror = false, parent } = options;
     const {
       size: { width, height },
     } = this.config;
 
+    this.isMirror = isMirror;
+    this.style = style;
+    this.world = options.world || { width: 200, height: 200 };
     this.pos = pos;
     this.width = width;
     this.height = height;
@@ -73,7 +72,8 @@ export class PixiShip {
     this.container.pivot.y = height / 2;
 
     // Add the ship to the scene we are building
-    options.parent.addChild(this.container);
+    parent.addChild(this.container);
+    this.parent = parent;
 
     // Init thrusters.
     this.initThrusters();
@@ -83,21 +83,106 @@ export class PixiShip {
       this.addFilter('motionblur', new MotionBlurFilter());
     }
 
-    const fps = 120;
-    const serverFps = 1000 / 60;
-    this.app.ticker.add(() => {
-      // Glide between vector velocity length updates.
-      // TODO: move to absolute time based calculation for better accuracy.
-      this.container.updateTransform({
-        x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
-        y: this.container.y - this.velocity.y * ((1 / fps) * serverFps),
-      });
+    // Manage ticker updates.
+    this.ticker = this.app.ticker.add(() => {
+      this.tickerCallback();
     });
-
     this.setPos(pos);
 
     // Init callback.
     if (options.onInit) options.onInit();
+  }
+
+  tickerCallback() {
+    const fps = 120;
+    const serverFps = 1000 / 60;
+
+    // Glide between vector velocity length updates.
+    // TODO: move to absolute time based calculation for better accuracy.
+    if (this.container && !this.container.destroyed) {
+      this.container.updateTransform({
+        x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
+        y: this.container.y - this.velocity.y * ((1 / fps) * serverFps),
+      });
+
+      this.manageMirror();
+    }
+  }
+
+  destroy() {
+    // Clean up ticker.
+    this.app.ticker.remove(this.ticker);
+
+    // Remove ship container.
+    this.container.destroy();
+
+    // Clean up emitters.
+    const emitters = [
+      ...this.emitters.thrusters.front,
+      ...this.emitters.thrusters.rear,
+    ];
+    emitters.forEach((effect) => effect.destroy());
+  }
+
+  manageMirror() {
+    // No mirror management for mirror ships.
+    if (this.isMirror) return;
+
+    const half = this.width / 2;
+
+    const setMirror = (pos) => {
+      if (!this.mirror) {
+        this.mirror = new PixiShip(this.app, {
+          parent: this.parent,
+          style: this.style,
+          pos,
+          isMirror: true,
+          width: this.width,
+          height: this.height,
+        });
+      } else {
+        this.mirror.setPos(pos);
+      }
+    };
+
+    // Mirror position base.
+    const mPos = {
+      x: this.pos.x,
+      y: this.pos.y,
+      d: this.pos.d,
+    };
+
+    // Past right edge.
+    if (this.pos.x > this.world.width - half) {
+      mPos.x = mPos.x - this.world.width;
+      setMirror(mPos);
+      return;
+    }
+
+    // Past left edge.
+    if (this.pos.x - half < 0) {
+      mPos.x = mPos.x + this.world.width;
+      setMirror(mPos);
+      return;
+    }
+
+    // Past bottom edge.
+    if (this.pos.y > this.world.height - half) {
+      mPos.y = mPos.y - this.world.height;
+      setMirror(mPos);
+      return;
+    }
+
+    // Past top edge.
+    if (this.pos.y - half < 0) {
+      mPos.y = mPos.y + this.world.height;
+      setMirror(mPos);
+      return;
+    }
+
+    // If we got this far, don't need it anymore!
+    this.mirror?.destroy();
+    this.mirror = null;
   }
 
   addFilter(name, filter) {
@@ -131,6 +216,16 @@ export class PixiShip {
       default:
         break;
     }
+  }
+
+  explode() {
+    new PixiEffect({
+      app: this.app,
+      type: 'explosion',
+      parent: this.container,
+      pos: { x: this.width / 2, y: this.height / 2 },
+      active: true,
+    });
   }
 
   getThrusterOffset({
@@ -198,9 +293,9 @@ export class PixiShip {
     if (vel) this.setVel(vel);
 
     // Reset position once no velocity
-    if (vel?.l === 0) {
-      this.container.updateTransform({ x, y });
-    }
+    //if (vel?.l === 0) {
+    this.container.updateTransform({ x, y });
+    //}
     this.container.rotation = degToRad(d);
   }
 
