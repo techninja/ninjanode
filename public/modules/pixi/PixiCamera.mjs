@@ -8,8 +8,10 @@ import { Viewport } from 'pixi-viewport';
 export class PixiCamera {
   viewport;
   target;
+  playArea;
 
   constructor(app, { playArea }) {
+    this.playArea = playArea;
     const viewport = new Viewport({
       // screenWidth: window.innerWidth,              // screen width used by viewport (eg, size of canvas)
       // screenHeight: window.innerHeight,            // screen height used by viewport (eg, size of canvas)
@@ -179,9 +181,18 @@ export class PixiCamera {
     return this.viewport;
   }
 
-  follow(target) {
-    this.target = target;
-    this.viewport.follow(target);
+  follow(ship) {
+    this.target = ship;
+    this.viewport.follow(ship.container);
+  }
+
+  unfollow(id) {
+    if (this.target && (!id || this.target.id === id)) {
+      this.viewport.plugins.remove('follow');
+      this.viewport.fit();
+      this.viewport.moveCenter(this.playArea / 2, this.playArea / 2);
+      this.target = null;
+    }
   }
 
   setZoom(scale) {

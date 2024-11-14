@@ -18,6 +18,7 @@ const {
 const degToRad = (degrees) => degrees * (Math.PI / 180);
 
 export class PixiShip {
+  id;
   app;
   pos;
   velocity = { x: 0, y: 0 };
@@ -47,6 +48,7 @@ export class PixiShip {
     const {
       size: { width, height },
     } = this.config;
+    this.id = options.id;
 
     this.isMirror = isMirror;
     this.style = style;

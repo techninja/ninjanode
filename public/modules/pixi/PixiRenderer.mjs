@@ -70,12 +70,17 @@ export class PixiRenderer {
 
       switch (update.status) {
         case 'create':
+          // Ignore already created ships.
+          if (ship) continue;
+
+          // Create ship.
           this.ships[id] = new PixiShip(this.app, {
+            id,
             parent: this.stage.ships,
             world: this.world,
             ...update,
             onInit: () => {
-              this.camera.follow(this.ships[id].container);
+              this.camera.follow(this.ships[id]);
               this.camera.setZoom(1);
             },
           });
@@ -86,13 +91,17 @@ export class PixiRenderer {
           switch (update.stage) {
             case 'start':
               ship.explode();
-              console.log('BOOM', id, ship.pos);
               break;
 
             default:
               break;
           }
+          break;
 
+        case 'destroy':
+          delete this.ships[id];
+          this.camera.unfollow(id);
+          ship?.destroy();
           break;
 
         default:
