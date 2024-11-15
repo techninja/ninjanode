@@ -7,10 +7,10 @@
 /* No selection of text! */
 body * {
   -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                    supported by Chrome and Opera */
 }
 
@@ -21,9 +21,9 @@ body form button {
 }
 
 body {
-   font-family: sans-serif;
-   width: 100%;
- }
+  font-family: sans-serif;
+  width: 100%;
+}
 
 body.fixed {
   position: fixed;
@@ -53,21 +53,34 @@ div#debug {
   top: 0;
 }
 
-.layer0 { z-index: 1; }
-.layer1 { z-index: 2; }
-.layer2 { z-index: 3; }
-.layer3 { z-index: 4; }
-.layer4 { z-index: 5; }
-.layer5 { z-index: 6; }
+.layer0 {
+  z-index: 1;
+}
+.layer1 {
+  z-index: 2;
+}
+.layer2 {
+  z-index: 3;
+}
+.layer3 {
+  z-index: 4;
+}
+.layer4 {
+  z-index: 5;
+}
+.layer5 {
+  z-index: 6;
+}
 
-.preload { /* required for big sprites! */
+.preload {
+  /* required for big sprites! */
   width: 0 !important;
   display: block;
 }
 
 /* Connection Window */
 #connection-window {
-  background-color: #A0A0A0;
+  background-color: #a0a0a0;
   height: 372px;
   left: 50%;
   margin-left: -300px;
@@ -80,11 +93,11 @@ div#debug {
 
 #connection-window legend {
   font-weight: bold;
-  font-family: 'Black Ops One',cursive;
+  font-family: 'Black Ops One', cursive;
 }
 
 #connection-window aside {
-  font-family: 'Black Ops One',cursive;
+  font-family: 'Black Ops One', cursive;
   text-align: center;
   width: 66%;
   margin: -1.4em auto 0.2em auto;
@@ -140,15 +153,31 @@ div#debug {
   background-color: #aaa;
   opacity: 1;
 }
-#connection-window .selector ship.selected { opacity: 1; }
+#connection-window .selector ship.selected {
+  opacity: 1;
+}
 
-#connection-window .selector .ship_a.selected { background-color: #FEA940; }
-#connection-window .selector .ship_b.selected { background-color: #00B219; }
-#connection-window .selector .ship_c.selected { background-color: #A35B5B; }
-#connection-window .selector .ship_d.selected { background-color: #D34121; }
-#connection-window .selector .ship_e.selected { background-color: #BE5225; }
-#connection-window .selector .ship_f.selected { background-color: #14A6F8; }
-#connection-window .selector .ship_g.selected { background-color: #1400FF; }
+#connection-window .selector .ship_a.selected {
+  background-color: #fea940;
+}
+#connection-window .selector .ship_b.selected {
+  background-color: #00b219;
+}
+#connection-window .selector .ship_c.selected {
+  background-color: #a35b5b;
+}
+#connection-window .selector .ship_d.selected {
+  background-color: #d34121;
+}
+#connection-window .selector .ship_e.selected {
+  background-color: #be5225;
+}
+#connection-window .selector .ship_f.selected {
+  background-color: #14a6f8;
+}
+#connection-window .selector .ship_g.selected {
+  background-color: #1400ff;
+}
 
 #connection-window fieldset {
   border: 1px solid #ddd;
@@ -157,7 +186,7 @@ div#debug {
 
 #connection-window h1 {
   margin-top: -0.3em;
-  font-family: 'Black Ops One',cursive;
+  font-family: 'Black Ops One', cursive;
   text-align: center;
 }
 
@@ -172,7 +201,7 @@ div#debug {
 }
 
 #connection-window label h4 {
-  font-family: 'Black Ops One',cursive;
+  font-family: 'Black Ops One', cursive;
   font-size: 2em;
   margin: -0.1em 0.2em;
 }
@@ -195,12 +224,50 @@ div#debug {
 
 #connection-window .ship-select label.selected {
   background: #e0f3fa;
-  background: -moz-linear-gradient(13deg,  #e0f3fa 0%, #d8f0fc 43%, #b8e2f6 55%, #b6dffd 100%);
-  background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#e0f3fa), color-stop(43%,#d8f0fc), color-stop(55%,#b8e2f6), color-stop(100%,#b6dffd));
-  background: -webkit-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
-  background: -o-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
-  background: -ms-linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
-  background: linear-gradient(13deg,  #e0f3fa 0%,#d8f0fc 43%,#b8e2f6 55%,#b6dffd 100%);
+  background: -moz-linear-gradient(
+    13deg,
+    #e0f3fa 0%,
+    #d8f0fc 43%,
+    #b8e2f6 55%,
+    #b6dffd 100%
+  );
+  background: -webkit-gradient(
+    linear,
+    left bottom,
+    right top,
+    color-stop(0%, #e0f3fa),
+    color-stop(43%, #d8f0fc),
+    color-stop(55%, #b8e2f6),
+    color-stop(100%, #b6dffd)
+  );
+  background: -webkit-linear-gradient(
+    13deg,
+    #e0f3fa 0%,
+    #d8f0fc 43%,
+    #b8e2f6 55%,
+    #b6dffd 100%
+  );
+  background: -o-linear-gradient(
+    13deg,
+    #e0f3fa 0%,
+    #d8f0fc 43%,
+    #b8e2f6 55%,
+    #b6dffd 100%
+  );
+  background: -ms-linear-gradient(
+    13deg,
+    #e0f3fa 0%,
+    #d8f0fc 43%,
+    #b8e2f6 55%,
+    #b6dffd 100%
+  );
+  background: linear-gradient(
+    13deg,
+    #e0f3fa 0%,
+    #d8f0fc 43%,
+    #b8e2f6 55%,
+    #b6dffd 100%
+  );
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', endColorstr='#b6dffd',GradientType=1 );
 }
 
@@ -229,7 +296,7 @@ div#debug {
   text-align: center;
   top: 50%;
   width: 200px;
-  background-color:darkred;
+  background-color: darkred;
   color: white;
   border-color: red;
   z-index: 1000;
@@ -240,7 +307,7 @@ div#debug {
   background-color: rgba(22, 22, 22, 0.5);
   border: 1px solid #444444;
   border-radius: 1em 1em 1em 1em;
-  color: #AAAAFF;
+  color: #aaaaff;
   font-family: monospace;
   font-size: 14px;
   padding: 1em;
@@ -250,7 +317,7 @@ div#debug {
 }
 
 #players h3 {
-  border-bottom: 1px solid #2D918B;
+  border-bottom: 1px solid #2d918b;
   margin-top: 0;
   color: #005bce;
   margin-bottom: 0.2em;
@@ -275,7 +342,9 @@ div#debug {
   width: 100%;
 }
 
-#players player label, #players player .score, #players player ship {
+#players player label,
+#players player .score,
+#players player ship {
   display: block;
   float: left;
 }
@@ -300,7 +369,7 @@ div#debug {
 }
 
 #players player .arrow {
-  border-bottom: 16px solid #FF0000;
+  border-bottom: 16px solid #ff0000;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   float: right;
@@ -308,7 +377,8 @@ div#debug {
   width: 0;
 }
 
-#players player .arrow.gray { /* Proximity colors (Thanks d@n!) */
+#players player .arrow.gray {
+  /* Proximity colors (Thanks d@n!) */
   border-bottom-color: gray;
 }
 #players player .arrow.green {
@@ -321,7 +391,8 @@ div#debug {
   border-bottom-color: orange;
 }
 
-#players player .arrow.dead { /* Show a diamond for dead players */
+#players player .arrow.dead {
+  /* Show a diamond for dead players */
   width: 0;
   height: 0;
   border: 8px solid transparent;
@@ -331,27 +402,38 @@ div#debug {
   margin-right: -2px;
 }
 #players player .arrow.dead:after {
-	content: '';
-	position: absolute;
-	left: -8px;
-	top: 8px;
-	width: 0;
-	height: 0;
-	border: 8px solid transparent;
-	border-top-color: gray;
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 8px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-top-color: gray;
 }
 
-
 @keyframes arrow-flash {
-  0%   { border-bottom-color: red; }
-  10%  { border-bottom-color: #FFF; }
-  100%  { border-bottom-color: red; }
+  0% {
+    border-bottom-color: red;
+  }
+  10% {
+    border-bottom-color: #fff;
+  }
+  100% {
+    border-bottom-color: red;
+  }
 }
 
 @-webkit-keyframes arrow-flash {
-  0%   { border-bottom-color: red; }
-  10%  { border-bottom-color: #FFF; }
-  100%  { border-bottom-color: red; }
+  0% {
+    border-bottom-color: red;
+  }
+  10% {
+    border-bottom-color: #fff;
+  }
+  100% {
+    border-bottom-color: red;
+  }
 }
 
 #players player .arrow.red {
@@ -369,13 +451,12 @@ div#debug {
 }
 
 #players player .circle {
-  border: 6px solid #00FF00;
+  border: 6px solid #00ff00;
   border-radius: 6px;
   float: right;
   height: 0;
   width: 0;
 }
-
 
 /* Chat Windows */
 .chat {
@@ -385,7 +466,7 @@ div#debug {
   background-color: rgba(0, 0, 25, 0.5);
   border: 1px solid #444444;
   border-radius: 0em 1em;
-  color: #FFF;
+  color: #fff;
   font-family: monospace;
   font-size: 16px;
   padding: 1em;
@@ -402,7 +483,7 @@ div#debug {
 
 .chat li {
   font-size: 1.2em;
-  color: #6CE26C;
+  color: #6ce26c;
 }
 
 .chat li span {
@@ -433,7 +514,7 @@ div#debug {
   border-style: solid none;
   border-width: 1px 0;
   bottom: 0.5em;
-  color: #AAFFFF;
+  color: #aaffff;
   font-family: monospace;
   font-size: 1.1em;
   height: 35px;
@@ -471,45 +552,81 @@ label.username {
 
 /** Keyframes for flash animation **/
 @keyframes flash-green {
-  0%   { background-color: green; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: green; }
+  0% {
+    background-color: green;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: green;
+  }
 }
 
 @keyframes flash-orange {
-  0%   { background-color: orange; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: orange; }
+  0% {
+    background-color: orange;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: orange;
+  }
 }
 
 @keyframes flash-red {
-  0%   { background-color: red; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: red; }
+  0% {
+    background-color: red;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: red;
+  }
 }
 
 @-webkit-keyframes flash-green {
-  0%   { background-color: green; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: green; }
+  0% {
+    background-color: green;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: green;
+  }
 }
 
 @-webkit-keyframes flash-orange {
-  0%   { background-color: orange; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: orange; }
+  0% {
+    background-color: orange;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: orange;
+  }
 }
 
 @-webkit-keyframes flash-red {
-  0%   { background-color: red; }
-  10%  { background-color: #FFF; }
-  100%  { background-color: red; }
+  0% {
+    background-color: red;
+  }
+  10% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: red;
+  }
 }
 
-
-label.username:before { /* Shield Status (label hack) */
+label.username:before {
+  /* Shield Status (label hack) */
   background-color: green;
-  content: "";
+  content: '';
   display: block;
   height: 5px;
   margin-left: -6px;
@@ -555,45 +672,173 @@ label.username.flash-red:before {
 }
 
 /** No way to set pseudo :before with JS, so these classes will have to do **/
-label.username.shield-0:before{padding-right:0;background-color:red;width:0%}
-label.username.shield-5:before{padding-right:1px;background-color:red;width:5%}
-label.username.shield-10:before{padding-right:1px;background-color:red;width:10%}
-label.username.shield-15:before{padding-right:2px;background-color:red;width:15%}
-label.username.shield-20:before{padding-right:2px;background-color:red;width:20%}
-label.username.shield-25:before{padding-right:3px;background-color:red;width:25%}
-label.username.shield-30:before{padding-right:3px;background-color:red;width:30%}
-label.username.shield-35:before{padding-right:5px;background-color:orange;width:35%}
-label.username.shield-40:before{padding-right:5px;background-color:orange;width:40%}
-label.username.shield-45:before{padding-right:7px;background-color:orange;width:45%}
-label.username.shield-50:before{padding-right:7px;background-color:orange;width:50%}
-label.username.shield-55:before{padding-right:9px;background-color:orange;width:55%}
-label.username.shield-60:before{padding-right:9px;background-color:orange;width:60%}
-label.username.shield-65:before{width:65%}label.username.shield-70:before{width:70%}
-label.username.shield-75:before{width:75%}label.username.shield-80:before{width:80%}
-label.username.shield-85:before{width:85%}label.username.shield-90:before{width:90%}
-label.username.shield-95:before{width:95%}label.username.shield-100:before{width:100%}
-
+label.username.shield-0:before {
+  padding-right: 0;
+  background-color: red;
+  width: 0%;
+}
+label.username.shield-5:before {
+  padding-right: 1px;
+  background-color: red;
+  width: 5%;
+}
+label.username.shield-10:before {
+  padding-right: 1px;
+  background-color: red;
+  width: 10%;
+}
+label.username.shield-15:before {
+  padding-right: 2px;
+  background-color: red;
+  width: 15%;
+}
+label.username.shield-20:before {
+  padding-right: 2px;
+  background-color: red;
+  width: 20%;
+}
+label.username.shield-25:before {
+  padding-right: 3px;
+  background-color: red;
+  width: 25%;
+}
+label.username.shield-30:before {
+  padding-right: 3px;
+  background-color: red;
+  width: 30%;
+}
+label.username.shield-35:before {
+  padding-right: 5px;
+  background-color: orange;
+  width: 35%;
+}
+label.username.shield-40:before {
+  padding-right: 5px;
+  background-color: orange;
+  width: 40%;
+}
+label.username.shield-45:before {
+  padding-right: 7px;
+  background-color: orange;
+  width: 45%;
+}
+label.username.shield-50:before {
+  padding-right: 7px;
+  background-color: orange;
+  width: 50%;
+}
+label.username.shield-55:before {
+  padding-right: 9px;
+  background-color: orange;
+  width: 55%;
+}
+label.username.shield-60:before {
+  padding-right: 9px;
+  background-color: orange;
+  width: 60%;
+}
+label.username.shield-65:before {
+  width: 65%;
+}
+label.username.shield-70:before {
+  width: 70%;
+}
+label.username.shield-75:before {
+  width: 75%;
+}
+label.username.shield-80:before {
+  width: 80%;
+}
+label.username.shield-85:before {
+  width: 85%;
+}
+label.username.shield-90:before {
+  width: 90%;
+}
+label.username.shield-95:before {
+  width: 95%;
+}
+label.username.shield-100:before {
+  width: 100%;
+}
 
 /** Keyframes for opacity pulse animation **/
 @keyframes pulse {
-  0%   { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
-  10%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
-  40%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
-  100%  { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+  0% {
+    opacity: 0;
+    width: 90px;
+    height: 90px;
+    background-size: 90px 90px;
+    margin-left: -12px;
+    margin-top: 3px;
+  }
+  10% {
+    opacity: 1;
+    width: 120px;
+    height: 120px;
+    background-size: 120px 120px;
+    margin-left: -27px;
+    margin-top: -12px;
+  }
+  40% {
+    opacity: 1;
+    width: 120px;
+    height: 120px;
+    background-size: 120px 120px;
+    margin-left: -27px;
+    margin-top: -12px;
+  }
+  100% {
+    opacity: 0;
+    width: 90px;
+    height: 90px;
+    background-size: 90px 90px;
+    margin-left: -12px;
+    margin-top: 3px;
+  }
 }
 
 @-webkit-keyframes pulse {
-  0%   { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
-  10%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
-  40%  { opacity: 1; width: 120px; height:120px; background-size: 120px 120px; margin-left: -27px; margin-top: -12px;}
-  100%  { opacity: 0; width: 90px; height:90px; background-size: 90px 90px; margin-left: -12px; margin-top: 3px;}
+  0% {
+    opacity: 0;
+    width: 90px;
+    height: 90px;
+    background-size: 90px 90px;
+    margin-left: -12px;
+    margin-top: 3px;
+  }
+  10% {
+    opacity: 1;
+    width: 120px;
+    height: 120px;
+    background-size: 120px 120px;
+    margin-left: -27px;
+    margin-top: -12px;
+  }
+  40% {
+    opacity: 1;
+    width: 120px;
+    height: 120px;
+    background-size: 120px 120px;
+    margin-left: -27px;
+    margin-top: -12px;
+  }
+  100% {
+    opacity: 0;
+    width: 90px;
+    height: 90px;
+    background-size: 90px 90px;
+    margin-left: -12px;
+    margin-top: 3px;
+  }
 }
 
-label.username:after { /* Shields! Hacked into the label */
+label.username:after {
+  /* Shields! Hacked into the label */
   background-color: transparent;
-  background-image: url("graphics/shields/shield_red.png");
+  background-image: url('graphics/shields/shield_red.png');
   background-size: 90px 90px;
-  content: "";
+  content: '';
   display: block;
   height: 90px;
   left: 0;
@@ -605,12 +850,24 @@ label.username:after { /* Shields! Hacked into the label */
   width: 90px;
 }
 
-label.username.style-blue:after {background-image: url("graphics/shields/shield_blue.png");}
-label.username.style-green:after {background-image: url("graphics/shields/shield_green.png");}
-label.username.style-orange:after {background-image: url("graphics/shields/shield_orange.png");}
-label.username.style-pink:after {background-image: url("graphics/shields/shield_pink.png");}
-label.username.style-purple:after {background-image: url("graphics/shields/shield_purple.png");}
-label.username.style-yellow:after {background-image: url("graphics/shields/shield_yellow.png");}
+label.username.style-blue:after {
+  background-image: url('graphics/shields/shield_blue.png');
+}
+label.username.style-green:after {
+  background-image: url('graphics/shields/shield_green.png');
+}
+label.username.style-orange:after {
+  background-image: url('graphics/shields/shield_orange.png');
+}
+label.username.style-pink:after {
+  background-image: url('graphics/shields/shield_pink.png');
+}
+label.username.style-purple:after {
+  background-image: url('graphics/shields/shield_purple.png');
+}
+label.username.style-yellow:after {
+  background-image: url('graphics/shields/shield_yellow.png');
+}
 
 label.username.pulse:after {
   animation-name: pulse;
@@ -624,89 +881,181 @@ label.username.pulse:after {
   -webkit-animation-timing-function: ease-out;
 }
 
-boom, #preload-boom {
+boom,
+#preload-boom {
   display: block;
   width: 400px;
   height: 400px;
   background-image: url('graphics/explosions/ship_boom.png');
 }
 
-.ipad boom, .ipad #preload-boom {
+.ipad boom,
+.ipad #preload-boom {
   width: 256px;
   height: 256px;
   background-image: url('graphics/explosions/explosion_wide.png');
 }
 
-boom.mine, #preload-boom-mine {
+boom.mine,
+#preload-boom-mine {
   display: block;
   width: 128px;
   height: 128px;
   background-image: url('graphics/explosions/mine_boom.png');
 }
 
-ship.ship_a { background-image: url('graphics/ships/ship_a.png'); }
-ship.ship_b { background-image: url('graphics/ships/ship_b.png'); }
-ship.ship_c { background-image: url('graphics/ships/ship_c.png'); }
-ship.ship_d { background-image: url('graphics/ships/ship_d.png'); }
-ship.ship_e { background-image: url('graphics/ships/ship_e.png'); }
-ship.ship_f { background-image: url('graphics/ships/ship_f.png'); }
-ship.ship_g { background-image: url('graphics/ships/ship_g.png'); }
+ship.ship_a {
+  background-image: url('graphics/ships/ship_a.png');
+}
+ship.ship_b {
+  background-image: url('graphics/ships/ship_b.png');
+}
+ship.ship_c {
+  background-image: url('graphics/ships/ship_c.png');
+}
+ship.ship_d {
+  background-image: url('graphics/ships/ship_d.png');
+}
+ship.ship_e {
+  background-image: url('graphics/ships/ship_e.png');
+}
+ship.ship_f {
+  background-image: url('graphics/ships/ship_f.png');
+}
+ship.ship_g {
+  background-image: url('graphics/ships/ship_g.png');
+}
 
 /* Forward thrust */
-ship.thrusting:before, ship.thrusting:after {
-  content: url("graphics/flame_down.gif");
+ship.thrusting:before,
+ship.thrusting:after {
+  content: url('graphics/flame_down.gif');
   position: relative;
   top: 60px;
 }
 
-ship.ship_a.thrusting:before { left: 12px; }
-ship.ship_a.thrusting:after { left: 2px; }
+ship.ship_a.thrusting:before {
+  left: 12px;
+}
+ship.ship_a.thrusting:after {
+  left: 2px;
+}
 
-ship.ship_b.thrusting:before { left: 3px; }
-ship.ship_b.thrusting:after { left: 9px; }
+ship.ship_b.thrusting:before {
+  left: 3px;
+}
+ship.ship_b.thrusting:after {
+  left: 9px;
+}
 
-ship.ship_c.thrusting:before { left: 9px; top: 59px; }
-ship.ship_c.thrusting:after { left: 4px; top: 59px; }
+ship.ship_c.thrusting:before {
+  left: 9px;
+  top: 59px;
+}
+ship.ship_c.thrusting:after {
+  left: 4px;
+  top: 59px;
+}
 
-ship.ship_d.thrusting:before { left: 4px; top: 62px; }
-ship.ship_d.thrusting:after { left: 8px; top: 62px; }
+ship.ship_d.thrusting:before {
+  left: 4px;
+  top: 62px;
+}
+ship.ship_d.thrusting:after {
+  left: 8px;
+  top: 62px;
+}
 
-ship.ship_e.thrusting:before { left: 9px; }
-ship.ship_e.thrusting:after { left: 4px; }
+ship.ship_e.thrusting:before {
+  left: 9px;
+}
+ship.ship_e.thrusting:after {
+  left: 4px;
+}
 
-ship.ship_f.thrusting:before { left: 8px; top: 62px; }
-ship.ship_f.thrusting:after { left: 3px; top: 62px; }
+ship.ship_f.thrusting:before {
+  left: 8px;
+  top: 62px;
+}
+ship.ship_f.thrusting:after {
+  left: 3px;
+  top: 62px;
+}
 
-ship.ship_g.thrusting:before { left: 18px; top: 62px; }
-ship.ship_g.thrusting:after { left: -8px; top: 55px; }
+ship.ship_g.thrusting:before {
+  left: 18px;
+  top: 62px;
+}
+ship.ship_g.thrusting:after {
+  left: -8px;
+  top: 55px;
+}
 
 /* Backward thrust */
-ship.thrusting_back:before, ship.thrusting_back:after {
-  content: url("graphics/flame_up.gif");
+ship.thrusting_back:before,
+ship.thrusting_back:after {
+  content: url('graphics/flame_up.gif');
   position: relative;
 }
 
-ship.ship_a.thrusting_back:before { left: -4px; top: -6px; }
-ship.ship_a.thrusting_back:after { left: 19px; top: -6px; }
+ship.ship_a.thrusting_back:before {
+  left: -4px;
+  top: -6px;
+}
+ship.ship_a.thrusting_back:after {
+  left: 19px;
+  top: -6px;
+}
 
-ship.ship_b.thrusting_back:before { left: 3px; }
-ship.ship_b.thrusting_back:after { left: 8px; }
+ship.ship_b.thrusting_back:before {
+  left: 3px;
+}
+ship.ship_b.thrusting_back:after {
+  left: 8px;
+}
 
-ship.ship_c.thrusting_back:before { left: -4px; top: 17px; }
-ship.ship_c.thrusting_back:after { left: 13px; top: 17px; }
+ship.ship_c.thrusting_back:before {
+  left: -4px;
+  top: 17px;
+}
+ship.ship_c.thrusting_back:after {
+  left: 13px;
+  top: 17px;
+}
 
-ship.ship_d.thrusting_back:before { left: -1px; top: 2px; }
-ship.ship_d.thrusting_back:after { left: 12px; top: 2px; }
+ship.ship_d.thrusting_back:before {
+  left: -1px;
+  top: 2px;
+}
+ship.ship_d.thrusting_back:after {
+  left: 12px;
+  top: 2px;
+}
 
-ship.ship_e.thrusting_back:before { left: -1px; }
-ship.ship_e.thrusting_back:after { left: 13px; }
+ship.ship_e.thrusting_back:before {
+  left: -1px;
+}
+ship.ship_e.thrusting_back:after {
+  left: 13px;
+}
 
-ship.ship_f.thrusting_back:before { left: 12px; top: -23px; }
-ship.ship_f.thrusting_back:after { left: 0px; top: -23px; }
+ship.ship_f.thrusting_back:before {
+  left: 12px;
+  top: -23px;
+}
+ship.ship_f.thrusting_back:after {
+  left: 0px;
+  top: -23px;
+}
 
-ship.ship_g.thrusting_back:before { left: 0px; top: 13px; }
-ship.ship_g.thrusting_back:after { left: 11px; top: 13px; }
-
+ship.ship_g.thrusting_back:before {
+  left: 0px;
+  top: 13px;
+}
+ship.ship_g.thrusting_back:after {
+  left: 11px;
+  top: 13px;
+}
 
 /* Ship Beacon/Spawn Point */
 beacon {
@@ -720,13 +1069,34 @@ beacon {
   animation: diamond-spin 3s infinite linear;
 }
 
-beacon.style-blue {background-color: blue; border-color: DarkBlue;}
-beacon.style-green {background-color: green; border-color: SpringGreen;}
-beacon.style-orange {background-color: orange; border-color: OrangeRed;}
-beacon.style-pink {background-color: magenta; border-color: MediumPurple;}
-beacon.style-purple {background-color: purple; border-color: BlueViolet;}
-beacon.style-red {background-color: red; border-color: FireBrick;}
-beacon.style-yellow {background-color: yellow; border-color: orange;}
+beacon.style-blue {
+  background-color: blue;
+  border-color: DarkBlue;
+}
+beacon.style-green {
+  background-color: green;
+  border-color: SpringGreen;
+}
+beacon.style-orange {
+  background-color: orange;
+  border-color: OrangeRed;
+}
+beacon.style-pink {
+  background-color: magenta;
+  border-color: MediumPurple;
+}
+beacon.style-purple {
+  background-color: purple;
+  border-color: BlueViolet;
+}
+beacon.style-red {
+  background-color: red;
+  border-color: FireBrick;
+}
+beacon.style-yellow {
+  background-color: yellow;
+  border-color: orange;
+}
 
 @keyframes diamond-spin {
   from {
@@ -741,13 +1111,21 @@ beacon.style-yellow {background-color: yellow; border-color: orange;}
 
 /* keyframes for spinning energy animation;  simple 0 to 360 */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
 }
 projectile.init {
   display: none;
@@ -758,7 +1136,7 @@ projectile.laser {
   height: 70px;
   width: 5px;
   border-radius: 5px;
-  background-color:#FFF;
+  background-color: #fff;
 }
 
 projectile.duallaser {
@@ -774,7 +1152,7 @@ projectile.biglaser {
   height: 70px;
   width: 8px;
   border-radius: 8px;
-  background-color:#FFF;
+  background-color: #fff;
 }
 
 projectile.energy {
@@ -795,37 +1173,81 @@ projectile.energy {
   -webkit-animation-timing-function: linear;
 }
 
-projectile.energy.blue {background-image: url('graphics/projectiles/energy_orb_blue.gif');}
-projectile.energy.green {background-image: url('graphics/projectiles/energy_orb_green.gif');}
-projectile.energy.orange {background-image: url('graphics/projectiles/energy_orb_orange.gif');}
-projectile.energy.pink {background-image: url('graphics/projectiles/energy_orb_pink.gif');}
-projectile.energy.purple {background-image: url('graphics/projectiles/energy_orb_purple.gif');}
-projectile.energy.yellow {background-image: url('graphics/projectiles/energy_orb_yellow.gif');}
+projectile.energy.blue {
+  background-image: url('graphics/projectiles/energy_orb_blue.gif');
+}
+projectile.energy.green {
+  background-image: url('graphics/projectiles/energy_orb_green.gif');
+}
+projectile.energy.orange {
+  background-image: url('graphics/projectiles/energy_orb_orange.gif');
+}
+projectile.energy.pink {
+  background-image: url('graphics/projectiles/energy_orb_pink.gif');
+}
+projectile.energy.purple {
+  background-image: url('graphics/projectiles/energy_orb_purple.gif');
+}
+projectile.energy.yellow {
+  background-image: url('graphics/projectiles/energy_orb_yellow.gif');
+}
 
 projectile.mine {
   background-color: transparent !important;
-  background-image: url("graphics/projectiles/mine_red.gif");
+  background-image: url('graphics/projectiles/mine_red.gif');
   background-size: 40px 40px;
   border-radius: 6px 0 6px 0;
   height: 40px !important;
   width: 40px !important;
 }
 
-projectile.mine.blue { background-image: url("graphics/projectiles/mine_blue.gif"); }
-projectile.mine.green { background-image: url("graphics/projectiles/mine_green.gif"); }
-projectile.mine.orange { background-image: url("graphics/projectiles/mine_orange.gif"); }
-projectile.mine.pink { background-image: url("graphics/projectiles/mine_pink.gif"); }
-projectile.mine.purple { background-image: url("graphics/projectiles/mine_purple.gif"); }
-projectile.mine.yellow { background-image: url("graphics/projectiles/mine_yellow.gif"); }
+projectile.mine.blue {
+  background-image: url('graphics/projectiles/mine_blue.gif');
+}
+projectile.mine.green {
+  background-image: url('graphics/projectiles/mine_green.gif');
+}
+projectile.mine.orange {
+  background-image: url('graphics/projectiles/mine_orange.gif');
+}
+projectile.mine.pink {
+  background-image: url('graphics/projectiles/mine_pink.gif');
+}
+projectile.mine.purple {
+  background-image: url('graphics/projectiles/mine_purple.gif');
+}
+projectile.mine.yellow {
+  background-image: url('graphics/projectiles/mine_yellow.gif');
+}
 
-
-projectile.blue {background-color: blue; border-color: blue;}
-projectile.green {background-color: green; border-color: green;}
-projectile.orange {background-color: orange; border-color: orange;}
-projectile.pink {background-color: magenta; border-color: magenta;}
-projectile.purple {background-color: purple; border-color: purple;}
-projectile.red {background-color: red; border-color: red;}
-projectile.yellow {background-color: yellow; border-color: yellow;}
+projectile.blue {
+  background-color: blue;
+  border-color: blue;
+}
+projectile.green {
+  background-color: green;
+  border-color: green;
+}
+projectile.orange {
+  background-color: orange;
+  border-color: orange;
+}
+projectile.pink {
+  background-color: magenta;
+  border-color: magenta;
+}
+projectile.purple {
+  background-color: purple;
+  border-color: purple;
+}
+projectile.red {
+  background-color: red;
+  border-color: red;
+}
+projectile.yellow {
+  background-color: yellow;
+  border-color: yellow;
+}
 
 projectile.fire {
   height: 64px !important;
@@ -852,7 +1274,7 @@ powerup {
   height: 64px;
   border-radius: 40px;
   border-width: 3px;
-  content: "&nbsp;";
+  content: '&nbsp;';
   background-color: white;
   border-color: #c8e1e1;
   border-style: solid;
@@ -865,14 +1287,13 @@ powerup {
 
 /* GHOST Powerup */
 powerup.ghost:before {
-  content: "G";
+  content: 'G';
 }
 
 powerup.ghost {
   background-color: cornflowerblue;
   border-color: blue;
 }
-
 
 /* Ship Ghost mode effect */
 .self.ghost-active {
@@ -893,21 +1314,32 @@ powerup.ghost {
 
 /* Keyframes for ghost opacity pulse animation */
 @keyframes ghost {
-  0%   { opacity: 0.5; }
-  50%  { opacity: 0.3; }
-  100%  { opacity: 0.5; }
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
 
 @-webkit-keyframes ghost {
-  0%   { opacity: 0.5; }
-  50%  { opacity: 0.3; }
-  100%  { opacity: 0.5; }
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
-
 
 /* TRIPLE Powerup */
 powerup.triple:before {
-  content: "T";
+  content: 'T';
   color: #fff;
 }
 
@@ -921,11 +1353,18 @@ pnbits {
   display: block;
 }
 
-pnbits.planet_a { background-image: url("graphics/pnbits/planet_a.gif"); }
-pnbits.planet_b { background-image: url("graphics/pnbits/planet_b.gif"); }
-pnbits.planet_c { background-image: url("graphics/pnbits/planet_c.gif"); }
-pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
-
+pnbits.planet_a {
+  background-image: url('graphics/pnbits/planet_a.gif');
+}
+pnbits.planet_b {
+  background-image: url('graphics/pnbits/planet_b.gif');
+}
+pnbits.planet_c {
+  background-image: url('graphics/pnbits/planet_c.gif');
+}
+pnbits.planet_d {
+  background-image: url('graphics/pnbits/planet_d.gif');
+}
 
 /** MINIMAP **/
 
@@ -936,12 +1375,11 @@ pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
   width: 200px;
   height: 200px;
   border-radius: 115px;
-  border: 16px inset #1C6EA4;
+  border: 16px inset #1c6ea4;
   box-sizing: border-box;
   background-image: url('graphics/grid.png');
   backdrop-filter: blur(5px);
   background-color: rgba(150, 255, 151, 0.6);
-
 }
 
 #map {
@@ -974,7 +1412,7 @@ pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
 }
 
 #map .map_ship.self {
-  background-color: #00F;
+  background-color: #00f;
 }
 
 #map-controls {
@@ -1004,7 +1442,7 @@ pnbits.planet_d { background-image: url("graphics/pnbits/planet_d.gif"); }
   border-radius: 29px;
   width: 22px;
   text-align: center;
-  border: 7px inset #FF6EA4;
+  border: 7px inset #ff6ea4;
   margin-left: 107px;
   cursor: pointer;
 }

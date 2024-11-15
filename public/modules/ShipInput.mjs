@@ -184,34 +184,92 @@ export class ShipInput {
     });
 
     // Touch device beindings...
-    $(document).bind('touchstart', ({ originalEvent: { touches } }) => {
-      if (touches.length != 1) {
-        this.multiTouchCallback(touches.length);
-      }
-    });
+    // $(document).bind(
+    //   'touchstart',
+    //   ({ originalEvent: { touches, preventDefault } }) => {
 
-    $(document).bind('touchstart touchmove', ({ originalEvent: orig }) => {
-      // Ignore any touchstart / touchmove here except the first
-      if (orig.touches.length == 1) {
-        this.touchPositionCallback({
-          x: orig.changedTouches[0].pageX,
-          y: orig.changedTouches[0].pageY,
-        });
-      }
-      return false;
-    });
+    //   }
+    // );
 
-    $(document).bind('touchend', ({ originalEvent: orig }) => {
-      // Ignore any touchend except the last one
-      if (orig.changedTouches.length == 1) {
-        this.touchEndCallback({
-          x: orig.changedTouches[0].pageX,
-          y: orig.changedTouches[0].pageY,
-        });
-      }
+    document.addEventListener(
+      'touchstart',
+      ({ touches, preventDefault }) => {
+        if (touches.length != 1) {
+          this.multiTouchCallback(touches.length);
+          preventDefault();
+        }
+      },
+      { passive: false }
+    );
 
-      return false;
-    });
+    document.addEventListener(
+      'touchstart',
+      ({ touches, changedTouches, preventDefault }) => {
+        if (touches.length != 1) {
+          this.multiTouchCallback(touches.length);
+        } else {
+          // Ignore any touchstart / touchmove here except the first
+          this.touchPositionCallback({
+            x: changedTouches[0].pageX,
+            y: changedTouches[0].pageY,
+          });
+        }
+        preventDefault();
+      },
+      { passive: false }
+    );
+
+    document.addEventListener(
+      'touchmove',
+      ({ touches, changedTouches, preventDefault }) => {
+        // Ignore any touchstart / touchmove here except the first
+        if (touches.length === 1) {
+          this.touchPositionCallback({
+            x: changedTouches[0].pageX,
+            y: changedTouches[0].pageY,
+          });
+          preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    document.addEventListener(
+      'touchend',
+      ({ changedTouches, preventDefault }) => {
+        // Ignore any touchend except the last one
+        if (changedTouches.length == 1) {
+          this.touchEndCallback({
+            x: changedTouches[0].pageX,
+            y: changedTouches[0].pageY,
+          });
+          preventDefault();
+        }
+
+        return false;
+      }
+    );
+
+    // $(document).bind('touchstart touchmove', ({ originalEvent: orig }) => {
+    //   // Ignore any touchstart / touchmove here except the first
+    //   if (orig.touches.length == 1) {
+
+    //     orig.preventDefault();
+    //   }
+    //   return false;
+    // });
+
+    // $(document).bind('touchend', ({ originalEvent: orig }) => {
+    //   // Ignore any touchend except the last one
+    //   if (orig.changedTouches.length == 1) {
+    //     this.touchEndCallback({
+    //       x: orig.changedTouches[0].pageX,
+    //       y: orig.changedTouches[0].pageY,
+    //     });
+    //   }
+
+    //   return false;
+    // });
   }
 }
 

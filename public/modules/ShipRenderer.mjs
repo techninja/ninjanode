@@ -925,10 +925,11 @@ export class ShipRenderer {
     var prefs = this._cookiePrefs();
     if (prefs) {
       $('#name').val(prefs.name);
-      $('input[value=' + prefs.ship + ']').prop('checked', true);
+      //$('input[value=' + prefs.ship + ']').prop('checked', true);
+      $('#ship-e').prop('checked', true);
     } else {
       // default ship selection if no cookie
-      $('input[type=radio]:first').prop('checked', true);
+      $('#ship-c').prop('checked', true);
     }
 
     $('#connection-window input').change(() => {

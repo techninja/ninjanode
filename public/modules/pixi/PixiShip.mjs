@@ -12,10 +12,12 @@ const {
   Assets,
   Container,
   filters: { MotionBlurFilter },
+  DEG_TO_RAD,
+  Graphics,
   // eslint-disable-next-line no-undef
 } = PIXI;
 
-const degToRad = (degrees) => degrees * (Math.PI / 180);
+const degToRad = (degrees) => degrees * DEG_TO_RAD;
 
 export class PixiShip {
   id;
@@ -109,6 +111,89 @@ export class PixiShip {
 
       this.manageMirror();
     }
+  }
+
+  async chunkParts() {
+    const parts = 8;
+    const timeout = 5000;
+    const imgPath = `../resources/graphics/ships/ship_${this.style}.png`;
+    const texture = await Assets.load(imgPath);
+    let chunks = [];
+
+    const arcWidth = 360 / parts;
+    const half = this.width * 0.5;
+    const chunkRadius = this.width * 0.8;
+
+    // Turn a distance and angle into an x/y coordinate with 90 degree offset.
+    const getC = (distance, angle, isY = false) =>
+      distance *
+      (isY ? Math.sin(degToRad(angle - 90)) : Math.cos(degToRad(angle - 90)));
+
+    this.sprite.alpha = 0;
+    for (let index = 0; index < parts; index++) {
+      // Initialize new sprite and mask
+      const container = new Container();
+      const sprite = new Sprite(texture);
+      const mask = new Graphics();
+
+      // Conform sprite to ship dimensions (not image dimensions).
+      sprite.anchor.set(0.5);
+      sprite.width = this.width;
+      sprite.height = this.height;
+
+      sprite.mask = mask;
+      sprite.rotation = 0;
+
+      // Add both Sprite and mask to a container that we'll move/effect on the ship container.
+      container.addChild(sprite);
+      container.addChild(mask);
+      this.container.addChild(container);
+
+      // Home coordinates of slice triangle base.
+      const home = [
+        getC(chunkRadius, index * arcWidth), // X
+        getC(chunkRadius, index * arcWidth, 1), // Y
+      ];
+
+      // Middle is starting point of next index.
+      const middle = [
+        getC(chunkRadius, (index + 1) * arcWidth), // X
+        getC(chunkRadius, (index + 1) * arcWidth, 1), // Y
+      ];
+
+      mask.moveTo(home[0], home[1]); // Move home
+      mask.lineTo(0, 0); // Draw to 0
+      mask.lineTo(middle[0], middle[1]); // Draw To middle point
+      mask.lineTo(home[0], home[1]); // Draw to home
+      mask.fill({ color: 0xff0000 }); // Add fill to activate.
+
+      // Move to center to align with ship
+      container.updateTransform({ x: half, y: half });
+      chunks.push(container);
+    }
+
+    const speed = 1.2;
+    const rotation = [0.01, -0.1, 0.04, 0.09, -0.001, 0.1, -0.02, 0.015];
+    const ticker = this.app.ticker.add(() => {
+      chunks.forEach((chunk, index) => {
+        chunk.updateTransform({
+          x: chunk.x + getC(speed, arcWidth * index + arcWidth / 2),
+          y: chunk.y + getC(speed, arcWidth * index + arcWidth / 2, 1),
+          rotation: chunk.rotation + rotation[index],
+        });
+        chunk.alpha = chunk.alpha - 0.005;
+      });
+    });
+
+    // Cleanup after timeout.
+    setTimeout(() => {
+      this.app.ticker.remove(ticker);
+      chunks.forEach((sprite) => sprite.destroy());
+      chunks = [];
+      this.sprite.alpha = 1;
+    }, timeout);
+
+    console.log(chunks);
   }
 
   destroy() {
@@ -228,6 +313,8 @@ export class PixiShip {
       pos: { x: this.width / 2, y: this.height / 2 },
       active: true,
     });
+
+    this.chunkParts();
   }
 
   getThrusterOffset({

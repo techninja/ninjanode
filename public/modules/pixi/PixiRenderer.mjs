@@ -55,6 +55,9 @@ export class PixiRenderer {
       // Setup the background.
       this.initBackground();
 
+      // Add ship getter helper
+      this.ships.get = (index = 0) => Object.values(this.ships)[index + 1];
+
       // Minimum for creating a ship object.
       // window.ship = new PixiShip(this.app, {
       //   style: 'a',
