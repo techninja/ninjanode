@@ -25,7 +25,7 @@ Designed for modern browsers. Just visit the site, and you're in! Enter a nick n
 3.  Once cloned, enter the directory `cd ninjanode` and run `npm install` within the repo root. This should install all dependencies.
 4.  Copy the [`.env.default`](/.env.default) to `.env`, and there you can customize your server's configurable settings.
 5.  Run `npm start [port]`, where `[port]` is the port you wish to host from. If left out, will default to `4242`.
-6.  Aaaand.. _you're done!_ I recommend a daemon like [forever](https://github.com/nodejitsu/forever) to run the server and keep it up.
+6.  You should now be able to view the game from your local system at `http://localhost:[port]`, `http://localhost:4242` by default.
 
 ## Time to play
 
@@ -35,6 +35,6 @@ Take care in selecting your ship! Some are fast and slow to turn, some accelerat
 
 ### Credits
 
-Thanks to my girl ["Super-Awesome" Sylvia](http://sylviashow.com) for helping with the ideas, and the second set of three ships originally created our [Squishy Space Race DML 2012 demo](https://github.com/techninja/DML2012), not to mention countless play-testing sessions!
+Thanks to Zeph for originally helping with the idea, not to mention countless play-testing sessions from Dorian and the whole family!
 
 Credit to Everaldo Coelho for the [fanciest of the Ship graphics](http://www.iconfinder.com/icondetails/18075/128/anakin_fighter_skywalker_spaceship_icon).
