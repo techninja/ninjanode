@@ -41,16 +41,22 @@ export class PixiRenderer {
       this.stage.ships = new Container();
       this.bindUpdateEvents();
 
-      // Setup camera and stage where layer containers are held and then added to.
-      this.camera = new PixiCamera(this.app, this.gameConfig);
-      this.stage.base = this.camera.getStage();
-
       // Layers (including ships)
+      this.stage.global = new Container();
       this.stage.background = new Container();
 
+      // Setup camera and stage where layer containers are held and then added to.
+      this.camera = new PixiCamera(
+        this.app,
+        this.gameConfig,
+        this.stage.global
+      );
+      this.stage.base = this.camera.getStage();
+
       // Add the working stage "layers" to the base stage.
-      this.stage.base.addChild(this.stage.background);
-      this.stage.base.addChild(this.stage.ships);
+      this.stage.global.addChild(this.stage.background);
+      this.stage.global.addChild(this.stage.ships);
+      this.stage.base.addChild(this.stage.global);
 
       // Setup the background.
       this.initBackground();

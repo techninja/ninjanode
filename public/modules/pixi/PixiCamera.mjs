@@ -9,9 +9,12 @@ export class PixiCamera {
   viewport;
   target;
   playArea;
+  filters = {};
+  globalContainer;
 
-  constructor(app, { playArea }) {
+  constructor(app, { playArea }, globalContainer) {
     this.playArea = playArea;
+    this.globalContainer = globalContainer;
     const viewport = new Viewport({
       // screenWidth: window.innerWidth,              // screen width used by viewport (eg, size of canvas)
       // screenHeight: window.innerHeight,            // screen height used by viewport (eg, size of canvas)
@@ -177,8 +180,39 @@ export class PixiCamera {
     this.viewport = viewport;
   }
 
+  toGlobalScreen({ x, y }) {
+    const offset = this.viewport.getVisibleBounds();
+    const gPos = this.viewport.toScreen({ x, y });
+    const scale = this.viewport.scale.x;
+
+    return {
+      x: gPos.x + (offset.x < 0 ? offset.x * scale : 0),
+      y: gPos.y + (offset.y < 0 ? offset.y * scale : 0),
+    };
+  }
+
   getStage() {
     return this.viewport;
+  }
+
+  addFilter(name, filter) {
+    // Destroy any existing named filter.
+    if (this.filters[name]) {
+      this.removeFilter(name);
+    }
+
+    this.filters[name] = filter;
+    this.globalContainer.filters = Object.values(this.filters);
+    return filter;
+  }
+
+  removeFilter(name) {
+    const filter = this.filters?.[name];
+    if (filter) {
+      delete this.filters[name];
+      this.globalContainer.filters = Object.values(this.filters);
+      filter.destroy();
+    }
   }
 
   follow(ship) {
