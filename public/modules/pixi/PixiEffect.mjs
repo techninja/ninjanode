@@ -43,9 +43,11 @@ export class PixiEffect {
   }
 
   initTicker() {
-    this.ticker = this.app.ticker.add(() => {
+    this.ticker = () => {
       this.tickerCallback();
-    });
+    };
+
+    this.app.ticker.add(this.ticker);
   }
 
   tickerCallback() {
