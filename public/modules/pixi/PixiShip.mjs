@@ -187,13 +187,22 @@ export class PixiShip {
       chunks.push(container);
     }
 
-    const speed = 1.2;
+    const fps = 120;
+    const serverFps = 1000 / 60;
+
+    const speed = 0.6;
     const rotation = [0.01, -0.1, 0.04, 0.09, -0.001, 0.1, -0.02, 0.015];
     const ticker = () => {
       chunks.forEach((chunk, index) => {
         chunk.updateTransform({
-          x: chunk.x + getC(speed, arcWidth * index + arcWidth / 2),
-          y: chunk.y + getC(speed, arcWidth * index + arcWidth / 2, 1),
+          x:
+            chunk.x +
+            getC(speed, arcWidth * index + arcWidth / 2) +
+            this.velocity.x * ((1 / fps) * serverFps),
+          y:
+            chunk.y +
+            getC(speed, arcWidth * index + arcWidth / 2, 1) +
+            this.velocity.y * ((1 / fps) * serverFps),
           rotation: chunk.rotation + rotation[index],
         });
         chunk.alpha = chunk.alpha - 0.005;
