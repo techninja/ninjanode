@@ -86,7 +86,9 @@ export class PixiRenderer {
           this.ships[id] = new PixiShip(this.app, {
             id,
             parent: this.stage.ships,
+            camera: this.camera,
             world: this.world,
+            blur: true,
             ...update,
             onInit: () => {
               this.camera.follow(this.ships[id]);
@@ -102,7 +104,13 @@ export class PixiRenderer {
               ship.explode();
               break;
 
+            case 'middle':
+              // TODO: Hide label, etc.
+              break;
+
             default:
+              // Complete, respawn.
+              ship.fadeIn();
               break;
           }
           break;

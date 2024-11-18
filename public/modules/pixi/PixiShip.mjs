@@ -11,7 +11,7 @@ const {
   Sprite,
   Assets,
   Container,
-  filters: { MotionBlurFilter },
+  filters: { MotionBlurFilter, PixelateFilter, ShockwaveFilter },
   DEG_TO_RAD,
   Graphics,
   // eslint-disable-next-line no-undef
@@ -34,6 +34,7 @@ export class PixiShip {
   emitters = {};
   filters = {};
   parent;
+  globalCamera;
   isMirror;
   mirror;
   world;
@@ -46,7 +47,7 @@ export class PixiShip {
   }
 
   async init(options) {
-    const { style, pos, isMirror = false, parent } = options;
+    const { style, pos, isMirror = false, parent, camera } = options;
     const {
       size: { width, height },
     } = this.config;
@@ -54,6 +55,7 @@ export class PixiShip {
 
     this.isMirror = isMirror;
     this.style = style;
+    this.globalCamera = camera;
     this.world = options.world || { width: 200, height: 200 };
     this.pos = pos;
     this.width = width;
@@ -88,13 +90,26 @@ export class PixiShip {
     }
 
     // Manage ticker updates.
-    this.ticker = this.app.ticker.add(() => {
+    this.ticker = () => {
       this.tickerCallback();
-    });
+    };
+    this.app.ticker.add(this.ticker);
+
     this.setPos(pos);
 
     // Init callback.
     if (options.onInit) options.onInit();
+  }
+
+  fadeIn(speed = 20) {
+    const fn = () => {
+      this.sprite.alpha += speed / 1000;
+      if (this.sprite.alpha > 1) {
+        this.sprite.alpha = 1;
+        this.app.ticker.remove(fn);
+      }
+    };
+    this.app.ticker.add(fn);
   }
 
   tickerCallback() {
@@ -174,7 +189,7 @@ export class PixiShip {
 
     const speed = 1.2;
     const rotation = [0.01, -0.1, 0.04, 0.09, -0.001, 0.1, -0.02, 0.015];
-    const ticker = this.app.ticker.add(() => {
+    const ticker = () => {
       chunks.forEach((chunk, index) => {
         chunk.updateTransform({
           x: chunk.x + getC(speed, arcWidth * index + arcWidth / 2),
@@ -183,17 +198,15 @@ export class PixiShip {
         });
         chunk.alpha = chunk.alpha - 0.005;
       });
-    });
+    };
+    this.app.ticker.add(ticker);
 
     // Cleanup after timeout.
     setTimeout(() => {
       this.app.ticker.remove(ticker);
       chunks.forEach((sprite) => sprite.destroy());
       chunks = [];
-      this.sprite.alpha = 1;
     }, timeout);
-
-    console.log(chunks);
   }
 
   destroy() {
@@ -313,8 +326,37 @@ export class PixiShip {
       pos: { x: this.width / 2, y: this.height / 2 },
       active: true,
     });
-
     this.chunkParts();
+    this.shockwave();
+  }
+
+  shockwave() {
+    const timeout = 5000;
+    const filterId = `${this.id}-wave`;
+
+    // Create global GL filter around ship position.
+    const wave = new ShockwaveFilter({
+      center: this.globalCamera.toGlobalScreen(this.pos),
+
+      // TODO: Apply global viewport scale.
+      amplitude: 60,
+      speed: 160,
+      radius: 600,
+    });
+    this.globalCamera.addFilter(filterId, wave);
+
+    // Animate Shockwave effect.
+    const ticker = () => {
+      wave.time = wave.time + 0.01;
+      wave.amplitude = wave.amplitude * 0.98;
+    };
+    this.app.ticker.add(ticker);
+
+    // Cleanup after timeout.
+    setTimeout(() => {
+      this.app.ticker.remove(ticker);
+      this.globalCamera.removeFilter(filterId);
+    }, timeout);
   }
 
   getThrusterOffset({
