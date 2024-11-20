@@ -167,14 +167,33 @@ export class PixiRenderer {
     });
   }
 
+  onProjectileStatusUpdate(projectiles) {
+    for (const id in projectiles) {
+      const proj = projectiles[id];
+      if (this.ships[proj.shipId]) {
+        this.ships[proj.shipId].updateProjectile({ ...proj, id });
+      }
+    }
+  }
+
+  onUpdateProjectilePos(projectiles) {
+    for (const id in projectiles) {
+      const shipId = id.slice(0, -7);
+      const pos = projectiles[id];
+      if (this.ships[shipId]) {
+        this.ships[shipId].updateProjectile({ status: 'move', pos, id });
+      }
+    }
+  }
+
   bindUpdateEvents() {
     const binds = {
       chat: console.log,
       pos: this.onUpdateShipPos,
       shipstat: this.onShipStatusUpdate,
       // shipbeaconstat: this.onBeaconsStatusUpdate,
-      // projstat: this.onProjectileStatusUpdate,
-      // projpos: this.updateProjectilePos,
+      projstat: this.onProjectileStatusUpdate,
+      projpos: this.onUpdateProjectilePos,
       // powerupstat: this.onPowerUpStatusUpdate,
       // pnbitsstat: this.onPnbitsStatusUpdate,
       disconnect: () => console.log('Disconnected!'),

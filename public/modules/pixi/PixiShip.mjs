@@ -4,7 +4,7 @@
  */
 
 import { shipTypes } from 'data';
-import { PixiEffect } from 'pixirender';
+import { PixiEffect, PixiProjectile } from 'pixirender';
 
 // Assume PIXI global namespace.
 const {
@@ -31,6 +31,7 @@ export class PixiShip {
   config;
   thrust = 0;
   sprite;
+  projectiles = {};
   emitters = {};
   filters = {};
   parent;
@@ -322,6 +323,36 @@ export class PixiShip {
         // Reverse thrust from front.
         thrusters.front.forEach((thruster) => thruster.activate());
         break;
+      default:
+        break;
+    }
+  }
+
+  updateProjectile(update) {
+    const { id, status } = update;
+
+    switch (status) {
+      case 'create':
+        if (!this.projectiles[id]) {
+          this.projectiles[id] = new PixiProjectile({
+            ...update,
+            app: this.app,
+            parent: this.parent,
+          });
+        }
+        break;
+
+      case 'move':
+        this.projectiles[id].setPos(update.pos);
+        break;
+
+      case 'destroy':
+        if (this.projectiles[id]) {
+          this.projectiles[id].destroy();
+          delete this.projectiles[id];
+        }
+        break;
+
       default:
         break;
     }
