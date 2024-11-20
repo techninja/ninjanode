@@ -104,6 +104,7 @@ export class Ship extends DynamicObject {
   // Cull inactive projectiles.
   cullProjectile(id) {
     if (this.projectiles[id]) {
+      this.projectiles[id].destroy();
       delete this.projectiles[id];
     }
   }
@@ -124,13 +125,11 @@ export class Ship extends DynamicObject {
       id,
       type: weapons[weaponId].type,
       style: weapons[weaponId].style,
-      offsetPos: true,
       shipId: this.id,
       weaponId,
       pos: {
-        // TODO: Why is this imbalanced?
-        x: this.pos.x + this.width,
-        y: this.pos.y + this.height / 2,
+        x: this.pos.x,
+        y: this.pos.y,
         d: angle,
       },
       callbacks,
@@ -476,30 +475,38 @@ export class Ship extends DynamicObject {
       this.pos.y += this.velocity.x;
       this.pos.x += this.velocity.y;
 
-      // Wrap to play area around center and complete transfer
-      const p = gameConfig.playArea;
-      const half = this.width / 2;
-
-      // Top to bottom.
-      if (this.pos.y < -half) {
-        this.pos.y = p - half;
-      }
-
-      // Bottom to top
-      if (this.pos.y > p + half) {
-        this.pos.y = half;
-      }
-
-      // Left to right.
-      if (this.pos.x < -half) {
-        this.pos.x = p - half;
-      }
-
-      // Right to left
-      if (this.pos.x > p + half) {
-        this.pos.x = half;
-      }
+      this.pos = this.getWrapPos(this.pos, this.width);
     }
+  }
+
+  // Wrap to play area around center and complete transfer
+  getWrapPos(inPos, width) {
+    const half = width / 2;
+    const pos = { ...inPos };
+
+    const p = gameConfig.playArea;
+
+    // Top to bottom.
+    if (pos.y < -half) {
+      pos.y = p - half;
+    }
+
+    // Bottom to top
+    if (pos.y > p + half) {
+      pos.y = half;
+    }
+
+    // Left to right.
+    if (pos.x < -half) {
+      pos.x = p - half;
+    }
+
+    // Right to left
+    if (pos.x > p + half) {
+      pos.x = half;
+    }
+
+    return pos;
   }
 
   updateProjectileMovementFrame() {
@@ -511,9 +518,11 @@ export class Ship extends DynamicObject {
         proj.pos.x += Math.sin(theta) * proj.config.speed;
         proj.pos.y += Math.cos(theta) * -proj.config.speed;
 
+        // Wrap projectile
+        proj.pos = this.getWrapPos(proj.pos, proj.config.size.width);
+
         // Projectile is too old! Kill it.
         if (new Date().getTime() - proj.born > proj.config.life) {
-          proj.destroy();
           this.cullProjectile(proj.id);
         }
       }

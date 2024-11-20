@@ -12,7 +12,10 @@ export class Projectile extends DynamicObject {
 
   constructor(options) {
     const { type, style, weaponId, shipId } = options;
-    super({ ...options, config: projectileTypes[type] });
+    const config = projectileTypes[type];
+    const { width, height } = config.size;
+
+    super({ ...options, config, width, height });
 
     this.born = new Date().getTime();
     this.style = style;
