@@ -337,7 +337,7 @@ export class PixiShip {
           this.projectiles[id] = new PixiProjectile({
             ...update,
             app: this.app,
-            parent: this.parent,
+            parent: this.globalCamera.getStage('projectiles'),
           });
         }
         break;

@@ -5,7 +5,7 @@
 
 // Assume PIXI global namespace.
 // eslint-disable-next-line no-undef
-const { Application, Container, Assets, TilingSprite } = PIXI;
+const { Application, Assets, TilingSprite } = PIXI;
 import { PixiShip, PixiCamera } from 'pixirender';
 
 export class PixiRenderer {
@@ -36,27 +36,15 @@ export class PixiRenderer {
 
     const pixiOpts = { canvas, resizeTo: window };
     this.app.init(pixiOpts).then(async () => {
-      // Before anything else, create a container for ships and bind events.
-      // If you take too long to do this, you will miss initial ship data.
-      this.stage.ships = new Container();
-      this.bindUpdateEvents();
-
-      // Layers (including ships)
-      this.stage.global = new Container();
-      this.stage.background = new Container();
-
       // Setup camera and stage where layer containers are held and then added to.
-      this.camera = new PixiCamera(
-        this.app,
-        this.gameConfig,
-        this.stage.global
-      );
-      this.stage.base = this.camera.getStage();
+      this.camera = new PixiCamera({
+        app: this.app,
+        playArea: this.gameConfig.playArea,
+        layers: ['ships', 'projectiles', 'background'],
+      });
 
-      // Add the working stage "layers" to the base stage.
-      this.stage.global.addChild(this.stage.background);
-      this.stage.global.addChild(this.stage.ships);
-      this.stage.base.addChild(this.stage.global);
+      this.stage = { ...this.camera.layers, base: this.camera.viewport };
+      this.bindUpdateEvents();
 
       // Setup the background.
       this.initBackground();

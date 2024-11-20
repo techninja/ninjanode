@@ -4,17 +4,27 @@
  */
 
 import { Viewport } from 'pixi-viewport';
+import { Container } from 'pixi.js';
 
 export class PixiCamera {
   viewport;
   target;
   playArea;
   filters = {};
+  layers = {};
   globalContainer;
 
-  constructor(app, { playArea }, globalContainer) {
+  constructor({ app, playArea, layers }) {
     this.playArea = playArea;
-    this.globalContainer = globalContainer;
+    this.globalContainer = new Container();
+
+    // Setup named layers, reverse order.
+    for (let index = layers.length - 1; index >= 0; index--) {
+      const name = layers[index];
+      this.layers[name] = new Container();
+      this.globalContainer.addChild(this.layers[name]);
+    }
+
     const viewport = new Viewport({
       // screenWidth: window.innerWidth,              // screen width used by viewport (eg, size of canvas)
       // screenHeight: window.innerHeight,            // screen height used by viewport (eg, size of canvas)
@@ -31,6 +41,9 @@ export class PixiCamera {
       // divWheel: null,                              // div to attach the wheel event (uses document.body as default)
       // disableOnContextMenu: false,                 // remove oncontextmenu=() => {} from the divWheel element
     });
+
+    // Add global container to viewport directly.
+    viewport.addChild(this.globalContainer);
 
     // this.viewport.bounce({
     //   sides: 'all', // all, horizontal, vertical, or combination of top, bottom, right, left(e.g., 'top-bottom-right')
@@ -175,7 +188,7 @@ export class PixiCamera {
       this.viewport.resize(window.innerWidth, window.innerHeight);
     };
 
-    // Add to app stage (only child).
+    // Add viewport to app stage (only child).
     app.stage.addChild(viewport);
     this.viewport = viewport;
   }
@@ -191,8 +204,8 @@ export class PixiCamera {
     };
   }
 
-  getStage() {
-    return this.viewport;
+  getStage(name) {
+    return this.layers[name] ?? this.viewport;
   }
 
   addFilter(name, filter) {

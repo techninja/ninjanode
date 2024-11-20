@@ -70,6 +70,7 @@ export class PixiProjectile {
     ];
     this.setPos(pos);
 
+    // Velocity is locked at init.
     this.velocity = {
       x: this.config.speed * Math.cos(degToRad(this.pos.d - 90)),
       y: this.config.speed * Math.sin(degToRad(this.pos.d - 90)),
