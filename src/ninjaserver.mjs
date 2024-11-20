@@ -206,6 +206,7 @@ io.sockets.on('connection', function (clientSocket) {
   function projectileDestroy() {
     const p = {};
     p[id + '_' + this.id] = {
+      shipId: id,
       status: 'destroy',
       type: this.type,
     };
