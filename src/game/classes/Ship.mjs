@@ -399,10 +399,9 @@ export class Ship extends DynamicObject {
       }
     }
 
-    // Apply thrust vector
-    // TODO: Why were we checking falsy "this.hit"??
-    // || this.hit
-    if (this.thrust != 0) {
+    // Apply thrust vector, or knockback vector.
+    // TODO: These should both be added separately and effect each other.
+    if (this.thrust != 0 || this.knockBack) {
       const { angle = this.pos.d, amount = this.thrust } = this.knockBack || {};
 
       // For knockback hit, only run once..
