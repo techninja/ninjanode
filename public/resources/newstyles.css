@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  position: fixed;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+#stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
