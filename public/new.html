@@ -28,13 +28,17 @@
           "data": "/data/index.mjs",
           "emitters": "/data/emitters/index.mjs",
           "pixirender": "/modules/pixi/index.mjs",
-          "modules": "/modules/index.mjs"
+          "modules": "/modules/index.mjs",
+          "ui": "/modules/ui/index.mjs",
+          "hybrids": "/hybrids/index.js"
         }
       }
     </script>
     <script type="module">
       import gameConfig from '/game' with { type: 'json' };
       import { ShipSocket, PixiRenderer, BotController } from 'modules';
+      import 'ui';
+
       const server = `${location.protocol}//${location.host}/`;
 
       // Connect immediately...
