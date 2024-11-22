@@ -13,3 +13,8 @@ body {
   left: 0;
   z-index: -1;
 }
+
+h2 {
+  font-family: 'Black Ops One', sans-serif;
+  text-transform: lowercase;
+}
