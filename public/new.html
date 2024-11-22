@@ -18,6 +18,9 @@
     />
   </head>
   <body>
+    <ninja-window id="main-window" title="Ninjanode">
+      <h4>Hello world</h4>
+    </ninja-window>
     <div id="framerate"></div>
     <canvas id="stage" width="400" height="400"></canvas>
     <script type="importmap">
@@ -36,18 +39,31 @@
     </script>
     <script type="module">
       import gameConfig from '/game' with { type: 'json' };
-      import { ShipSocket, PixiRenderer, BotController } from 'modules';
+      import {
+        ShipSocket,
+        PixiRenderer,
+        PixiInput,
+        BotController,
+      } from 'modules';
+
+      // Import and register all web components via side-effects.
       import 'ui';
 
       const server = `${location.protocol}//${location.host}/`;
 
       // Connect immediately...
       const socket = new ShipSocket(server);
-      window.renderer = new PixiRenderer({
+      const renderer = new PixiRenderer({
         socket,
         stageId: 'stage',
         framerateId: 'framerate',
         gameConfig,
+      });
+      window.renderer = renderer;
+
+      const input = new PixiInput({
+        renderer,
+        socket,
       });
 
       // Setup the Bots
