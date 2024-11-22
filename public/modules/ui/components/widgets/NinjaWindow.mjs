@@ -10,10 +10,10 @@ const toggleVis = (hidden) => (host) => {
 
 export const NinjaWindow = {
   tag: 'ninja-window',
-  title: '',
+  head: '',
   hidden: false,
 
-  render: ({ title, hidden }) => html`
+  render: ({ head, hidden }) => html`
     <style>
       div.wrapper {
         display: flex;
@@ -88,7 +88,7 @@ export const NinjaWindow = {
           size="32"
           onclick="${toggleVis()}"
         ></ninja-button>
-        ${title && html`<h2>${title}</h2>`}
+        ${head && html`<h2>${head}</h2>`}
         <slot></slot>
       </section>
     </div>
