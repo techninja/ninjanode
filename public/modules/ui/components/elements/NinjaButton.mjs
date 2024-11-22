@@ -10,6 +10,7 @@ export const NinjaButton = {
   type: 'plain',
   loading: false,
   desc: '',
+  solid: false,
   fullWidth: false,
   active: false,
   disabled: false,
@@ -23,6 +24,7 @@ export const NinjaButton = {
     disabled,
     loading,
     type,
+    solid,
   }) => {
     const linkClasses = {
       button: true,
@@ -46,7 +48,7 @@ export const NinjaButton = {
         style=${buttonStyle}
         title="${desc}"
       >
-        ${icon && html`<ninja-icon name=${icon} />`}
+        ${icon && html`<ninja-icon name=${icon} solid=${solid} />`}
         ${text && html`<span>${text}</span>`}
       </a>
     `;

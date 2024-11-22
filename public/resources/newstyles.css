@@ -14,7 +14,9 @@ body {
   z-index: -1;
 }
 
-h2 {
+h2,
+h3 {
   font-family: 'Black Ops One', sans-serif;
   text-transform: lowercase;
+  text-align: center;
 }

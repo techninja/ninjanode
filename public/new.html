@@ -19,7 +19,23 @@
   </head>
   <body>
     <ninja-window id="main-window" head="ninjanode">
-      <h4>Hello world</h4>
+      <h3>
+        A fully open source web browser space ship game, for the hell of it.
+      </h3>
+      <ninja-tabs activeItem="play">
+        <ninja-tab text="Play" icon="play" name="play">
+          <h2>Join Game</h2>
+        </ninja-tab>
+        <ninja-tab text="Edit Controls" icon="edit" name="controls">
+          <h2>Edit Control Config</h2>
+        </ninja-tab>
+        <ninja-tab text="Bots" icon="robot" name="bots">
+          <h2>Bot Config</h2>
+        </ninja-tab>
+        <ninja-tab text="Settings" icon="cog" name="settings">
+          <h2>Game settings</h2>
+        </ninja-tab>
+      </ninja-tabs>
     </ninja-window>
     <div id="framerate"></div>
     <canvas id="stage" width="400" height="400"></canvas>
