@@ -32,14 +32,21 @@ const game = new Game();
 server.listen(port);
 app.use('/', express.static('public'));
 
-// Give access to local pixi js build.
-app.use('/pixi', express.static('node_modules/pixi.js/dist'));
-app.use('/pixi-filters', express.static('node_modules/pixi-filters/dist'));
-app.use('/pixi-viewport', express.static('node_modules/pixi-viewport/dist'));
-app.use(
-  '/particle-emitter',
-  express.static('node_modules/@barvynkoa/particle-emitter')
-);
+// Map frontend node modules to public static file endpoints.
+// node_modules/from -> /to
+const frontendNodeMaps = {
+  'pixi.js/dist': 'pixi',
+  'pixi-filters/dist': 'pixi-filters',
+  'pixi-viewport/dist': 'pixi-viewport',
+  'hybrids/src': 'hybrids',
+  '@barvynkoa/particle-emitter': 'particle-emitter',
+  '@hackernoon/pixel-icon-library': 'icons',
+};
+
+for (const sourcePath in frontendNodeMaps) {
+  const destPath = frontendNodeMaps[sourcePath];
+  app.use(`/${destPath}`, express.static(`node_modules/${sourcePath}`));
+}
 
 console.log('ninjanode server listening on localhost:' + port);
 
