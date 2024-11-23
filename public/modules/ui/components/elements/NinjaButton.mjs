@@ -6,17 +6,19 @@ import { html } from 'hybrids';
 export const NinjaButton = {
   tag: 'ninja-button',
   text: '',
-  icon: '',
   type: 'plain',
   loading: false,
   desc: '',
-  solid: false,
   fullWidth: false,
   active: false,
   disabled: false,
 
+  // Icon prop drilled attributes.
+  icon: '',
+  solid: false,
+  angle: 0,
+
   render: ({
-    icon,
     text,
     desc,
     fullWidth,
@@ -24,7 +26,9 @@ export const NinjaButton = {
     disabled,
     loading,
     type,
+    icon,
     solid,
+    angle,
   }) => {
     const linkClasses = {
       button: true,
@@ -48,7 +52,8 @@ export const NinjaButton = {
         style=${buttonStyle}
         title="${desc}"
       >
-        ${icon && html`<ninja-icon name=${icon} solid=${solid} />`}
+        ${icon &&
+        html`<ninja-icon name=${icon} solid=${solid} angle=${angle} />`}
         ${text && html`<span>${text}</span>`}
       </a>
     `;
