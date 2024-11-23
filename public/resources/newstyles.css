@@ -5,6 +5,7 @@ body {
   position: fixed;
   overflow-y: scroll;
   width: 100%;
+  font-family: 'Pixelify Sans', sans-serif;
 }
 
 #stage {
