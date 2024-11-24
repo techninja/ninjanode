@@ -24,6 +24,8 @@ export const NinjaIcon = {
       <style>
         :host {
           display: block;
+          width: ${`${size}px`};
+          height: ${`${size}px`};
         }
         img {
           width: ${fullWidth ? '100%' : `${size}px`};

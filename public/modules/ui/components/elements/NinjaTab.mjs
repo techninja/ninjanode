@@ -6,6 +6,7 @@ import { html } from 'hybrids';
 export const NinjaTab = {
   tag: 'ninja-tab',
   text: '',
+  caption: '',
   name: '',
   icon: '',
   active: false,

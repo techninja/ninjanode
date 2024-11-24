@@ -24,21 +24,21 @@
   </head>
   <body>
     <ninja-window id="main-window" head="ninjanode">
-      <h3>
+      <h3 class="subhed">
         A fully open source web browser space ship game, for the hell of it.
       </h3>
       <ninja-tabs activeItem="play">
-        <ninja-tab text="Play" icon="play" name="play">
-          <h2>Join Game</h2>
+        <ninja-tab caption="Play" icon="play" name="play">
+          <ninja-ship-select></ninja-ship-select>
         </ninja-tab>
-        <ninja-tab text="Edit Controls" icon="edit" name="controls">
-          <h2>Edit Control Config</h2>
+        <ninja-tab caption="Edit Controls" icon="edit" name="controls">
+          <ninja-controls></ninja-controls>
         </ninja-tab>
-        <ninja-tab text="Bots" icon="robot" name="bots">
-          <h2>Bot Config</h2>
+        <ninja-tab caption="Bots" icon="robot" name="bots">
+          <ninja-bots></ninja-bots>
         </ninja-tab>
-        <ninja-tab text="Settings" icon="cog" name="settings">
-          <h2>Game settings</h2>
+        <ninja-tab caption="Settings" icon="cog" name="settings">
+          <ninja-settings></ninja-settings>
         </ninja-tab>
       </ninja-tabs>
     </ninja-window>

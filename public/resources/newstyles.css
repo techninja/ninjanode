@@ -16,8 +16,18 @@ body {
 }
 
 h2,
-h3 {
+h3,
+h4 {
   font-family: 'Black Ops One', sans-serif;
   text-transform: lowercase;
   text-align: center;
+}
+
+h3.subhed {
+  position: absolute;
+  top: -9px;
+  right: 0;
+  width: 300px;
+  line-height: 17px;
+  font-size: 15px;
 }

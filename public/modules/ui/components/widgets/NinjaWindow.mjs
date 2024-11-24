@@ -29,11 +29,12 @@ export const NinjaWindow = {
         background-color: #a0a0a0;
         max-width: 600px;
         border-radius: 0 1em;
-        min-width: 300px;
+        padding-top: 30px;
         box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
         position: relative;
         opacity: ${hidden ? 0 : 1};
         height: ${hidden ? 0 : 'auto'};
+        min-width: 525px;
       }
 
       h2 {

@@ -45,6 +45,13 @@ export const NinjaButton = {
           display: inline-block;
           cursor: pointer;
         }
+        a {
+          display: block !important;
+          padding: 0.25em;
+        }
+        a:hover {
+          background-color: gray;
+        }
       </style>
       <a
         class="${linkClasses}"
@@ -55,6 +62,7 @@ export const NinjaButton = {
         ${icon &&
         html`<ninja-icon name=${icon} solid=${solid} angle=${angle} />`}
         ${text && html`<span>${text}</span>`}
+        <slot></slot>
       </a>
     `;
   },
