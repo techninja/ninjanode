@@ -4,7 +4,7 @@
  */
 
 import { store } from 'hybrids';
-import { AppState } from 'data';
+import { AppState } from 'models';
 
 const defaultKeyBindings = {
   l: 37, // Left

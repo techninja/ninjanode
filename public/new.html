@@ -52,6 +52,7 @@
           "data": "/data/index.mjs",
           "emitters": "/data/emitters/index.mjs",
           "pixirender": "/modules/pixi/index.mjs",
+          "models": "/data/stateModels/index.mjs",
           "modules": "/modules/index.mjs",
           "ui": "/modules/ui/index.mjs",
           "hybrids": "/hybrids/index.js"
@@ -86,6 +87,13 @@
         renderer,
         socket,
       });
+
+      // Bind the join event from ship selection.
+      document
+        .getElementsByTagName('ninja-ship-select')[0]
+        .addEventListener('join', ({ detail }) => {
+          socket.join(detail);
+        });
 
       // Setup the Bots
       const bots = [

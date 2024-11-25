@@ -3,7 +3,7 @@
  */
 
 import { html, store } from 'hybrids';
-import { AppState } from 'data';
+import { AppState } from 'models';
 
 const toggleVis = (windowVisible) => () => {
   store.set(AppState, { windowVisible });
