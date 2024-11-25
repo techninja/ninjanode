@@ -3,6 +3,9 @@
  * Clientside abstraction to separate networking response logic from input.
  */
 
+import { store } from 'hybrids';
+import { AppState } from 'data';
+
 const defaultKeyBindings = {
   l: 37, // Left
   u: 38, // Up
@@ -28,13 +31,13 @@ export class PixiInput {
   }
 
   initializeKeyBindings() {
-    const window = this.get({ id: 'main-window' });
-
     // Bind to the global keyup & keydown events.
     this.docBind('keyup keydown', ({ type, which }) => {
-      // Window keypress, toggle visibility.
+      const state = store.get(AppState);
+
+      // Window keypress, toggle visibility via global state.
       if (type == 'keyup' && which == this.keys.w) {
-        window.hidden = !window.hidden;
+        store.set(AppState, { windowVisible: !state.windowVisible });
       }
     });
   }
@@ -45,17 +48,17 @@ export class PixiInput {
     });
   }
 
-  get({ id, className, type }) {
-    if (id) {
-      return document.getElementById(id);
-    }
+  // get({ id, className, type }) {
+  //   if (id) {
+  //     return document.getElementById(id);
+  //   }
 
-    if (className) {
-      return document.getElementsByClassName(className);
-    }
+  //   if (className) {
+  //     return document.getElementsByClassName(className);
+  //   }
 
-    if (type) {
-      return document.getElementsByTagName(type)[0];
-    }
-  }
+  //   if (type) {
+  //     return document.getElementsByTagName(type)[0];
+  //   }
+  // }
 }
