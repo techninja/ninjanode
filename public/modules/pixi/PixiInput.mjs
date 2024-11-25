@@ -32,14 +32,41 @@ export class PixiInput {
 
   initializeKeyBindings() {
     // Bind to the global keyup & keydown events.
-    this.docBind('keyup keydown', ({ type, which }) => {
+    this.docBind('keyup keydown', (e) => {
+      const { type, which } = e;
       const state = store.get(AppState);
 
       // Window keypress, toggle visibility via global state.
       if (type == 'keyup' && which == this.keys.w) {
         store.set(AppState, { windowVisible: !state.windowVisible });
       }
+
+      // If not chatting, move through
+      if (!state.chatVisible) {
+        const actionCode = this.getKey(which);
+        if (actionCode) {
+          const action = `${actionCode}${type}`;
+
+          // Filter out held down key repeats
+          if (this.lastKey != action) {
+            this.lastKey = action;
+            this.socket.key(e, actionCode);
+          }
+          return false;
+        }
+      }
     });
+  }
+
+  /**
+   * Return the action code for a given char code if any.
+   * @param {*} charCode
+   */
+  getKey(charCode) {
+    const index = Object.values(this.keys).findIndex(
+      (ascii) => ascii === charCode
+    );
+    return Object.keys(this.keys)?.[index];
   }
 
   docBind(binds, cb) {
