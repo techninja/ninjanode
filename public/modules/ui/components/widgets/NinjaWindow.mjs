@@ -2,25 +2,26 @@
  * @file <ninja-window> component for window management
  */
 
-import { html } from 'hybrids';
+import { html, store } from 'hybrids';
+import { AppState } from 'data';
 
-const toggleVis = (hidden) => (host) => {
-  host.hidden = hidden ?? !host.hidden;
+const toggleVis = (windowVisible) => () => {
+  store.set(AppState, { windowVisible });
 };
 
 export const NinjaWindow = {
   tag: 'ninja-window',
   head: '',
-  hidden: false,
+  windowVisible: () => store.get(AppState).windowVisible,
 
-  render: ({ head, hidden }) => html`
+  render: ({ head, windowVisible }) => html`
     <style>
       div.wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
         transition: 0.5s ease-in-out;
-        min-height: ${hidden ? 0 : '100vh'};
+        min-height: ${!windowVisible ? 0 : '100vh'};
       }
 
       section {
@@ -32,8 +33,8 @@ export const NinjaWindow = {
         padding-top: 30px;
         box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
         position: relative;
-        opacity: ${hidden ? 0 : 1};
-        height: ${hidden ? 0 : 'auto'};
+        opacity: ${!windowVisible ? 0 : 1};
+        height: ${!windowVisible ? 0 : 'auto'};
         min-width: 525px;
       }
 
@@ -71,8 +72,8 @@ export const NinjaWindow = {
         padding: 0.3em;
         padding-bottom: 0.1em;
         border-radius: 0.5em;
-        opacity: ${hidden ? 1 : 0};
-        height: ${hidden ? 'auto' : 0};
+        opacity: ${!windowVisible ? 1 : 0};
+        height: ${!windowVisible ? 'auto' : 0};
       }
     </style>
     <div class="wrapper">
@@ -80,14 +81,14 @@ export const NinjaWindow = {
         id="open"
         title="Open"
         icon="bars"
-        onclick="${toggleVis()}"
+        onclick="${toggleVis(true)}"
       ></ninja-button>
       <section>
         <ninja-button
           id="close"
           icon="window-close"
           size="32"
-          onclick="${toggleVis()}"
+          onclick="${toggleVis(false)}"
         ></ninja-button>
         ${head && html`<h2>${head}</h2>`}
         <slot></slot>
