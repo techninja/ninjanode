@@ -33,8 +33,7 @@ export class ShipSocket {
   join(shipData) {
     // Send the ship data! User will have to wait for server to relay the
     // new ship back to them before the ship will exist locally
-    shipData.status = 'create';
-    this.socket.emit('shipstat', shipData);
+    this.socket.emit('shipstat', { ...shipData, status: 'create' });
   }
 
   // Sends chat messages
