@@ -7,8 +7,6 @@ import { html, children, dispatch } from 'hybrids';
 // which can be added as event listener
 function activate(name) {
   return (host) => {
-    console.log('activate', name);
-
     // Set next active element by it's name
     host.activeItem = name;
 
@@ -39,7 +37,6 @@ export const NinjaTabs = {
     },
     observe: ({ items }, name) => {
       if (!name) name = items[0].name;
-      console.log('Set value', { items, name });
       return items
         .filter((item) => (item.active = item.name === name))
         .map(({ name }) => name)[0];
@@ -67,9 +64,13 @@ export const NinjaTabs = {
     </style>
     <nav class="tabs">
       <ul>
-        ${items.map(({ text, active, icon, name }) =>
+        ${items.map(({ text, active, icon, name, caption }) =>
           html`
-            <li class=${active ? 'is-active' : ''} onclick="${activate(name)}">
+            <li
+              title=${caption}
+              class=${active ? 'is-active' : ''}
+              onclick="${activate(name)}"
+            >
               <ninja-button icon=${icon} solid=${active} title=${text}>
                 ${text}
               </ninja-button>
