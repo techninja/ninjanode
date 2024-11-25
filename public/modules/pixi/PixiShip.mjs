@@ -11,6 +11,7 @@ const {
   Sprite,
   Assets,
   Container,
+  Text,
   filters: { MotionBlurFilter, PixelateFilter, ShockwaveFilter },
   DEG_TO_RAD,
   Graphics,
@@ -31,6 +32,8 @@ export class PixiShip {
   config;
   thrust = 0;
   sprite;
+  nameLabel;
+  name = '';
   projectiles = {};
   emitters = {};
   filters = {};
@@ -48,7 +51,7 @@ export class PixiShip {
   }
 
   async init(options) {
-    const { style, pos, isMirror = false, parent, camera } = options;
+    const { style, pos, isMirror = false, parent, camera, name } = options;
     const {
       size: { width, height },
     } = this.config;
@@ -73,6 +76,23 @@ export class PixiShip {
     // Everything goes in the container which is moved.
     this.container = new Container();
     this.container.addChild(ship);
+
+    // Add name to ship
+    this.name = name;
+    this.nameLabel = new Container();
+    this.nameLabel.addChild(
+      new Text({
+        text: name,
+        style: {
+          fontFamily: 'Arial',
+          fontSize: 13,
+          fill: 0xff1010,
+          align: 'left',
+        },
+      })
+    );
+
+    camera.getStage('labels').addChild(this.nameLabel);
 
     // Rotate around the center
     this.container.pivot.x = width / 2;
@@ -105,6 +125,7 @@ export class PixiShip {
   fadeIn(speed = 20) {
     const fn = () => {
       this.sprite.alpha += speed / 1000;
+      this.nameLabel.alpha = this.sprite.alpha;
       if (this.sprite.alpha > 1) {
         this.sprite.alpha = 1;
         this.app.ticker.remove(fn);
@@ -124,6 +145,8 @@ export class PixiShip {
         x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
         y: this.container.y - this.velocity.y * ((1 / fps) * serverFps),
       });
+
+      this.setNamePos({ x: this.container.x, y: this.container.y });
 
       this.manageMirror();
     }
@@ -145,7 +168,9 @@ export class PixiShip {
       distance *
       (isY ? Math.sin(degToRad(angle - 90)) : Math.cos(degToRad(angle - 90)));
 
+    // Fully hide the ship and label.
     this.sprite.alpha = 0;
+    this.nameLabel.alpha = 0;
     for (let index = 0; index < parts; index++) {
       // Initialize new sprite and mask
       const container = new Container();
@@ -226,6 +251,9 @@ export class PixiShip {
     // Remove ship container.
     this.container.destroy();
 
+    // Remove name label.
+    this.nameLabel.destroy();
+
     // Clean up emitters.
     const emitters = [
       ...this.emitters.thrusters.front,
@@ -245,6 +273,8 @@ export class PixiShip {
         this.mirror = new PixiShip(this.app, {
           parent: this.parent,
           style: this.style,
+          camera: this.globalCamera,
+          name: this.name,
           pos,
           isMirror: true,
           width: this.width,
@@ -450,6 +480,15 @@ export class PixiShip {
     this.emitters.thrusters.front.forEach((thruster, index) => {
       thruster.setPos(this.getThrusterOffset({ t: 2, index }));
     });
+  }
+
+  setNamePos({ x, y }) {
+    // Set name label position
+    if (this.nameLabel)
+      this.nameLabel.updateTransform({
+        x: x - this.width / 2,
+        y: y - this.height / 2 - 20,
+      });
   }
 
   setPos({ x, y, d, t = 0, vel }) {

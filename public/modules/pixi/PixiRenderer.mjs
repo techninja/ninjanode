@@ -40,7 +40,7 @@ export class PixiRenderer {
       this.camera = new PixiCamera({
         app: this.app,
         playArea: this.gameConfig.playArea,
-        layers: ['ships', 'projectiles', 'background'],
+        layers: ['labels', 'ships', 'projectiles', 'background'],
       });
 
       this.stage = { ...this.camera.layers, base: this.camera.viewport };
