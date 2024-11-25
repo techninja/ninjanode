@@ -78,11 +78,14 @@ export class PixiRenderer {
             parent: this.stage.ships,
             camera: this.camera,
             world: this.world,
-            blur: true,
+            blur: this.socket.id !== id,
             ...update,
             onInit: () => {
-              this.camera.follow(this.ships[id]);
-              this.camera.setZoom(1);
+              // Follow us when we join.
+              if (this.socket.id == id) {
+                this.camera.follow(this.ships[id]);
+                this.camera.setZoom(1);
+              }
             },
           });
 
