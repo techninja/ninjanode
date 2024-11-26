@@ -80,11 +80,8 @@ export class PixiRenderer {
 
     // Ignore this if freelook is on or not joined.
     if ((!freelook || force) && joined) {
-      console.log('following');
       this.camera.follow(this.ships[this.socket.id]);
       this.camera.setZoom(1);
-    } else {
-      console.log('skipping follow', { freelook, joined });
     }
   }
 
