@@ -96,12 +96,19 @@ export class PixiInput {
     this.docBind(
       'mousedown mousemove mouseup',
       ({ pageX: x, pageY: y, which, type }) => {
-        // console.log({ which, type, x, y });
+        const { windowVisible, chatVisible, joined } = store.get(AppState);
+
+        const controllable = joined && !windowVisible && !chatVisible;
+
+        // If we can't mouse control, leave early.
+        if (!controllable) return false;
+
         switch (type) {
           case 'mousedown':
             this.renderer.stage.base.pause = true;
             this.mousedown = which;
             this.touchPositionCallback({ x, y });
+            this.renderer.stage.base.pause = false;
             break;
 
           case 'mousemove':
