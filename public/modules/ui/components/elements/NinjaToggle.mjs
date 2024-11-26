@@ -26,9 +26,14 @@ export const NinjaToggle = {
   offIcon: 'octagon-times',
 
   render: ({ isOn, onIcon, offIcon, onTitle, offTitle }) =>
-    html`<ninja-button
-      onclick=${click}
-      icon=${isOn ? onIcon : offIcon}
-      text=${isOn ? onTitle : offTitle}
-    ></ninja-button>`,
+    html` <style>
+        :host {
+          display: inline-block;
+        }
+      </style>
+      <ninja-button
+        onclick=${click}
+        icon=${isOn ? onIcon : offIcon}
+        text=${isOn ? onTitle : offTitle}
+      ></ninja-button>`,
 };
