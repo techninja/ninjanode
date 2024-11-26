@@ -45,7 +45,7 @@ export class PixiCamera {
     // Add global container to viewport directly.
     viewport.addChild(this.globalContainer);
 
-    // this.viewport.bounce({
+    // viewport.bounce({
     //   sides: 'all', // all, horizontal, vertical, or combination of top, bottom, right, left(e.g., 'top-bottom-right')
     //   friction: 0.5, // friction to apply to decelerate if active
     //   time: 150, // time in ms to finish bounce
@@ -112,21 +112,10 @@ export class PixiCamera {
     //   //     underflow: 'center',	       // where to place world if too small for screen (e.g., top - right, center, none, bottomleft)
     //   // })
 
-    //   // viewport.clampZoom({
-    //   //     minWidth: null,                 // minimum width
-    //   //     minHeight: null,                // minimum height
-    //   //     maxWidth: null,                 // maximum width
-    //   //     maxHeight: null,                // maximum height
-    //   //     minScale: null,                 // minimum scale
-    //   //     maxScale: null,                 // minimum scale
-    //   // })
-
-    //   // target.start()  // starts the target moving
-    //   // viewport.follow(target.get(), {
-    //   //     speed: 0,           // speed to follow in pixels/frame (0=teleport to location)
-    //   //     acceleration: null, // set acceleration to accelerate and decelerate at this rate; speed cannot be 0 to use acceleration
-    //   //     radius: null,       // radius (in world coordinates) of center circle where movement is allowed without moving the viewport
-    //   // })
+    viewport.clampZoom({
+      maxScale: 5, // minimum scale
+      minScale: 0.5, // minimum scale
+    });
 
     //   // viewport.mouseEdges({
     //   //     radius: null,           // distance from center of screen in screen pixels
@@ -165,16 +154,6 @@ export class PixiCamera {
     //   //     forceStart: false,          // starts the snap immediately regardless of whether the viewport is at the desired zoom
     //   //     noMove: false,              // zoom but do not move
     //   // })
-
-    //   // create elements
-    //   // stars(viewport, STAR_SIZE, BORDER);
-    //   // target.setup(viewport);
-    //   // border(viewport, BORDER);
-
-    //   // fit and center the world into the panel
-    //   // viewport.fit();
-    //   // viewport.moveCenter(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-    // }
 
     // Fit and center the world into the panel.
     // viewport.fit()
