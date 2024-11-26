@@ -2,11 +2,13 @@
  * @file NinjaNode Pixi.js Render Library
  * Clientside abstraction to separate networking response logic from game rendering.
  */
+import { store } from 'hybrids';
+import { UserSettings, UserSettingsObserver, AppState } from 'models';
+import { PixiShip, PixiCamera } from 'pixirender';
 
 // Assume PIXI global namespace.
 // eslint-disable-next-line no-undef
 const { Application, Assets, TilingSprite } = PIXI;
-import { PixiShip, PixiCamera } from 'pixirender';
 
 export class PixiRenderer {
   app;
@@ -43,6 +45,16 @@ export class PixiRenderer {
         layers: ['labels', 'ships', 'projectiles', 'background'],
       });
 
+      // TODO: Where should this live?
+      // Bind to freelook user setting to set viewport state.
+      new UserSettingsObserver('freelook', ({ freelook }) => {
+        if (!freelook) {
+          this.setFollow(true);
+        } else {
+          this.camera.unfollow();
+        }
+      });
+
       this.stage = { ...this.camera.layers, base: this.camera.viewport };
 
       // Add ship getter helper
@@ -60,6 +72,20 @@ export class PixiRenderer {
       //   pos: { x: 150, y: 150, d: 0, t: 1 },
       // });
     });
+  }
+
+  setFollow(force = false) {
+    const { joined } = store.get(AppState);
+    const { freelook } = store.get(UserSettings);
+
+    // Ignore this if freelook is on or not joined.
+    if ((!freelook || force) && joined) {
+      console.log('following');
+      this.camera.follow(this.ships[this.socket.id]);
+      this.camera.setZoom(1);
+    } else {
+      console.log('skipping follow', { freelook, joined });
+    }
   }
 
   onShipStatusUpdate(shipUpdates) {
@@ -83,8 +109,7 @@ export class PixiRenderer {
             onInit: () => {
               // Follow us when we join.
               if (this.socket.id == id) {
-                this.camera.follow(this.ships[id]);
-                this.camera.setZoom(1);
+                this.setFollow();
               }
             },
           });

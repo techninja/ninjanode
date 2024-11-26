@@ -97,10 +97,14 @@ export class PixiInput {
       'mousedown mousemove mouseup',
       ({ pageX: x, pageY: y, which, type }) => {
         const { windowVisible, chatVisible, joined } = store.get(AppState);
-        const { mouseControls } = store.get(UserSettings);
+        const { mouseControls, freelook } = store.get(UserSettings);
 
         const controllable =
-          joined && !windowVisible && !chatVisible && mouseControls;
+          joined &&
+          !windowVisible &&
+          !chatVisible &&
+          mouseControls &&
+          !freelook;
 
         // If we can't mouse control, leave early.
         if (!controllable) return false;

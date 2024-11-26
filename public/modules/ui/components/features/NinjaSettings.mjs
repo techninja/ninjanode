@@ -14,17 +14,14 @@ export const NinjaSettings = {
   render: ({ settings }) => html`
     <style></style>
     <div>
-      <h2>Game settings</h2>
-      <div>
-        <ninja-toggle
-          is-on=${settings.freelook}
-          on-title="Freelook On"
-          off-title="Freelook Off"
-          on-icon="eye"
-          off-icon="eye-cross"
-          onchange=${setVal('freelook')}
-        ></ninja-toggle>
-      </div>
+      <ninja-toggle
+        is-on=${settings.freelook}
+        on-title="Freelook On"
+        off-title="Freelook Off"
+        on-icon="eye"
+        off-icon="eye-cross"
+        onchange=${setVal('freelook')}
+      ></ninja-toggle>
     </div>
   `,
 };
