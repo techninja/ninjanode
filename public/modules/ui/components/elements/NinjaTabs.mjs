@@ -58,6 +58,9 @@ export const NinjaTabs = {
         list-style: none;
         padding: 0;
       }
+      li {
+        height: 60px;
+      }
       li.is-active {
         filter: invert(1);
       }
