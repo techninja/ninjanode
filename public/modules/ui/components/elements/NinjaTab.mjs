@@ -12,14 +12,22 @@ export const NinjaTab = {
   active: false,
 
   // Renders children (<slot/>) if active is set to true
-  render: ({ active }) => html`
+  render: ({ active, caption }) => html`
     <style>
       :host {
         display: block;
         position: relative;
         overflow: hidden;
       }
+      h2 {
+        margin: 0;
+        padding-bottom: 5px;
+      }
     </style>
-    ${active && html`<slot></slot>`}
+    ${active &&
+    html`
+      <h2>${caption}</h2>
+      <slot></slot>
+    `}
   `,
 };
