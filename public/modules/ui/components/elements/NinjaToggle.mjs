@@ -4,15 +4,21 @@
 import { html, dispatch } from 'hybrids';
 
 const click = (host) => {
-  host.isOn = !host.isOn;
+  const newVal = !host.isOn;
+
+  // Manage our own state if configured.
+  if (host.statefull) {
+    host.isOn = newVal;
+  }
 
   // After change custom event is dispatched
-  dispatch(host, 'change', { detail: { isOn: host.isOn } });
+  dispatch(host, 'change', { detail: { isOn: newVal } });
 };
 
 export const NinjaToggle = {
   tag: 'ninja-toggle',
   isOn: false,
+  statefull: false,
   fullwidth: false,
   onTitle: 'On',
   onIcon: 'octagon-check',
