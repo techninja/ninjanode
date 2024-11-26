@@ -6,7 +6,9 @@ const storageKey = 'UserSettings';
 export const UserSettings = {
   ship: '',
   name: '',
+  freelook: false,
 
+  // Standard local storage store.
   [store.connect]: {
     get: () => JSON.parse(localStorage.getItem(storageKey) || '{}'),
     set: (id, values) => {
