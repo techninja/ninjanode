@@ -23,7 +23,7 @@ export const NinjaIcon = {
     return html`
       <style>
         :host {
-          display: block;
+          display: inline-block;
           width: ${`${size}px`};
           height: ${`${size}px`};
         }
