@@ -6,7 +6,7 @@ export const NinjaBots = {
   render: () => html`
     <style></style>
     <div>
-      <h2>Bot config</h2>
+      <small>bot stuff goes here</small>
     </div>
   `,
 };
