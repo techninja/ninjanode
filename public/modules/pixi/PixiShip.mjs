@@ -32,6 +32,7 @@ export class PixiShip {
   config;
   thrust = 0;
   sprite;
+  shield;
   nameLabel;
   name = '';
   projectiles = {};
@@ -65,17 +66,29 @@ export class PixiShip {
     this.width = width;
     this.height = height;
     const imgPath = `../resources/graphics/ships/ship_${style}.png`;
+    const shieldPath = `../resources/graphics/shields/shield_${this.config.shield.style}.png`;
 
-    // load the texture we need
-    const texture = await Assets.load(imgPath);
-    const ship = new Sprite(texture);
-    this.sprite = ship;
+    // Init shield sprite.
+    const shield = new Sprite(await Assets.load(shieldPath));
+    shield.anchor = 0.5;
+    shield.width = 150;
+    shield.height = 150;
+    shield.alpha = 0;
+    shield.position = { x: width / 2, y: height / 2 };
+
+    // Init ship sprite.
+    const ship = new Sprite(await Assets.load(imgPath));
     ship.width = width;
     ship.height = height;
+
+    // Store the sprites for modification.
+    this.sprite = ship;
+    this.shield = shield;
 
     // Everything goes in the container which is moved.
     this.container = new Container();
     this.container.addChild(ship);
+    this.container.addChild(shield);
 
     // Add name to ship
     this.name = name;
@@ -398,6 +411,28 @@ export class PixiShip {
     });
     this.chunkParts();
     this.shockwave();
+  }
+
+  // Play sound, show shield.
+  hit({ weapon }) {
+    const timeout = 300;
+    this.shield.alpha = 1;
+
+    // Add ticker for animation.
+    const ticker = () => {
+      this.shield.alpha = this.shield.alpha - 0.001;
+      this.shield.width = this.shield.width * 0.985;
+      this.shield.height = this.shield.width;
+    };
+    this.app.ticker.add(ticker);
+
+    // Cleanup after timeout.
+    setTimeout(() => {
+      this.shield.alpha = 0;
+      this.shield.width = 150;
+      this.shield.height = 150;
+      this.app.ticker.remove(ticker);
+    }, timeout);
   }
 
   shockwave() {

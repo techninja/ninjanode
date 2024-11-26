@@ -113,6 +113,10 @@ export class PixiRenderer {
 
           break;
 
+        case 'hit':
+          ship.hit(update);
+          break;
+
         case 'boom':
           switch (update.stage) {
             case 'start':
