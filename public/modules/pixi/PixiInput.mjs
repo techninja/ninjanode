@@ -4,7 +4,7 @@
  */
 
 import { store } from 'hybrids';
-import { AppState } from 'models';
+import { AppState, UserSettings } from 'models';
 
 const defaultKeyBindings = {
   l: 37, // Left
@@ -97,8 +97,10 @@ export class PixiInput {
       'mousedown mousemove mouseup',
       ({ pageX: x, pageY: y, which, type }) => {
         const { windowVisible, chatVisible, joined } = store.get(AppState);
+        const { mouseControls } = store.get(UserSettings);
 
-        const controllable = joined && !windowVisible && !chatVisible;
+        const controllable =
+          joined && !windowVisible && !chatVisible && mouseControls;
 
         // If we can't mouse control, leave early.
         if (!controllable) return false;

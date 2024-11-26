@@ -18,6 +18,7 @@ export const UserSettings = {
   ship: '',
   name: '',
   freelook: false,
+  mouseControls: true,
 
   // Standard local storage store.
   [store.connect]: {
