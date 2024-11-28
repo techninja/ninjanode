@@ -13,7 +13,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node --env-file=.env src/ninjaserver.mjs"
+    "start": "node src/ninjaserver.mjs",
+    "dev": "node --env-file=.env src/ninjaserver.mjs"
   },
   "dependencies": {
     "@barvynkoa/particle-emitter": "^0.0.1",
