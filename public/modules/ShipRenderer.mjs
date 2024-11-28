@@ -56,7 +56,8 @@ export class ShipRenderer {
     const updateScale = () => {
       // Move through all items on the map and move them based on scale.
       Object.entries(items).forEach(([key, item]) => {
-        const { x, y, radius } = item.data('pos');
+        const pos = item.data('pos');
+        const { x, y, radius } = pos;
 
         item.css({
           left: x * scale,
@@ -120,7 +121,7 @@ export class ShipRenderer {
         updateScale();
       },
       shipstat: (ships) => {
-        Object.entries(ships).forEach(([id, { style, status, stage }]) => {
+        Object.entries(ships).forEach(([id, { style, status, stage, pos }]) => {
           const itemId = `ship-${id}`;
           if (status === 'create') {
             if (!items[itemId]) {
@@ -128,6 +129,7 @@ export class ShipRenderer {
               const $ship = $(
                 `<ship class="map_ship ship_${style}${self}"></ship>`
               );
+              $ship.data('pos', pos);
               items[itemId] = $ship;
               $map.append($ship);
             }
