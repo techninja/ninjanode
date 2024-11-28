@@ -96,8 +96,8 @@
         const renderer = new ShipRenderer(mainSocket, $('body'));
 
         // Setup the Bot
-        // const botSocket = new ShipSocket(server);
-        // const botController = new BotController(botSocket);
+        const botSocket = new ShipSocket(server);
+        const botController = new BotController(botSocket);
 
         // const botSocket2 = new ShipSocket(server);
         // const botController2 = new BotController(botSocket2);
