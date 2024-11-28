@@ -20,6 +20,8 @@ export class ShipInput {
   keys = defaultKeyBindings;
   mousedown = 0;
   lastKey = '';
+  connectionHidden = false;
+  chatHidden = true;
 
   constructor(renderer, socket, $body) {
     this.renderer = renderer;
@@ -42,6 +44,7 @@ export class ShipInput {
         if (e.type == 'keyup' && e.which == 27) {
           // 'esc' pressed
           renderer.toggleConnectionWindow(false);
+          this.connectionHidden = false;
           return;
         }
         return;
@@ -50,6 +53,7 @@ export class ShipInput {
       if (chatHidden && connectionHidden) {
         if (e.type == 'keyup' && e.which == 27) {
           renderer.toggleConnectionWindow(true);
+          this.connectionHidden = true;
           return;
         }
       }
@@ -83,6 +87,7 @@ export class ShipInput {
         $('#chat-notify').hide();
         $('#chat-main input')[0].focus();
         $('#chat-main ol')[0].scrollTop = $('#chat-main ol')[0].scrollHeight; // Scroll to bottom
+        this.chatHidden = false;
         return false;
       }
 
@@ -97,6 +102,7 @@ export class ShipInput {
         if ($('#chat-notify li').length) {
           $('#chat-notify').fadeIn('slow');
         }
+        this.chatHidden = true;
         return false;
       }
 
@@ -161,16 +167,28 @@ export class ShipInput {
     }
   }
 
+  notControllable() {
+    this.connectionHidden = !$('#connection-window:visible').length;
+    this.chatHidden = !$('#chat-main:visible').length;
+    return !this.connectionHidden || !this.chatHidden;
+  }
+
   // Bind callbacks to both mouse and touch events for input
   bindTouchEvents() {
     // Mouse bindings....
     $(document).bind('mousedown', ({ pageX: x, pageY: y, which }) => {
+      // No control if these are open.
+      if (this.notControllable()) return false;
+
       this.touchPositionCallback({ x, y });
       this.mousedown = which;
       return false;
     });
 
     $(document).bind('mousemove', ({ pageX: x, pageY: y }) => {
+      // No control if these are open.
+      if (this.notControllable()) return false;
+
       if (this.mousedown == 1) {
         this.touchPositionCallback({ x, y });
         return false;
@@ -178,33 +196,26 @@ export class ShipInput {
     });
 
     $(document).bind('mouseup', ({ pageX: x, pageY: y }) => {
+      // No control if these are open.
+      if (this.notControllable()) return false;
+
       this.touchEndCallback({ x, y });
       this.mousedown = 0;
       return false;
     });
 
-    // Touch device beindings...
-    // $(document).bind(
-    //   'touchstart',
-    //   ({ originalEvent: { touches, preventDefault } }) => {
-
-    //   }
-    // );
+    // Disable Gestures for iOS.
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
 
     document.addEventListener(
       'touchstart',
-      ({ touches, preventDefault }) => {
-        if (touches.length != 1) {
-          this.multiTouchCallback(touches.length);
-          preventDefault();
-        }
-      },
-      { passive: false }
-    );
+      (e) => {
+        // No control if these are open.
+        if (this.notControllable()) return false;
 
-    document.addEventListener(
-      'touchstart',
-      ({ touches, changedTouches, preventDefault }) => {
+        const { touches, changedTouches, preventDefault } = e;
         if (touches.length != 1) {
           this.multiTouchCallback(touches.length);
         } else {
@@ -215,61 +226,51 @@ export class ShipInput {
           });
         }
         preventDefault();
+        // iOS long press fix.
+        e.returnValue = false;
       },
       { passive: false }
     );
 
     document.addEventListener(
       'touchmove',
-      ({ touches, changedTouches, preventDefault }) => {
+      (e) => {
+        // No control if these are open.
+        if (this.notControllable()) return false;
+
+        const { touches, changedTouches, preventDefault } = e;
         // Ignore any touchstart / touchmove here except the first
         if (touches.length === 1) {
           this.touchPositionCallback({
             x: changedTouches[0].pageX,
             y: changedTouches[0].pageY,
           });
+          // iOS long press fix.
+          e.returnValue = false;
           preventDefault();
         }
       },
       { passive: false }
     );
 
-    document.addEventListener(
-      'touchend',
-      ({ changedTouches, preventDefault }) => {
-        // Ignore any touchend except the last one
-        if (changedTouches.length == 1) {
-          this.touchEndCallback({
-            x: changedTouches[0].pageX,
-            y: changedTouches[0].pageY,
-          });
-          preventDefault();
-        }
+    document.addEventListener('touchend', (e) => {
+      // No control if these are open.
+      if (this.notControllable()) return false;
 
-        return false;
+      const { changedTouches, preventDefault } = e;
+      // Ignore any touchend except the last one
+      if (changedTouches.length == 1) {
+        this.touchEndCallback({
+          x: changedTouches[0].pageX,
+          y: changedTouches[0].pageY,
+        });
+        // iOS long press fix.
+        e.returnValue = false;
+        preventDefault();
       }
-    );
 
-    // $(document).bind('touchstart touchmove', ({ originalEvent: orig }) => {
-    //   // Ignore any touchstart / touchmove here except the first
-    //   if (orig.touches.length == 1) {
-
-    //     orig.preventDefault();
-    //   }
-    //   return false;
-    // });
-
-    // $(document).bind('touchend', ({ originalEvent: orig }) => {
-    //   // Ignore any touchend except the last one
-    //   if (orig.changedTouches.length == 1) {
-    //     this.touchEndCallback({
-    //       x: orig.changedTouches[0].pageX,
-    //       y: orig.changedTouches[0].pageY,
-    //     });
-    //   }
-
-    //   return false;
-    // });
+      return false;
+    });
   }
 }
 

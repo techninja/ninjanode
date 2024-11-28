@@ -14,6 +14,12 @@ body * {
                                    supported by Chrome and Opera */
 }
 
+/* Prevent zoom on Android */
+:root {
+  touch-action: pan-x pan-y;
+  height: 100%;
+}
+
 /* Reset select for items we do care about */
 body #name,
 body form button {
@@ -26,6 +32,7 @@ body {
 }
 
 body.fixed {
+  -webkit-user-select: none;
   position: fixed;
   overflow: hidden;
 }
