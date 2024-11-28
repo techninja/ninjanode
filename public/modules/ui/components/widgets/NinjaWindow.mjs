@@ -36,6 +36,7 @@ export const NinjaWindow = {
         opacity: ${!windowVisible ? 0 : 1};
         height: ${!windowVisible ? 0 : 'auto'};
         min-width: 525px;
+        z-index: 5;
       }
 
       h2 {

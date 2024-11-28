@@ -15,6 +15,7 @@ const defaultKeyBindings = {
   s: 77, // Secondary Fire (m)
   b: 83, // Set Spawn Beacon (s)
   w: 27, // Open/Close main window
+  c: 84, // Open Chat (t)
 };
 
 export class PixiInput {
@@ -37,13 +38,33 @@ export class PixiInput {
       const { type, which } = e;
       const state = store.get(AppState);
 
-      // Window keypress, toggle visibility via global state.
+      // Escape keypress.
       if (type == 'keyup' && which == this.keys.w) {
+        // Chat visible? Close it.
+        if (state.chatVisible) {
+          store.set(AppState, { chatVisible: false });
+          return;
+        }
+
+        // Toggle main window visibility via global state.
         store.set(AppState, { windowVisible: !state.windowVisible });
+        return;
       }
 
-      // If not chatting, move through
-      if (!state.chatVisible) {
+      // Show chat.
+      if (
+        type == 'keyup' &&
+        which == this.keys.c &&
+        state.joined &&
+        !state.chatVisible &&
+        !state.windowVisible
+      ) {
+        store.set(AppState, { chatVisible: true });
+        return;
+      }
+
+      // If not chatting or in window, move through keybindings.
+      if (!state.chatVisible && !state.windowVisible) {
         const actionCode = this.getKey(which);
         if (actionCode) {
           const action = `${actionCode}${type}`;
@@ -150,23 +171,17 @@ export class PixiInput {
     return Object.keys(this.keys)?.[index];
   }
 
+  /**
+   * Bind to global document level events.
+   *
+   * @param string binds
+   *   Space separated list of events to bind to.
+   * @param {*} cb
+   *   Callback for event.
+   */
   docBind(binds, cb) {
     binds.split(' ').forEach((bind) => {
       document.addEventListener(bind, cb, { passive: false });
     });
   }
-
-  // get({ id, className, type }) {
-  //   if (id) {
-  //     return document.getElementById(id);
-  //   }
-
-  //   if (className) {
-  //     return document.getElementsByClassName(className);
-  //   }
-
-  //   if (type) {
-  //     return document.getElementsByTagName(type)[0];
-  //   }
-  // }
 }

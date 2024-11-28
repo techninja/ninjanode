@@ -3,7 +3,13 @@
  * Clientside abstraction to separate networking response logic from game rendering.
  */
 import { store } from 'hybrids';
-import { UserSettings, UserSettingsObserver, AppState } from 'models';
+import {
+  UserSettings,
+  UserSettingsObserver,
+  AppState,
+  ChatStateObserver,
+  ChatState,
+} from 'models';
 import { PixiShip, PixiCamera } from 'pixirender';
 
 // Assume PIXI global namespace.
@@ -66,12 +72,80 @@ export class PixiRenderer {
       // Setup the background.
       this.initBackground();
 
+      // Setup chat.
+      this.initChat();
+
       // Minimum for creating a ship object.
       // window.ship = new PixiShip(this.app, {
       //   style: 'a',
       //   pos: { x: 150, y: 150, d: 0, t: 1 },
       // });
     });
+  }
+
+  initChat() {
+    // Whenever a user submits a new message, send it.
+    new ChatStateObserver('newMessage', ({ newMessage }) => {
+      this.socket.sendChat(newMessage);
+    });
+  }
+
+  /**
+   * Render a message for dispay to the user.
+   *
+   * @param {*} data
+   * @returns
+   */
+  renderMessage(data) {
+    if (!this.ships[data.id]) return false;
+    const nameSource = this.ships[data.id].name;
+
+    let type = 'chat';
+    let nameTarget = '';
+
+    // Set the name of the target in the message to the sip, if it's available
+    if (data.target && this.ships[data.target]) {
+      nameTarget = this.ships[data.target].name;
+    } else {
+      // Otherwise, use it as a literal
+      nameTarget = data.target;
+    }
+
+    const sysMsgActions = {
+      join: `${nameSource} joined the game`,
+      disconnect: `${nameSource} disconnected`,
+      projectile: `${nameSource} made ${nameTarget} explode`,
+      collision: `${nameSource} slammed into ${nameTarget}`,
+      pnbcollision: `${nameSource} crashed into ${nameTarget}`,
+    };
+
+    if (data.type == 'system') {
+      type = 'system';
+      data.msg = sysMsgActions[data.action];
+    } else if (data.type == 'chat') {
+      data.msg = nameSource + ': ' + data.msg;
+      if (data.id == this.socket.id) {
+        type = 'self';
+      }
+    }
+
+    return { type, message: data.msg };
+  }
+
+  /**
+   * Socket chat/system message callback handler.
+   *
+   * @param {*} payload
+   */
+  onMessage(payload) {
+    const { messages } = store.get(ChatState);
+    const newMessage = this.renderMessage(payload);
+
+    if (newMessage) {
+      store.set(ChatState, {
+        messages: [...messages, newMessage],
+      });
+    }
   }
 
   setFollow(force = false) {
@@ -207,7 +281,7 @@ export class PixiRenderer {
 
   bindUpdateEvents() {
     const binds = {
-      chat: console.log,
+      chat: this.onMessage,
       pos: this.onUpdateShipPos,
       shipstat: this.onShipStatusUpdate,
       // shipbeaconstat: this.onBeaconsStatusUpdate,

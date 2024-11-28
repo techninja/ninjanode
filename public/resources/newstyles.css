@@ -5,6 +5,7 @@ body {
   position: fixed;
   overflow-y: scroll;
   width: 100%;
+  height: 100%;
   font-family: 'Pixelify Sans', sans-serif;
 }
 
@@ -30,4 +31,12 @@ h3.subhed {
   width: 300px;
   line-height: 17px;
   font-size: 15px;
+}
+
+ninja-chat {
+  z-index: 1;
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  width: 70%;
 }
