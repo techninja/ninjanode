@@ -9,12 +9,28 @@
   "main": "ninjaserver.js",
   "author": "techninja",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node ninjaserver"
+    "start": "node --env-file=.env src/ninjaserver.mjs"
   },
   "dependencies": {
+    "@barvynkoa/particle-emitter": "^0.0.1",
+    "@hackernoon/pixel-icon-library": "^1.0.2",
     "express": "^4.19.2",
+    "hybrids": "^9.1.8",
+    "pixi-filters": "^6.0.5",
+    "pixi-viewport": "^5.0.3",
+    "pixi.js": "^8.5.2",
     "sanitizer": "~0.1.3",
     "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "prettier-eslint": "^16.3.0"
   }
 }
