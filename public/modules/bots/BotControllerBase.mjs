@@ -68,7 +68,7 @@ export class BotControllerBase {
             this.setShipData(id, { exploding: false });
 
           if (this.target === id && d.stage === 'start') {
-            console.log('Death', id, this.target, d);
+            // console.log('Death', id, this.target, d);
             this.onTargetBoom();
           }
           break;

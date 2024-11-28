@@ -101,7 +101,7 @@ export class BotController extends BotControllerBase {
   }
 
   onTargetHit({ source }) {
-    console.log('Child hit', source, this.id);
+    // console.log('Child hit', source, this.id);
     if (source == this.id) {
       this.actionChat('target_hit');
     }
