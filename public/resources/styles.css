@@ -339,7 +339,7 @@ div#debug {
 }
 
 #players player {
-  height: 1.1em;
+  height: 18px;
   position: relative;
   display: block;
   margin-top: 0.5em;

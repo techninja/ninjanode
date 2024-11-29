@@ -424,7 +424,7 @@ export class ShipRenderer {
         // Set ship element position and rotation
         s.element.rotate(s.pos.d);
         s.element.css({
-          left: s.pos.x,
+          left: s.pos.x - 32,
           top: s.pos.y,
         });
 
@@ -445,7 +445,7 @@ export class ShipRenderer {
 
         // Set label position
         s.label.css({
-          left: s.pos.x,
+          left: s.pos.x - 32,
           top: s.pos.y,
         });
 
