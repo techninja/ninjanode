@@ -102,8 +102,8 @@ io.sockets.on('connection', function (clientSocket) {
       // New ship!
 
       // Populate data fields.
-      data.name = sanitizer.escape(data.name);
-      data.style = sanitizer.sanitize(data.style);
+      data.name = sanitizer.escape(data.name.substring(0, 20));
+      data.style = sanitizer.sanitize(data.style.substring(0, 1));
       data.id = id;
 
       // Existing user, setting new ship.
