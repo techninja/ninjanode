@@ -18,6 +18,22 @@ export const getRandomPos = (angleDivisibleBy) => {
   };
 };
 
+export const hasCollision = (items, { x, y }, radius) => {
+  let index = 0;
+  let collided = false;
+  while (index < items.length && !collided) {
+    const item = items[index];
+    collided = circleIntersects(
+      { x, y },
+      radius,
+      { x: item.x, y: item.y },
+      item.radius
+    );
+    index++;
+  }
+  return collided;
+};
+
 /**
  * Get a random item from a list based on weight
  * @param {array} list

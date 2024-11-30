@@ -1,4 +1,9 @@
-import { getId, circleIntersects } from './utils.mjs';
+import {
+  getId,
+  circleIntersects,
+  getRandomPos,
+  hasCollision,
+} from './utils.mjs';
 import { gameConfig } from './gameConfig.mjs';
 import { PermanentBody, Powerup, Ship } from './classes/index.mjs';
 
@@ -31,18 +36,31 @@ export class Game {
     // Create the powerups
     for (let i = 0; i < config.powerupCount; i++) {
       const id = getId('pu');
-      this.powerups[id] = new Powerup({ id });
+
+      const power = new Powerup({ id });
+      this.getSafePosition({ radius: power.config.size / 2 });
+      this.powerups[id] = power;
     }
 
     // Create the PNBITS: Planets, suns, etc
     for (let i = 0; i < config.pnbitsCount; i++) {
       const id = getId('pn');
-      this.pnbits[id] = new PermanentBody({ id });
+      const body = new PermanentBody({ id });
+
+      // Set position safely.
+      body.pos = this.getSafePosition({ radius: body.radius });
+      this.pnbits[id] = body;
     }
   }
 
   addShip(options) {
-    this.ships[options.id] = new Ship(options);
+    const ship = new Ship(options);
+    ship.pos = this.getSafePosition({
+      radius: ship.width / 2,
+      angle: ship.config.rotationSpeed,
+    });
+
+    this.ships[options.id] = ship;
   }
 
   removeShip(id) {
@@ -139,6 +157,68 @@ export class Game {
     }
 
     return out;
+  }
+
+  // Get a flat array of every "hittable" item, it's center x/y and its radius
+  getAllCollisionItems() {
+    const out = [];
+
+    for (const s in this.ships) {
+      const ship = this.ships[s];
+
+      // Add non-exploding ships.
+      if (!ship.exploding) {
+        out.push({
+          x: ship.pos.x,
+          y: ship.pos.y,
+          radius: ship.width / 2,
+          type: 'ship',
+        });
+      }
+      for (const p in ship.projectiles) {
+        const proj = ship.projectiles[p];
+
+        // Add active projectiles.
+        if (proj.active) {
+          out.push({
+            x: proj.pos.x,
+            y: proj.pos.y,
+            radius: proj.config.size.hitRadius,
+            type: 'projectile',
+          });
+        }
+      }
+    }
+
+    // Add all planets.
+    for (const p in this.pnbits) {
+      const pnbit = this.pnbits[p];
+      out.push({
+        x: pnbit.pos.x,
+        y: pnbit.pos.y,
+        radius: pnbit.radius,
+        type: 'planet',
+      });
+    }
+
+    return out;
+  }
+
+  getSafePosition({ radius, angle }, nearPos = null) {
+    const existingItems = this.getAllCollisionItems();
+    let testPos = nearPos ? nearPos : getRandomPos(angle);
+    const padding = 20;
+    let foundPos = !hasCollision(existingItems, testPos, radius + padding);
+    while (!foundPos) {
+      foundPos = !hasCollision(existingItems, testPos, radius + padding);
+
+      // TODO: Support near pos adjusting.
+      if (!foundPos) {
+        // Pick a new location.
+        testPos = getRandomPos(angle);
+      }
+    }
+    return testPos;
   }
 
   /**
@@ -244,13 +324,13 @@ export class Game {
             ) {
               // Trigger hit callback (to simplify things.. both should die
               if (target.velocityLength > source.velocityLength) {
-                console.log(target.name + ' slammed into ' + source.name);
+                // console.log(target.name + ' slammed into ' + source.name);
                 source.hit({
                   type: 'collision',
                   source: target, // Include source to find out who's hitting who
                 });
               } else {
-                console.log(source.name + ' slammed into ' + target.name);
+                // console.log(source.name + ' slammed into ' + target.name);
                 target.hit({
                   type: 'collision',
                   source: source, // Include source to find out who's hitting who
