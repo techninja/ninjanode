@@ -154,6 +154,7 @@ io.sockets.on('connection', function (clientSocket) {
 
   // Broadcast incoming chats to all clients
   clientSocket.on('chat', function (data) {
+    console.log('Chat:', game.ships[id].name, 'says:', data.msg);
     io.sockets.emit('chat', {
       type: 'chat',
       msg: sanitizer.escape(data.msg),
