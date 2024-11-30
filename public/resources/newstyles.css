@@ -33,6 +33,17 @@ h3.subhed {
   font-size: 15px;
 }
 
+@media (max-width: 600px) {
+  h3.subhed {
+    font-size: 10px;
+    width: 136px;
+    line-height: 10px;
+    text-align: right;
+    padding-right: 6px;
+    top: 0;
+  }
+}
+
 ninja-chat {
   z-index: 1;
   position: absolute;

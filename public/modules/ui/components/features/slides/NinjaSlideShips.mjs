@@ -23,6 +23,12 @@ export const NinjaSlideShips = {
         overflow-y: scroll;
       }
 
+      @media (max-width: 530px) {
+        div.wrapper {
+          grid-template-columns: 1fr;
+        }
+      }
+
       ninja-icon {
         padding: 0.25em;
         border-radius: ${`${40 * 2}px`};

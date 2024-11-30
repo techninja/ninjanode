@@ -11,7 +11,7 @@ export const NinjaShipSelect = {
   settings: () => store.get(UserSettings),
   render: ({ settings }) => html`
     <style></style>
-    <ninja-slides width="450" height="250" unit="px" onjoin=${joinGame}>
+    <ninja-slides width="99" height="250" unit="%" onjoin=${joinGame}>
       <ninja-slide name="pick" active=${!settings.name}>
         <ninja-slide-ships></ninja-slide-ships>
       </ninja-slide>

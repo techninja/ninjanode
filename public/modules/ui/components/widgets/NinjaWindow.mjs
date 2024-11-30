@@ -39,6 +39,12 @@ export const NinjaWindow = {
         z-index: 5;
       }
 
+      @media (max-width: 600px) {
+        section {
+          min-width: 380px;
+        }
+      }
+
       h2 {
         border-bottom: 0.1em solid var(--text-color);
         color: var(--text-color);
