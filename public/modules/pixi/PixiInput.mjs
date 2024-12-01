@@ -104,6 +104,25 @@ export class PixiInput {
       },
       'm'
     );
+
+    // Unpause viewport
+    this.renderer.stage.base.pause = false;
+  }
+
+   // Multitouch trigger binding callback.
+  // (number of touches only for now)
+  multiTouchCallback(touchCount) {
+    // If touch enabled device, give them some way to fire!
+    if (touchCount == 2) {
+      // 2 touch primary fire
+      this.socket.key({ type: 'keydown' }, 'f');
+    }
+
+    if (touchCount == 3) {
+      // 3 touch secondary fire
+      this.socket.key({ type: 'keydown' }, 's');
+    }
+
   }
 
   // Touch end / Mouse Up binding callback.

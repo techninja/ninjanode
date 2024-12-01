@@ -180,7 +180,7 @@ io.sockets.on('connection', function (clientSocket) {
         break;
       case 'b': // Set/unset spawn beacon to current position
         if (data.s) {
-          ship.setSpawn();
+          ship.setSpawnPos();
           emitBeaconUpdate(id);
         }
         break;
