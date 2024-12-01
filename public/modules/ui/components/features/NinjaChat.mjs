@@ -116,6 +116,7 @@ export const NinjaChat = {
         font-family: monospace;
         border-radius: 0em 1em;
         transition: 0.5s ease-in-out;
+        width: 100%;
       }
       ninja-button#open {
         z-index: 2;
