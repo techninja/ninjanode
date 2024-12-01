@@ -29,6 +29,7 @@ export class PixiInput {
     this.renderer = renderer;
     this.socket = socket;
     this.initializeKeyBindings();
+    this.initializeMouseBindings();
     this.initializeTouchBindings();
   }
 
@@ -82,6 +83,9 @@ export class PixiInput {
 
   // Touch/Mouse Start & movement binding callback.
   touchPositionCallback(e) {
+    // Pause viewport scrolling.
+    this.renderer.stage.base.pause = true;
+
     // Find the angle relative to the center of the screen
     const center = {
       x: window.innerWidth / 2,
@@ -123,6 +127,10 @@ export class PixiInput {
       this.socket.key({ type: 'keydown' }, 's');
     }
 
+    if (touchCount == 3) {
+      // 4 touch set spawn
+      this.socket.key({ type: 'keydown' }, 'b');
+    }
   }
 
   // Touch end / Mouse Up binding callback.
@@ -131,7 +139,7 @@ export class PixiInput {
     this.socket.key({ type: 'keyup' }, 'm');
   }
 
-  initializeTouchBindings() {
+  initializeMouseBindings() {
     // Mouse bindings....
     this.docBind(
       'mousedown mousemove mouseup',
@@ -151,17 +159,13 @@ export class PixiInput {
 
         switch (type) {
           case 'mousedown':
-            this.renderer.stage.base.pause = true;
             this.mousedown = which;
             this.touchPositionCallback({ x, y });
-            this.renderer.stage.base.pause = false;
             break;
 
           case 'mousemove':
             if (this.mousedown == 1) {
-              this.renderer.stage.base.pause = true;
               this.touchPositionCallback({ x, y });
-              this.renderer.stage.base.pause = false;
             }
             break;
 
@@ -177,6 +181,67 @@ export class PixiInput {
         }
       }
     );
+  }
+
+  initializeTouchBindings() {
+    // Disable Gestures for iOS.
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+
+    this.docBind('touchstart touchend touchmove', (e) => {
+      const { windowVisible, chatVisible, joined } = store.get(AppState);
+      const { freelook } = store.get(UserSettings);
+
+      const controllable =
+        joined &&
+        !windowVisible &&
+        !chatVisible &&
+        !freelook;
+
+      // No control if these are open.
+      if (!controllable) return false;
+
+      const { touches, changedTouches, type } = e;
+
+      switch (type) {
+        case 'touchstart':
+          if (touches.length != 1) {
+            this.multiTouchCallback(touches.length);
+          } else {
+            // Ignore any touchstart / touchmove here except the first
+            this.touchPositionCallback({
+              x: changedTouches[0].pageX,
+              y: changedTouches[0].pageY,
+            });
+          }
+          break;
+        case 'touchmove':
+          // Ignore any touchstart / touchmove here except the first
+          if (touches.length === 1) {
+            this.touchPositionCallback({
+              x: changedTouches[0].pageX,
+              y: changedTouches[0].pageY,
+            });
+          }
+          break;
+        case 'touchend':
+          // Ignore any touchend except the last one
+          if (changedTouches.length == 1) {
+            this.touchEndCallback({
+              x: changedTouches[0].pageX,
+              y: changedTouches[0].pageY,
+            });
+          }
+          break;
+        default:
+          break;
+      }
+
+      e.preventDefault();
+      // iOS long press fix.
+      e.returnValue = false;
+    });
   }
 
   /**
