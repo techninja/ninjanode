@@ -6,7 +6,13 @@ import { html, store } from 'hybrids';
 import { AppState } from 'models';
 
 const toggleVis = (windowVisible) => () => {
-  store.set(AppState, { windowVisible });
+  const { chatVisible } = store.get(AppState);
+  if (windowVisible && chatVisible) {
+    // Hide chat window if trying to open main.
+    store.set(AppState, { chatVisible: false, windowVisible });
+  } else {
+    store.set(AppState, { windowVisible });
+  }
 };
 
 export const NinjaWindow = {

@@ -4,6 +4,16 @@
 import { html, store } from 'hybrids';
 import { AppState, ChatState } from 'models';
 
+const toggleVis = (chatVisible) => () => {
+  const { windowVisible } = store.get(AppState);
+  if (chatVisible && windowVisible) {
+    // Hide main window if trying to access chat.
+    store.set(AppState, { chatVisible, windowVisible: false });
+  } else {
+    store.set(AppState, { chatVisible });
+  }
+};
+
 const textInput = (host, { keyCode, target }) => {
   // Enter pressed
   if (keyCode === 13) {
@@ -42,24 +52,20 @@ export const NinjaChat = {
   visible: visibleAttribute,
   messages: messagesAttribute,
   input: ({ render }) => render().querySelector('input'),
+  joined: () => store.get(AppState).joined,
+  windowVisible: () => store.get(AppState).windowVisible,
 
-  render: ({ visible, messages }) => html`
+  render: ({ visible, messages, joined, windowVisible }) => html`
     <style>
       :host {
         display: block;
-        position: relative;
-        overflow: hidden;
       }
       .wrapper {
-        background-color: rgba(0, 0, 25, 0.5);
-        border: 1px solid #444444;
-        color: #fff;
-        font-size: 16px;
-        padding: 1em;
-        font-family: monospace;
-        border-radius: 0em 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         transition: 0.5s ease-in-out;
-        height: 0;
+        min-height: ${!visible ? 0 : '100vh'};
       }
       .messages {
         height: calc(100% - 40px);
@@ -94,6 +100,36 @@ export const NinjaChat = {
         font-size: 1.2em;
         color: #6ce26c;
       }
+      section {
+        overflow: hidden;
+        max-width: 600px;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        opacity: ${!visible ? 0 : 1};
+        height: ${!visible ? 0 : '70%'};
+        background-color: rgba(0, 0, 25, 0.5);
+        border: 1px solid #444444;
+        color: #fff;
+        font-size: 16px;
+        padding: 1em;
+        font-family: monospace;
+        border-radius: 0em 1em;
+        transition: 0.5s ease-in-out;
+      }
+      ninja-button#open {
+        z-index: 2;
+        transition: 0.5s ease-in-out;
+        position: absolute;
+        left: 10px;
+        top: ${windowVisible ? '10px' : '70px'};
+        background-color: gray;
+        padding: 0.3em;
+        padding-bottom: 0.1em;
+        border-radius: 0.5em;
+        opacity: ${!visible ? 1 : 0};
+        height: ${!visible ? 'auto' : 0};
+      }
       li.system {
         color: red;
       }
@@ -101,13 +137,30 @@ export const NinjaChat = {
         color: yellow;
       }
     </style>
-    <div class=${{ wrapper: true, visible }}>
-      <ul class="messages">
-        ${messages.map(
-          ({ type, message }) => html`<li class=${type}>${message}</li>`
-        )}
-      </ul>
-      <input type="text" onkeyup=${textInput} />
+    <div class="wrapper">
+      <ninja-button
+        id="open"
+        title="Open Chat"
+        icon="comment"
+        onclick="${toggleVis(true)}"
+      ></ninja-button>
+      <section>
+        <ul class="messages">
+          ${messages.map(
+            ({ type, message }) => html`<li class=${type}>${message}</li>`
+          )}
+        </ul>
+        <input
+          title="hello"
+          placeholder=${joined
+            ? 'Type your message and press enter to chat'
+            : 'Join the game to chat'}
+          disabled=${!joined}
+          type="text"
+          onkeyup=${textInput}
+          onblur=${toggleVis(false)}
+        />
+      </section>
     </div>
   `,
 };
