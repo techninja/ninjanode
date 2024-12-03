@@ -35,12 +35,14 @@ export const NinjaIcon = {
           width: ${pxSize};
           height: ${pxSize};
         }
+        .icon {
+          transform: ${`rotate(${angle}deg)`};
+        }
         .icon i {
           font-size: ${pxSize};
           color: ${color};
           ${disabled &&
         'filter: invert(0.5) sepia(1) saturate(0) hue-rotate(175deg)'};
-          transform: ${`rotate(${angle}deg)`};
         }
         .icon i:hover {
           color: ${hoverColor};
