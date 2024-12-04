@@ -69,6 +69,8 @@
         PixiInput,
         BotController,
       } from 'modules';
+      import { store } from 'hybrids';
+      import { AppState } from 'models';
 
       // Import and register all web components via side-effects.
       import 'ui';
@@ -77,6 +79,12 @@
 
       // Connect immediately...
       const socket = new ShipSocket(server);
+
+      // Store Id in global state.
+      socket.socket.on('connect', () => {
+        store.set(AppState, { socketId: socket.socket.id });
+      });
+
       const renderer = new PixiRenderer({
         socket,
         stageId: 'stage',
