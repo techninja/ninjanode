@@ -13,8 +13,18 @@ export const NinjaIcon = {
   hoverColor: 'white',
   solid: false,
   disabled: false,
+  flash: false,
 
-  render: ({ name, color, hoverColor, disabled, solid, size, angle }) => {
+  render: ({
+    name,
+    color,
+    hoverColor,
+    disabled,
+    solid,
+    size,
+    angle,
+    flash,
+  }) => {
     const icon = `hn-${name}${solid ? '-solid' : ''}`;
     const pxSize = `${size}px`;
     const shipImage =
@@ -26,6 +36,7 @@ export const NinjaIcon = {
       hn: !shipImage,
       ship: !!shipImage,
       [icon]: !shipImage,
+      flash,
     };
 
     return html`
@@ -35,31 +46,49 @@ export const NinjaIcon = {
           width: ${pxSize};
           height: ${pxSize};
         }
+        @keyframes flash {
+          0% {
+            color: ${color};
+          }
+          10% {
+            color: #fff;
+          }
+          100% {
+            color: ${color};
+          }
+        }
+        .flash {
+          animation-name: flash;
+          animation-duration: 500ms;
+          animation-iteration-count: infinite;
+          animation-timing-function: ease-out;
+        }
         .icon {
           transform: ${`rotate(${angle}deg)`};
+          width: ${pxSize};
+          height: ${pxSize};
         }
         .icon i {
           font-size: ${pxSize};
           color: ${color};
-          ${disabled &&
-        'filter: invert(0.5) sepia(1) saturate(0) hue-rotate(175deg)'};
         }
         .icon i:hover {
           color: ${hoverColor};
-        }
-        .ship {
-          display: block;
-          content: ' ';
-          background-image: ${`url(${shipImage})`};
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: ${pxSize};
-          height: ${pxSize};
         }
       </style>
       <div class="icon">
         <i class=${iconClasses}></i>
       </div>
-    `.style(iconfont);
+    `.style(iconfont).css`
+      .ship {
+        background-image: url(${shipImage});
+        width: ${pxSize};
+        height: ${pxSize};
+        display: block;
+        content: ' ';
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    `;
   },
 };
