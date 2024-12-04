@@ -9,6 +9,8 @@ import {
   AppState,
   ChatStateObserver,
   ChatState,
+  storeUser,
+  removeUser,
 } from 'models';
 import { PixiShip, PixiCamera } from 'pixirender';
 
@@ -169,6 +171,9 @@ export class PixiRenderer {
           // Ignore already created ships.
           if (ship) continue;
 
+          // Store the user data in state.
+          storeUser(id, update);
+
           // Create ship.
           this.ships[id] = new PixiShip(this.app, {
             id,
@@ -189,11 +194,20 @@ export class PixiRenderer {
 
         case 'hit':
           ship.hit(update);
+
+          // If someone exploded, we've got to update the scores!
+          if (update.scores) {
+            for (const socketId in update.scores) {
+              const score = update.scores[socketId];
+              storeUser(socketId, { score });
+            }
+          }
           break;
 
         case 'boom':
           switch (update.stage) {
             case 'start':
+              storeUser(id, { exploding: true });
               ship.explode();
               break;
 
@@ -203,12 +217,17 @@ export class PixiRenderer {
 
             default:
               // Complete, respawn.
-              ship.fadeIn();
+              // TODO: Server still sends this for destroyed ships!
+              if (ship) {
+                ship.fadeIn();
+                storeUser(id, { exploding: false });
+              }
               break;
           }
           break;
 
         case 'destroy':
+          removeUser(id);
           delete this.ships[id];
           this.camera.unfollow(id);
           ship?.destroy();
@@ -256,6 +275,7 @@ export class PixiRenderer {
 
   onUpdateShipPos(posUpdates) {
     Object.entries(posUpdates).forEach(([id, pos]) => {
+      storeUser(id, { pos: { x: pos.x, y: pos.y, d: pos.d } });
       this.ships[id].setPos(pos);
     });
   }
