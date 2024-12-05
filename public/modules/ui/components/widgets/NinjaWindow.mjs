@@ -35,7 +35,6 @@ export const NinjaWindow = {
         overflow: hidden;
         background-color: #a0a0a0;
         max-width: 600px;
-        border-radius: 0 1em;
         padding-top: 30px;
         box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
         position: relative;
@@ -43,6 +42,11 @@ export const NinjaWindow = {
         height: ${!windowVisible ? 0 : 'auto'};
         min-width: 525px;
         z-index: 5;
+        box-shadow:
+          -3px 0 0 0 white,
+          3px 0 0 0 white,
+          0 -3px 0 0 white,
+          0 3px 0 0 white;
       }
 
       @media (max-width: 600px) {
@@ -59,8 +63,8 @@ export const NinjaWindow = {
         padding-left: 0.2em;
         font-weight: 300;
         position: absolute;
-        top: -19px;
-        left: 44px;
+        top: -15px;
+        left: 57px;
         font-size: 30px;
       }
 
@@ -72,8 +76,9 @@ export const NinjaWindow = {
 
       ninja-button#close {
         position: absolute;
-        left: 10px;
-        top: 10px;
+        left: 0;
+        top: 0;
+        margin: 10px;
       }
 
       ninja-button#open {
@@ -99,9 +104,10 @@ export const NinjaWindow = {
       <section>
         <ninja-button
           id="close"
-          icon="window-close"
-          size="32"
+          icon="times"
+          size="20"
           onclick="${toggleVis(false)}"
+          solid
         ></ninja-button>
         ${head && html`<h2>${head}</h2>`}
         <slot></slot>

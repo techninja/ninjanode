@@ -73,9 +73,14 @@ export const NinjaSlides = {
         overflow: hidden;
       }
       .slide-wrapper {
-        width: ${`${width}${unit}`};
-        border: 1px solid red;
+        width: ${`${width - 1}${unit}`};
+        box-shadow:
+          -3px 0 0 0 gray,
+          3px 0 0 0 gray,
+          0 -3px 0 0 gray,
+          0 3px 0 0 gray;
         overflow: hidden;
+        margin: 3px;
       }
       .slides {
         height: ${height}px;

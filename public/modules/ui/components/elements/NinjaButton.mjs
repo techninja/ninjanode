@@ -12,6 +12,7 @@ export const NinjaButton = {
   fullWidth: false,
   active: false,
   disabled: false,
+  borderSize: 2,
 
   // Icon prop drilled attributes.
   icon: '',
@@ -26,6 +27,7 @@ export const NinjaButton = {
     disabled,
     loading,
     type,
+    borderSize,
     icon,
     solid,
     angle,
@@ -44,6 +46,11 @@ export const NinjaButton = {
         :host {
           display: inline-block;
           cursor: pointer;
+          box-shadow:
+            -${borderSize}px 0 0 0 black,
+            ${borderSize}px 0 0 0 black,
+            0 -${borderSize}px 0 0 black,
+            0 ${borderSize}px 0 0 black;
         }
         a {
           display: block !important;

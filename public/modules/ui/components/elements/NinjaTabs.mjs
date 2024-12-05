@@ -50,9 +50,10 @@ export const NinjaTabs = {
         overflow: hidden;
       }
       nav {
-        border-right: 3px dashed black;
+        border-right: 3px solid black;
         float: left;
         margin-right: 1em;
+        margin-left: 3px;
       }
       ul {
         list-style: none;
