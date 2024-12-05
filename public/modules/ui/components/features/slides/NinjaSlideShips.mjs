@@ -1,10 +1,15 @@
 import { shipTypes } from 'data';
 import { html, store } from 'hybrids';
 import { UserSettings } from 'models';
+import { getRandomName } from 'modules';
 
 const selectShip = (ship) => (host) => {
+  // If they don't have a name, give em one.
+  let { name } = host;
+  if (!name.trim()) name = getRandomName();
+
   // Store the new state
-  store.set(UserSettings, { ship }).then(() => {
+  store.set(UserSettings, { ship, name }).then(() => {
     // Directly set the index of the slide controller
     host.parentElement.parentElement.index = 1;
   });
@@ -12,6 +17,7 @@ const selectShip = (ship) => (host) => {
 
 export const NinjaSlideShips = {
   tag: 'ninja-slide-ships',
+  name: () => store.get(UserSettings).name,
 
   render: () => html`
     <style>
@@ -21,6 +27,7 @@ export const NinjaSlideShips = {
         grid-gap: 0.5em;
         max-height: 250px;
         overflow-y: scroll;
+        padding: 3px;
       }
 
       @media (max-width: 530px) {
@@ -35,8 +42,6 @@ export const NinjaSlideShips = {
       }
 
       ninja-button {
-        border: 2px dashed black;
-        border-radius: 2px;
         grid-gap: 0.5em;
       }
 
