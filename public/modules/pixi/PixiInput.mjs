@@ -113,7 +113,7 @@ export class PixiInput {
     this.renderer.stage.base.pause = false;
   }
 
-   // Multitouch trigger binding callback.
+  // Multitouch trigger binding callback.
   // (number of touches only for now)
   multiTouchCallback(touchCount) {
     // If touch enabled device, give them some way to fire!
@@ -185,63 +185,64 @@ export class PixiInput {
 
   initializeTouchBindings() {
     // Disable Gestures for iOS.
-    document.addEventListener('gesturestart', function (e) {
+    this.docBind('gesturestart', (e) => {
       e.preventDefault();
     });
 
-    this.docBind('touchstart touchend touchmove', (e) => {
-      const { windowVisible, chatVisible, joined } = store.get(AppState);
-      const { freelook } = store.get(UserSettings);
+    this.docBind(
+      'touchstart touchend touchmove',
+      (e) => {
+        const { windowVisible, chatVisible, joined } = store.get(AppState);
+        const { freelook } = store.get(UserSettings);
 
-      const controllable =
-        joined &&
-        !windowVisible &&
-        !chatVisible &&
-        !freelook;
+        const controllable =
+          joined && !windowVisible && !chatVisible && !freelook;
 
-      // No control if these are open.
-      if (!controllable) return false;
+        // No control if these are open.
+        if (!controllable) return false;
 
-      const { touches, changedTouches, type } = e;
+        const { touches, changedTouches, type } = e;
 
-      switch (type) {
-        case 'touchstart':
-          if (touches.length != 1) {
-            this.multiTouchCallback(touches.length);
-          } else {
+        switch (type) {
+          case 'touchstart':
+            if (touches.length != 1) {
+              this.multiTouchCallback(touches.length);
+            } else {
+              // Ignore any touchstart / touchmove here except the first
+              this.touchPositionCallback({
+                x: changedTouches[0].pageX,
+                y: changedTouches[0].pageY,
+              });
+            }
+            break;
+          case 'touchmove':
             // Ignore any touchstart / touchmove here except the first
-            this.touchPositionCallback({
-              x: changedTouches[0].pageX,
-              y: changedTouches[0].pageY,
-            });
-          }
-          break;
-        case 'touchmove':
-          // Ignore any touchstart / touchmove here except the first
-          if (touches.length === 1) {
-            this.touchPositionCallback({
-              x: changedTouches[0].pageX,
-              y: changedTouches[0].pageY,
-            });
-          }
-          break;
-        case 'touchend':
-          // Ignore any touchend except the last one
-          if (changedTouches.length == 1) {
-            this.touchEndCallback({
-              x: changedTouches[0].pageX,
-              y: changedTouches[0].pageY,
-            });
-          }
-          break;
-        default:
-          break;
-      }
+            if (touches.length === 1) {
+              this.touchPositionCallback({
+                x: changedTouches[0].pageX,
+                y: changedTouches[0].pageY,
+              });
+            }
+            break;
+          case 'touchend':
+            // Ignore any touchend except the last one
+            if (changedTouches.length == 1) {
+              this.touchEndCallback({
+                x: changedTouches[0].pageX,
+                y: changedTouches[0].pageY,
+              });
+            }
+            break;
+          default:
+            break;
+        }
 
-      e.preventDefault();
-      // iOS long press fix.
-      e.returnValue = false;
-    });
+        e.preventDefault();
+        // iOS long press fix.
+        e.returnValue = false;
+      },
+      document.getElementById('stage')
+    );
   }
 
   /**
@@ -262,10 +263,12 @@ export class PixiInput {
    *   Space separated list of events to bind to.
    * @param {*} cb
    *   Callback for event.
+   * @param {DOMElement} element
+   *   The element to base the event binding on.
    */
-  docBind(binds, cb) {
+  docBind(binds, cb, element = document) {
     binds.split(' ').forEach((bind) => {
-      document.addEventListener(bind, cb, { passive: false });
+      element.addEventListener(bind, cb, { passive: false });
     });
   }
 }
