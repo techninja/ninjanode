@@ -29,6 +29,24 @@ const randomName = () => {
   store.set(UserSettings, { name: getRandomName() });
 };
 
+const swapShip =
+  (direction) =>
+  ({ ship }) => {
+    const keys = Object.keys(shipTypes);
+    let index = keys.findIndex((a) => a === ship) + direction;
+
+    // Valid key
+    if (keys[index]) {
+      store.set(UserSettings, { ship: keys[index] });
+    } else if (index < 0) {
+      // Off the bottom, wrap to top.
+      store.set(UserSettings, { ship: keys[keys.length - 1] });
+    } else {
+      // Off the top, wrap to bottom.
+      store.set(UserSettings, { ship: keys[0] });
+    }
+  };
+
 export const NinjaSlideJoin = {
   tag: 'ninja-slide-join',
   ship: () => store.get(UserSettings).ship,
@@ -76,7 +94,10 @@ export const NinjaSlideJoin = {
               grid-area: 1 / 3 / 2 / 4;
             }
             .ship-info .breakdown {
-              grid-area: 2 / 1 / 3 / 4;
+              grid-area: 2 / 1 / 3 / 3;
+            }
+            .ship-info .scroller {
+              grid-area: 2 / 3 / 3 / 4;
             }
             footer {
               display: grid;
@@ -270,6 +291,22 @@ export const NinjaSlideJoin = {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <div class="scroller">
+                <ninja-button
+                  solid
+                  border-size="0"
+                  icon="chevron-up"
+                  title="Previous Ship"
+                  onclick=${swapShip(-1)}
+                ></ninja-button>
+                <ninja-button
+                  solid
+                  border-size="0"
+                  icon="chevron-down"
+                  title="Next Ship"
+                  onclick=${swapShip(1)}
+                ></ninja-button>
               </div>
             </div>
             <footer>
