@@ -5,6 +5,8 @@
 
 import { Viewport } from 'pixi-viewport';
 import { Container } from 'pixi.js';
+import { store } from 'hybrids';
+import { AppStateObserver, UserSettings } from 'models';
 
 export class PixiCamera {
   viewport;
@@ -114,7 +116,7 @@ export class PixiCamera {
 
     viewport.clampZoom({
       maxScale: 5, // minimum scale
-      minScale: 0.5, // minimum scale
+      minScale: 0.25, // minimum scale
     });
 
     //   // viewport.mouseEdges({
@@ -170,6 +172,17 @@ export class PixiCamera {
     // Add viewport to app stage (only child).
     app.stage.addChild(viewport);
     this.viewport = viewport;
+
+    this.addBindings();
+  }
+
+  addBindings() {
+    new AppStateObserver('viewportFocus', ({ viewportFocus }) => {
+      const { freelook } = store.get(UserSettings);
+      if (freelook) {
+        this.viewport.moveCenter(viewportFocus);
+      }
+    });
   }
 
   toGlobalScreen({ x, y }) {

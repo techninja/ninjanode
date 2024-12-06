@@ -1,8 +1,17 @@
 /**
  * @file Ninjanode player roster.
  */
-import { html } from 'hybrids';
-import { getUser } from 'models';
+import { html, store } from 'hybrids';
+import { getUser, AppState } from 'models';
+
+const userClick = ({ user }) => {
+  store.set(AppState, {
+    viewportFocus: {
+      x: user.pos.x,
+      y: user.pos.y,
+    },
+  });
+};
 
 export const NinjaRosterUser = {
   tag: 'ninja-roster-user',
@@ -89,6 +98,7 @@ export const NinjaRosterUser = {
       <style>
         :host {
           display: block;
+          cursor: pointer;
         }
         .wrapper {
           display: grid;
@@ -96,7 +106,7 @@ export const NinjaRosterUser = {
           grid-gap: 5px;
         }
       </style>
-      <div class="wrapper">
+      <div class="wrapper" onclick=${userClick}>
         <span>
           <ninja-icon
             size="16"

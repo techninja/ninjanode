@@ -17,6 +17,7 @@ export const AppState = {
   joined: false,
   chatVisible: false,
   socketId: '',
+  viewportFocus: { x: 0, y: 0 },
 
   // Memory storage boilerplate.
   [store.connect]: {
