@@ -78,6 +78,7 @@ export const NinjaIcon = {
           transform-origin: ${origin};
           width: ${pxSize};
           height: ${pxSize};
+          transition: 0.5s ease-in-out;
         }
         .icon i {
           font-size: ${pxSize};
