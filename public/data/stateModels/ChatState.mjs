@@ -17,6 +17,7 @@ export const ChatState = {
   messages: [{ type: 'system', message: 'Welcome to ninjanode!' }],
   newMessage: '',
 
+  // Memory storage boilerplate.
   [store.connect]: {
     get: () => memoryStore,
     set: (id, values) => {
