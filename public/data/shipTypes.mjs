@@ -1,6 +1,7 @@
 /**
  * @file ninjanode Ship type configuration.
  */
+import { projectileTypes } from './projectileTypes.mjs';
 
 export const shipTypes = {
   a: {
@@ -184,3 +185,113 @@ export const shipTypes = {
     ],
   },
 };
+
+// Wrapper for extracting stat comparison keys from the base object.
+const getStatVals = (type = 'a') => {
+  const {
+    topSpeed,
+    accelRate,
+    drag,
+    rotationSpeed,
+    shield: { max: shieldMax, regenRate: shieldRate },
+    weapons: [
+      {
+        fireRate: primaryWeaponRate,
+        proj: {
+          damage: primaryWeaponDamage,
+          speed: primaryWeaponSpeed,
+          life: primaryWeaponLife,
+          knockBackForce: primaryWeaponForce,
+        },
+      },
+      {
+        fireRate: secondaryWeaponRate,
+        proj: {
+          damage: secondaryWeaponDamage,
+          speed: secondaryWeaponSpeed,
+          life: secondaryWeaponLife,
+          knockBackForce: secondaryWeaponForce,
+        },
+      },
+    ],
+  } = shipTypes[type];
+
+  return {
+    topSpeed,
+    accelRate,
+    drag,
+    rotationSpeed,
+    shieldMax,
+    shieldRate,
+    primaryWeaponRate,
+    primaryWeaponDamage,
+    primaryWeaponSpeed,
+    primaryWeaponLife,
+    primaryWeaponForce,
+    secondaryWeaponRate,
+    secondaryWeaponDamage,
+    secondaryWeaponSpeed,
+    secondaryWeaponLife,
+    secondaryWeaponForce,
+  };
+};
+
+// Get ratios for all comparable stats vs all ships.
+const getCompareStats = (compareType) => {
+  // Fill base stats object with keys and initial values.
+  const baseStats = getStatVals();
+
+  // Convert stats key values to arrays
+  Object.keys(baseStats).forEach((key) => {
+    baseStats[key] = [];
+  });
+
+  // Move through every ship type and add the values.
+  for (const type in shipTypes) {
+    const stats = getStatVals(type);
+
+    Object.keys(stats).forEach((key) => {
+      baseStats[key].push(stats[key]);
+    });
+  }
+
+  // Final stat comparison object.
+  const shipStats = getStatVals(compareType);
+
+  // Sort final values, calculate ratio.
+  Object.keys(baseStats).forEach((key) => {
+    baseStats[key].sort((a, b) => a - b);
+
+    // Min/max
+    const min = baseStats[key][0];
+    const max = baseStats[key][baseStats[key].length - 1];
+
+    // Assume max value, to be reset if min and max aren't the same.
+    let statRatio = 1;
+
+    // If min == max, then default to 100%.
+    if (min !== max) {
+      statRatio = (shipStats[key] - min) / (max - min);
+    }
+
+    // Store final ratio for the stat.
+    shipStats[key] = statRatio;
+  });
+
+  return shipStats;
+};
+
+// Append projectile info to each weapon entry.
+for (const key in shipTypes) {
+  shipTypes[key].weapons.forEach((e, index) => {
+    shipTypes[key].weapons[index] = {
+      ...shipTypes[key].weapons[index],
+      proj: projectileTypes[shipTypes[key].weapons[index].type],
+    };
+  });
+}
+
+// Append calculated comparison stats.
+for (const key in shipTypes) {
+  shipTypes[key].stats = getCompareStats(key);
+}
