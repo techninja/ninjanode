@@ -177,9 +177,9 @@ export class PixiCamera {
   }
 
   addBindings() {
-    new AppStateObserver('viewportFocus', ({ viewportFocus }) => {
+    new AppStateObserver('viewportFocus', ({ viewportFocus, joined }) => {
       const { freelook } = store.get(UserSettings);
-      if (freelook) {
+      if (freelook || !joined) {
         this.viewport.moveCenter(viewportFocus);
       }
     });
