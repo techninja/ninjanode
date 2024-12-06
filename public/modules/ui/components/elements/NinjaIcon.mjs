@@ -14,6 +14,7 @@ export const NinjaIcon = {
   solid: false,
   disabled: false,
   flash: false,
+  origin: 'inherit',
 
   render: ({
     name,
@@ -24,19 +25,28 @@ export const NinjaIcon = {
     size,
     angle,
     flash,
+    origin,
   }) => {
     const icon = `hn-${name}${solid ? '-solid' : ''}`;
     const pxSize = `${size}px`;
-    const shipImage =
+    let shipImage =
       name.substr(0, 4) == 'ship'
         ? `resources/graphics/ships/ship_${name.substr(-1)}.png`
         : false;
+
+    const customImage =
+      name.substr(0, 4) == 'cust'
+        ? `resources/graphics/icons/${name.substr(5)}.png`
+        : false;
+
+    if (customImage) shipImage = customImage;
 
     const iconClasses = {
       hn: !shipImage,
       ship: !!shipImage,
       [icon]: !shipImage,
       flash,
+      disabled,
     };
 
     return html`
@@ -65,6 +75,7 @@ export const NinjaIcon = {
         }
         .icon {
           transform: ${`rotate(${angle}deg)`};
+          transform-origin: ${origin};
           width: ${pxSize};
           height: ${pxSize};
         }
