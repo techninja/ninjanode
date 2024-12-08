@@ -5,8 +5,9 @@ export const NinjaMeter = {
   ratio: 0.0,
   wiggle: false,
   flipped: false,
+  label: '',
 
-  render: ({ ratio, flipped }) => html`
+  render: ({ ratio, flipped, label }) => html`
     <style>
       :host {
         display: inline-block;
@@ -26,6 +27,14 @@ export const NinjaMeter = {
         top: -4px;
         z-index: 1;
       }
+      span {
+        font-size: 7px;
+        position: absolute;
+        bottom: 0;
+        display: block;
+        text-align: center;
+        width: 100%;
+      }
     </style>
     <ninja-icon
       origin="4px 29px"
@@ -38,5 +47,6 @@ export const NinjaMeter = {
       name="cust-meter-to-${flipped ? 'bad' : 'good'}"
       size="50"
     ></ninja-icon>
+    ${label && html`<span>${label}</span>`}
   `,
 };
