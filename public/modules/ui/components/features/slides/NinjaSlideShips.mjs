@@ -77,8 +77,16 @@ export const NinjaSlideShips = {
               ></ninja-icon>
               <div class="ship-info">
                 <h4>${config.name}</h4>
-                <b>Top Speed:</b> ${config.topSpeed}<br />
-                <b>Accel Rate:</b> ${config.accelRate}<br />
+                <ninja-meter
+                  ratio=${config.stats.highlights.worst.ratio}
+                  flipped=${config.stats.highlights.worst.flipped}
+                  label=${config.stats.highlights.worst.label}
+                ></ninja-meter>
+                <ninja-meter
+                  ratio=${config.stats.highlights.best.ratio}
+                  flipped=${config.stats.highlights.best.flipped}
+                  label=${config.stats.highlights.best.label}
+                ></ninja-meter>
               </div>
             </div>
           </ninja-button>
