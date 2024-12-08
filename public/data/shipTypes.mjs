@@ -186,6 +186,43 @@ export const shipTypes = {
   },
 };
 
+const getHighlightableStats = (stats) => {
+  const {
+    topSpeed,
+    accelRate,
+    drag,
+    rotationSpeed,
+    shieldMax,
+    shieldRate,
+    primaryWeaponRate,
+    primaryWeaponDamage,
+    primaryWeaponSpeed,
+    primaryWeaponLife,
+    primaryWeaponForce,
+  } = stats;
+  return {
+    slowFast: {
+      topSpeed,
+      accelRate,
+      primaryWeaponSpeed,
+    },
+    fastSlow: {
+      shieldRate,
+      rotationSpeed,
+      primaryWeaponRate,
+    },
+    lowHigh: {
+      shieldMax,
+      primaryWeaponDamage,
+      primaryWeaponLife,
+      primaryWeaponForce,
+    },
+    highLow: {
+      drag,
+    },
+  };
+};
+
 // Wrapper for extracting stat comparison keys from the base object.
 const getStatVals = (type = 'a') => {
   const {
@@ -294,4 +331,74 @@ for (const key in shipTypes) {
 // Append calculated comparison stats.
 for (const key in shipTypes) {
   shipTypes[key].stats = getCompareStats(key);
+}
+
+// Append highlighted best and worst stats.
+for (const key in shipTypes) {
+  const ship = shipTypes[key];
+  const stats = getHighlightableStats(ship.stats);
+  const best = {
+    label: '',
+    ratio: 0,
+    flipped: false,
+  };
+
+  const worst = {
+    label: '',
+    ratio: 1,
+    flipped: false,
+  };
+
+  const labels = {
+    slowFast: ['Slow', 'Fast', false],
+    fastSlow: ['Fast', 'Slow', true],
+    lowHigh: ['Low', 'High', false],
+    highLow: ['High', 'Low', true],
+  };
+
+  for (const labelType in stats) {
+    for (const metric in stats[labelType]) {
+      const value = stats[labelType][metric];
+      const [, , flipped] = labels[labelType];
+
+      if (!flipped) {
+        // Better than best? Add it.
+        if (value > best.ratio) {
+          best.metric = metric;
+          best.ratio = value;
+          best.label = `${labels[labelType][1]} ${metric}`;
+          best.flipped = false;
+        }
+
+        // Worst than worst? Add it.
+        if (value < worst.ratio) {
+          worst.metric = metric;
+          worst.ratio = value;
+          worst.label = `${labels[labelType][0]} ${metric}`;
+          best.flipped = false;
+        }
+      } else {
+        // Better than best? Add it.
+        if (1 - value < best.ratio) {
+          best.metric = metric;
+          best.ratio = value;
+          best.label = `${labels[labelType][1]} ${metric}`;
+          best.flipped = true;
+        }
+
+        // Worst than worst? Add it.
+        if (1 - value > worst.ratio) {
+          worst.metric = metric;
+          worst.ratio = value;
+          worst.label = `${labels[labelType][0]} ${metric}`;
+          worst.flipped = true;
+        }
+      }
+    }
+  }
+
+  shipTypes[key].stats.highlights = {
+    best,
+    worst,
+  };
 }
