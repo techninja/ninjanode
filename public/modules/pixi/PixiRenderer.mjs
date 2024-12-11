@@ -59,7 +59,7 @@ export class PixiRenderer {
         if (!freelook) {
           this.setFollow(true);
         } else {
-          this.camera.unfollow();
+          store.set(AppState, { followShip: '' });
         }
       });
 
@@ -156,7 +156,7 @@ export class PixiRenderer {
 
     // Ignore this if freelook is on or not joined.
     if ((!freelook || force) && joined) {
-      this.camera.follow(this.ships[this.socket.id]);
+      store.set(AppState, { followShip: this.socket.id });
       this.camera.setZoom(1);
     }
   }

@@ -2,15 +2,14 @@
  * @file Ninjanode player roster.
  */
 import { html, store } from 'hybrids';
-import { getUser, AppState } from 'models';
+import { getUser, AppState, UserSettings } from 'models';
 
 const userClick = ({ user }) => {
-  store.set(AppState, {
-    viewportFocus: {
-      x: user.pos.x,
-      y: user.pos.y,
-    },
-  });
+  // Set follow on click.
+  store.set(AppState, { followShip: user.socketId });
+
+  // Disable freelook.
+  store.set(UserSettings, { freelook: false });
 };
 
 export const NinjaRosterUser = {
@@ -109,6 +108,7 @@ export const NinjaRosterUser = {
       <div class="wrapper" onclick=${userClick}>
         <span>
           <ninja-icon
+            no-animation
             size="16"
             angle=${user.pos.d}
             name=${`ship-${user.style}`}

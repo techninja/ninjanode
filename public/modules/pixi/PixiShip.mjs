@@ -3,8 +3,10 @@
  *   Manages sprite and other effect abstractions within the app stage
  */
 
+import { store } from 'hybrids';
 import { shipTypes } from 'data';
 import { PixiEffect, PixiProjectile } from 'pixirender';
+import { AppState, UserSettings } from 'models';
 import { lineDistance } from 'utils';
 
 // Assume PIXI global namespace.

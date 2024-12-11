@@ -237,4 +237,8 @@ export class PixiCamera {
   setZoom(scale) {
     this.viewport.scale = scale;
   }
+
+  setPos({ x, y }) {
+    this.viewport.moveCenter(x, y);
+  }
 }
