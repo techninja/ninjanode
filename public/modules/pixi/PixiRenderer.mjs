@@ -276,7 +276,7 @@ export class PixiRenderer {
   onUpdateShipPos(posUpdates) {
     Object.entries(posUpdates).forEach(([id, pos]) => {
       storeUser(id, { pos: { x: pos.x, y: pos.y, d: pos.d } });
-      this.ships[id].setPos(pos);
+      this.ships[id].onServerUpdatePos(pos);
     });
   }
 

@@ -5,6 +5,7 @@
 
 import { shipTypes } from 'data';
 import { PixiEffect, PixiProjectile } from 'pixirender';
+import { lineDistance } from 'utils';
 
 // Assume PIXI global namespace.
 const {
@@ -23,8 +24,6 @@ const degToRad = (degrees) => degrees * DEG_TO_RAD;
 export class PixiShip {
   id;
   app;
-  pos;
-  velocity = { x: 0, y: 0 };
   container;
   width;
   height;
@@ -45,6 +44,13 @@ export class PixiShip {
   world;
   ticker;
 
+  // Server and client frame sync.
+  pos = { x: 0, y: 0, d: 0 }; // Actual Pixi container pinned position transposed.
+  velocity = { x: 0, y: 0 }; // Server reported velocity per ms
+  targetPos = { x: 0, y: 0 }; // Server-corrected position
+  correctionStartTime = null; // Time when correction begins
+  correctionDuration = 200; // Duration of correction in ms
+
   constructor(app, options) {
     this.app = app;
     this.config = shipTypes[options.style];
@@ -62,7 +68,7 @@ export class PixiShip {
     this.style = style;
     this.globalCamera = camera;
     this.world = options.world || { width: 200, height: 200 };
-    this.pos = pos;
+    this.pos = { x: pos.x, y: pos.y, d: pos.d };
     this.width = width;
     this.height = height;
     const imgPath = `../resources/graphics/ships/ship_${style}.png`;
@@ -129,7 +135,7 @@ export class PixiShip {
     };
     this.app.ticker.add(this.ticker);
 
-    this.setPos(pos);
+    this.onServerUpdatePos(pos);
 
     // Init callback.
     if (options.onInit) options.onInit();
@@ -148,21 +154,39 @@ export class PixiShip {
   }
 
   tickerCallback() {
-    const fps = 120;
-    const serverFps = 1000 / 60;
-
     // Glide between vector velocity length updates.
-    // TODO: move to absolute time based calculation for better accuracy.
     if (this.container && !this.container.destroyed) {
-      this.container.updateTransform({
-        x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
-        y: this.container.y - this.velocity.y * ((1 / fps) * serverFps),
-      });
-
-      this.setNamePos({ x: this.container.x, y: this.container.y });
-
+      this.tickerUpdatePosition(this.app.ticker.deltaMS);
       this.manageMirror();
     }
+  }
+
+  tickerUpdatePosition(deltaTime) {
+    if (this.correctionStartTime) {
+      const elapsed = performance.now() - this.correctionStartTime;
+
+      // If correction is complete or outside range, snap to the target position
+      if (
+        elapsed >= this.correctionDuration ||
+        lineDistance(this.targetPos, this.pos) > 200
+      ) {
+        this.pos.x = this.targetPos.x;
+        this.pos.y = this.targetPos.y;
+        this.correctionStartTime = null;
+      } else {
+        // Interpolate position toward the target
+        const t = elapsed / this.correctionDuration;
+        this.pos.x += (this.targetPos.x - this.pos.x) * t;
+        this.pos.y += (this.targetPos.y - this.pos.y) * t;
+      }
+    }
+
+    // Predict movement based on velocity
+    this.pos.x += this.velocity.x * deltaTime;
+    this.pos.y -= this.velocity.y * deltaTime;
+
+    // Actually set position of container.
+    this.actuallyUpdatePos();
   }
 
   async chunkParts() {
@@ -526,35 +550,51 @@ export class PixiShip {
       });
   }
 
-  setPos({ x, y, d, t = 0, vel }) {
-    if (!this.container) return;
+  onServerUpdatePos(pos) {
+    this.targetPos = { x: pos.x, y: pos.y };
+    this.pos.d = pos.d;
+    if (pos.vel) this.setVel(pos.vel);
+    this.correctionStartTime = performance.now();
 
+    // Update status for thruster emitters.
+    this.setThrust(pos.t);
+  }
+
+  actuallyUpdatePos() {
+    if (!this.container) return;
+    const pos = { x: this.pos.x, y: this.pos.y };
+
+    this.container.updateTransform(pos);
+    this.updateThrusterPositions();
+    this.setNamePos(pos);
+
+    // Set the camera position to follow this ship if its ID matches.
+    const { followShip } = store.get(AppState);
+    const { freelook } = store.get(UserSettings);
+    if (!freelook && followShip == this.id) {
+      this.globalCamera.setPos(pos);
+    }
+
+    this.container.rotation = degToRad(this.pos.d);
+  }
+
+  // Direct setter, only for puppets.
+  setPos({ x, y, d }) {
     this.pos.x = x;
     this.pos.y = y;
     this.pos.d = d;
-    this.setThrust(t);
-    this.updateThrusterPositions();
-
-    if (vel) this.setVel(vel);
-
-    // Reset position once no velocity
-    //if (vel?.l === 0) {
-    this.container.updateTransform({ x, y });
-    //}
-    this.container.rotation = degToRad(d);
   }
 
-  setVel({ l, t }) {
-    this.velocity = {
-      x: Math.cos(degToRad(t - 90)) * (l * 1),
-      y: Math.sin(degToRad(t - 90)) * (l * 1),
-    };
+  setVel({ x, y }) {
+    this.velocity = { x, y };
 
-    if (this.filters['motionblur']) {
-      this.filters['motionblur'].velocity = {
-        x: this.velocity.x * 1,
-        y: this.velocity.y * 1,
-      };
-    }
+    // I'm leaving this off for now, it actually needs to be set as
+    // a function of speed relative to the viewport speed.
+    // if (this.filters['motionblur']) {
+    //   this.filters['motionblur'].velocity = {
+    //     x: this.velocity.x * 1,
+    //     y: this.velocity.y * 1,
+    //   };
+    // }
   }
 }

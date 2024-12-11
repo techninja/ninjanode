@@ -72,8 +72,8 @@ export class PixiProjectile {
 
     // Velocity is locked at init.
     this.velocity = {
-      x: this.config.speed * Math.cos(degToRad(this.pos.d - 90)),
-      y: this.config.speed * Math.sin(degToRad(this.pos.d - 90)),
+      x: (this.config.speed / 1000) * Math.cos(degToRad(this.pos.d - 90)),
+      y: (this.config.speed / 1000) * Math.sin(degToRad(this.pos.d - 90)),
     };
 
     this.initTicker();
@@ -88,15 +88,12 @@ export class PixiProjectile {
   }
 
   tickerCallback() {
-    // Update position
-    const fps = 120;
-    const serverFps = 1000 / 60;
+    const deltaMs = this.app.ticker.deltaMS;
     // Glide between vector velocity length updates.
-    // TODO: move to absolute time based calculation for better accuracy.
     if (this.container && !this.container.destroyed) {
       this.container.updateTransform({
-        x: this.container.x + this.velocity.x * ((1 / fps) * serverFps),
-        y: this.container.y + this.velocity.y * ((1 / fps) * serverFps),
+        x: this.container.x + this.velocity.x * deltaMs,
+        y: this.container.y + this.velocity.y * deltaMs,
       });
     }
   }
