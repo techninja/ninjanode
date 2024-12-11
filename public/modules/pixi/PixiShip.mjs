@@ -51,7 +51,7 @@ export class PixiShip {
   velocity = { x: 0, y: 0 }; // Server reported velocity per ms
   targetPos = { x: 0, y: 0 }; // Server-corrected position
   correctionStartTime = null; // Time when correction begins
-  correctionDuration = 200; // Duration of correction in ms
+  correctionDuration = 400; // Duration of correction in ms
 
   constructor(app, options) {
     this.app = app;
@@ -170,7 +170,7 @@ export class PixiShip {
       // If correction is complete or outside range, snap to the target position
       if (
         elapsed >= this.correctionDuration ||
-        lineDistance(this.targetPos, this.pos) > 200
+        lineDistance(this.targetPos, this.pos) > 400
       ) {
         this.pos.x = this.targetPos.x;
         this.pos.y = this.targetPos.y;
