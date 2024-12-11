@@ -300,7 +300,8 @@ export class Ship extends DynamicObject {
 
   setThrust(direction) {
     const { accelRate } = this.config;
-    this.thrust = accelRate * direction;
+    const accelRatePerMs = accelRate / 1000;
+    this.thrust = accelRatePerMs * direction;
 
     // Nullify thrust if exploding.
     if (this.exploding) {
@@ -378,7 +379,7 @@ export class Ship extends DynamicObject {
     return true;
   }
 
-  updateMovementFrame({ pnbits }) {
+  updateMovementFrame({ pnbits }, deltaMs) {
     // Process touch angle movement, if any
     if (this.touchAngle) {
       this.setTouch(this.touchAngle);
@@ -445,7 +446,7 @@ export class Ship extends DynamicObject {
     }
 
     // Find the overall velocity length
-    const dragOption = pnbitsEffected ? 0 : this.config.drag;
+    const dragOption = pnbitsEffected ? 0 : this.config.drag / 1000;
     this.velocity.length =
       Math.sqrt(Math.pow(this.velocity.x, 2) + Math.pow(this.velocity.y, 2)) -
       dragOption;
@@ -458,8 +459,11 @@ export class Ship extends DynamicObject {
     if (this.velocity.length < 0) {
       this.velocity.length = 0;
     } else {
-      if (this.velocity.length > this.config.topSpeed && !pnbitsEffected) {
-        this.velocity.length = this.config.topSpeed;
+      if (
+        this.velocity.length > this.config.topSpeed / 1000 &&
+        !pnbitsEffected
+      ) {
+        this.velocity.length = this.config.topSpeed / 1000;
       }
 
       // find the current velocity rotation
@@ -472,8 +476,8 @@ export class Ship extends DynamicObject {
       this.velocity.y = Math.sin(theta) * this.velocity.length;
 
       // update position
-      this.pos.y += this.velocity.x;
-      this.pos.x += this.velocity.y;
+      this.pos.y += this.velocity.x * deltaMs;
+      this.pos.x += this.velocity.y * deltaMs;
 
       this.pos = this.getWrapPos(this.pos, this.width);
     }
@@ -509,14 +513,15 @@ export class Ship extends DynamicObject {
     return pos;
   }
 
-  updateProjectileMovementFrame() {
+  updateProjectileMovementFrame(deltaMs) {
     for (const p in this.projectiles) {
       const proj = this.projectiles[p];
 
       if (proj.active) {
         const theta = proj.pos.d * (Math.PI / 180);
-        proj.pos.x += Math.sin(theta) * proj.config.speed;
-        proj.pos.y += Math.cos(theta) * -proj.config.speed;
+        const move = (proj.config.speed / 1000) * deltaMs;
+        proj.pos.x += Math.sin(theta) * move;
+        proj.pos.y += Math.cos(theta) * -move;
 
         // Wrap projectile
         proj.pos = this.getWrapPos(proj.pos, proj.config.size.width);

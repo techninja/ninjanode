@@ -3,6 +3,7 @@ import {
   circleIntersects,
   getRandomPos,
   hasCollision,
+  degToRad,
 } from './utils.mjs';
 import { gameConfig } from './gameConfig.mjs';
 import { PermanentBody, Powerup, Ship } from './classes/index.mjs';
@@ -22,6 +23,9 @@ export class Game {
 
   // Base entity configs and imported env config.
   playArea;
+
+  // Simulation timer.
+  lastFrameTime = performance.now();
 
   constructor() {
     // TODO: Add support for construct overrides?
@@ -73,27 +77,31 @@ export class Game {
   }
 
   processFrame() {
-    this.updateShipMovement();
-    this.updateProjectileMovement();
+    const delta = performance.now() - this.lastFrameTime;
+
+    this.updateShipMovement(delta);
+    this.updateProjectileMovement(delta);
     this.detectCollisions();
+
+    this.lastFrameTime = performance.now();
   }
 
   /**
    * Move through all ships and step one movement frame ahead.
    */
-  updateShipMovement() {
+  updateShipMovement(delta) {
     const { pnbits } = this;
     Object.values(this.ships).forEach((ship) =>
-      ship.updateMovementFrame({ pnbits })
+      ship.updateMovementFrame({ pnbits }, delta)
     );
   }
 
   /**
    * Move through all ships and move their projectiles one movement frame ahead.
    */
-  updateProjectileMovement() {
+  updateProjectileMovement(delta) {
     Object.values(this.ships).forEach((ship) =>
-      ship.updateProjectileMovementFrame()
+      ship.updateProjectileMovementFrame(delta)
     );
   }
 
@@ -117,6 +125,16 @@ export class Game {
         }
       }
 
+      const theta = parseInt(
+        Math.atan2(ship.velocity.y, ship.velocity.x) * (180 / Math.PI),
+        10
+      );
+
+      const correctedVelocity = {
+        x: Math.cos(degToRad(theta - 90)) * ship.velocity.length,
+        y: Math.sin(degToRad(theta - 90)) * ship.velocity.length,
+      };
+
       out[id] = {
         pos: {
           x: Math.round(ship.pos.x * 100) / 100,
@@ -125,12 +143,10 @@ export class Game {
           d: ship.pos.d,
         },
         vel: {
-          x: ship.velocity.x,
-          y: ship.velocity.y,
+          x: correctedVelocity.x,
+          y: correctedVelocity.y,
           l: ship.velocity.length,
-          t: parseInt(
-            Math.atan2(ship.velocity.y, ship.velocity.x) * (180 / Math.PI)
-          ),
+          t: theta,
         },
       };
 
@@ -365,7 +381,7 @@ export class Game {
                 // Register knockback on the target on next move
                 target.knockBack = {
                   angle: p.pos.d,
-                  amount: p.config.knockBackForce,
+                  amount: p.config.knockBackForce / 1000,
                 };
                 p.destroy();
               } // End Check Circular Intersection

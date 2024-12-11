@@ -5,7 +5,7 @@
 export const projectileTypes = {
   laser: {
     name: 'Death Laser',
-    speed: 67.5,
+    speed: 1125,
     life: 2500, // How many ms till it dies?
     sound: 3,
     damage: 50,
@@ -14,14 +14,14 @@ export const projectileTypes = {
       width: 8,
       height: 70,
     },
-    knockBackForce: 2,
+    knockBackForce: 33.3,
     yOffset: -30,
   },
 
   biglaser: {
     name: 'Super Laser',
     damage: 40,
-    speed: 60,
+    speed: 1000,
     life: 5000,
     sound: 1,
     size: {
@@ -29,14 +29,14 @@ export const projectileTypes = {
       width: 8,
       height: 70,
     },
-    knockBackForce: 4,
+    knockBackForce: 66,
     yOffset: -50,
   },
 
   duallaser: {
     name: 'Dual Laser',
     damage: 30,
-    speed: 53,
+    speed: 883.4,
     life: 2500,
     sound: 3,
     size: {
@@ -44,14 +44,14 @@ export const projectileTypes = {
       width: 25,
       height: 50,
     },
-    knockBackForce: 3,
+    knockBackForce: 50,
     yOffset: -50,
   },
 
   energy: {
     name: 'Energy Orb',
     damage: 30,
-    speed: 20,
+    speed: 333,
     life: 5500,
     sound: 2,
     size: {
@@ -59,7 +59,7 @@ export const projectileTypes = {
       width: 64,
       height: 64,
     },
-    knockBackForce: 6,
+    knockBackForce: 100,
     yOffset: -8,
   },
 
@@ -74,14 +74,14 @@ export const projectileTypes = {
       width: 40,
       height: 40,
     },
-    knockBackForce: 5,
+    knockBackForce: 83,
     yOffset: 0,
   },
 
   fire: {
     name: 'Fire',
     damage: 40,
-    speed: 35,
+    speed: 583,
     life: 1000,
     sound: 5,
     size: {
@@ -89,7 +89,7 @@ export const projectileTypes = {
       width: 64,
       height: 64,
     },
-    knockBackForce: 10,
+    knockBackForce: 166,
     yOffset: -8,
   },
 };

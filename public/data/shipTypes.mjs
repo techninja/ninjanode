@@ -6,9 +6,9 @@ import { projectileTypes } from './projectileTypes.mjs';
 export const shipTypes = {
   a: {
     name: 'Legionnaire',
-    topSpeed: 21,
-    accelRate: 0.375,
-    drag: 0.09,
+    topSpeed: 350,
+    accelRate: 6.25, // PX Per sec(2)
+    drag: 1.5,
     rotationSpeed: 9,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
@@ -31,9 +31,9 @@ export const shipTypes = {
 
   b: {
     name: 'Cygnuss',
-    topSpeed: 30,
-    accelRate: 0.35,
-    drag: 0.03,
+    topSpeed: 500,
+    accelRate: 5.83,
+    drag: 0.5,
     rotationSpeed: 8,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
@@ -56,9 +56,9 @@ export const shipTypes = {
 
   c: {
     name: 'Scimitar',
-    topSpeed: 22.5,
-    accelRate: 0.9,
-    drag: 0.08,
+    topSpeed: 375,
+    accelRate: 15,
+    drag: 1.34,
     rotationSpeed: 15,
     thrusterPositions: {
       front: [
@@ -87,9 +87,9 @@ export const shipTypes = {
 
   d: {
     name: 'Mongoose',
-    topSpeed: 18,
-    accelRate: 0.375,
-    drag: 0.03,
+    topSpeed: 300,
+    accelRate: 6.25,
+    drag: 8.34,
     rotationSpeed: 15,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
@@ -112,9 +112,9 @@ export const shipTypes = {
 
   e: {
     name: 'Sulaco',
-    topSpeed: 18,
-    accelRate: 0.435,
-    drag: 0.03,
+    topSpeed: 300,
+    accelRate: 7.25,
+    drag: 0.5,
     rotationSpeed: 18,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
@@ -137,9 +137,9 @@ export const shipTypes = {
 
   f: {
     name: 'Excalibur',
-    topSpeed: 12,
-    accelRate: 1.2,
-    drag: 0.03,
+    topSpeed: 200,
+    accelRate: 20,
+    drag: 0.5,
     rotationSpeed: 13,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
@@ -162,9 +162,9 @@ export const shipTypes = {
 
   g: {
     name: 'Falcon',
-    topSpeed: 50,
-    accelRate: 1.1,
-    drag: 0.06,
+    topSpeed: 833.4,
+    accelRate: 18.3,
+    drag: 1,
     rotationSpeed: 10,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
