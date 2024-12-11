@@ -141,7 +141,8 @@ export class Ship extends DynamicObject {
     // Don't fire too quickly! Respect the fireRate for this ship
     if (
       new Date().getTime() - this.lastFire[weaponId] <
-      this.config.weapons[weaponId].fireRate
+        this.config.weapons[weaponId].fireRate ||
+      this.exploding
     ) {
       return;
     }
