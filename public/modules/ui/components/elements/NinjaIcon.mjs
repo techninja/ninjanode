@@ -15,6 +15,7 @@ export const NinjaIcon = {
   disabled: false,
   flash: false,
   origin: 'inherit',
+  noAnimation: false,
 
   render: ({
     name,
@@ -26,6 +27,7 @@ export const NinjaIcon = {
     angle,
     flash,
     origin,
+    noAnimation,
   }) => {
     const icon = `hn-${name}${solid ? '-solid' : ''}`;
     const pxSize = `${size}px`;
@@ -78,7 +80,7 @@ export const NinjaIcon = {
           transform-origin: ${origin};
           width: ${pxSize};
           height: ${pxSize};
-          transition: 0.5s ease-in-out;
+          transition: ${!noAnimation ? '0.5s ease-in-out' : 'none'};
         }
         .icon i {
           font-size: ${pxSize};
