@@ -46,6 +46,9 @@ export class PixiRenderer {
 
     const pixiOpts = { canvas, resizeTo: window };
     this.app.init(pixiOpts).then(async () => {
+      // DEBUG: Lock framerate.
+      // this.app.ticker.maxFPS = 30;
+
       // Setup camera and stage where layer containers are held and then added to.
       this.camera = new PixiCamera({
         app: this.app,
