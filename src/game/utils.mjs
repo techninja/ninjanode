@@ -139,3 +139,5 @@ export const lineDistance = (point1, point2) => {
 
   return Math.sqrt(xs + ys);
 };
+
+export const degToRad = (degrees) => degrees * (Math.PI / 180);
