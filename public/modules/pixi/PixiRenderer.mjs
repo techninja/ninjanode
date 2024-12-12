@@ -171,8 +171,12 @@ export class PixiRenderer {
 
       switch (update.status) {
         case 'create':
-          // Ignore already created ships.
-          if (ship) continue;
+          // Update but mostly ignore already created ships.
+          if (ship) {
+            ship.update(update);
+            storeUser(id, update);
+            continue;
+          }
 
           // Store the user data in state.
           storeUser(id, update);

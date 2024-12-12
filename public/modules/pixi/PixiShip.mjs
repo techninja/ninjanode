@@ -73,7 +73,6 @@ export class PixiShip {
     this.pos = { x: pos.x, y: pos.y, d: pos.d };
     this.width = width;
     this.height = height;
-    const imgPath = `../resources/graphics/ships/ship_${style}.png`;
     const shieldPath = `../resources/graphics/shields/shield_${this.config.shield.style}.png`;
 
     // Init shield sprite.
@@ -83,19 +82,13 @@ export class PixiShip {
     shield.height = 150;
     shield.alpha = 0;
     shield.position = { x: width / 2, y: height / 2 };
+    this.shield = shield;
 
     // Init ship sprite.
-    const ship = new Sprite(await Assets.load(imgPath));
-    ship.width = width;
-    ship.height = height;
-
-    // Store the sprites for modification.
-    this.sprite = ship;
-    this.shield = shield;
+    this.setSprite(style);
 
     // Everything goes in the container which is moved.
     this.container = new Container();
-    this.container.addChild(ship);
     this.container.addChild(shield);
 
     // Add name to ship
@@ -141,6 +134,32 @@ export class PixiShip {
 
     // Init callback.
     if (options.onInit) options.onInit();
+  }
+
+  async setSprite(style) {
+    const imgPath = `../resources/graphics/ships/ship_${style}.png`;
+
+    if (!this.sprite) {
+      const ship = new Sprite(await Assets.load(imgPath));
+      ship.width = this.width;
+      ship.height = this.height;
+      this.sprite = ship;
+      this.container.addChild(ship);
+    } else {
+      console.log('Update sprite...');
+      this.sprite.texture = await Assets.load(imgPath);
+      this.sprite.alpha = 0;
+    }
+  }
+
+  // Allow updating name and ship type.
+  update({ name, style }) {
+    this.name = name;
+    this.nameLabel.children[0].text = name;
+    this.style = style;
+    this.config = shipTypes[style];
+    this.setSprite(style);
+    this.initThrusters();
   }
 
   fadeIn(speed = 20) {
@@ -513,7 +532,19 @@ export class PixiShip {
     };
   }
 
+  destroyThusters() {
+    if (this.emitters?.thrusters?.front?.length) {
+      this.emitters.thrusters.front.forEach((emitter) => emitter.destroy());
+    }
+
+    if (this.emitters?.thrusters?.rear?.length) {
+      this.emitters.thrusters.rear.forEach((emitter) => emitter.destroy());
+    }
+  }
+
   initThrusters() {
+    this.destroyThusters();
+
     const {
       thrusterPositions: { front, rear },
     } = this.config;
