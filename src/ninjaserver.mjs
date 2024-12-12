@@ -110,6 +110,7 @@ io.sockets.on('connection', function (clientSocket) {
       if (users[id].status !== 'lobby') {
         console.log('Changing ship type for user: ' + id + ': ' + data.name);
         game.ships[id].changeStyle(data.style);
+        game.ships[id].name = data.name;
       } else {
         // New user ship.
         console.log('Creating ship for user: ' + id + ': ' + data.name);
