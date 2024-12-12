@@ -1,69 +1,30 @@
 /**
  * @file Slide group element definition.
  */
-import { html, children, dispatch } from 'hybrids';
-
-function getIndex(host, name) {
-  let index = -1;
-  let home = 0;
-
-  let i = 0;
-  for (const slide of host.children) {
-    if (slide.name === host.home) home = i;
-    if (slide.name === name) index = i;
-    i++;
-  }
-
-  // Default to home if none found.
-  if (index === -1) index = home;
-
-  return index;
-}
-
-/**
- * Factory for managing host item change/value, takes name, changes what's selected.
- *
- * @param {string} [defaultItem='']
- *   Hash value from hybrids factory handler.
- *
- * @returns {hybrids factory}
- */
-function itemChangeFactory() {
-  return {
-    observe: (host, value) => {
-      const index = getIndex(host, value);
-
-      // Actually set the index based on the name (if we have a value/home).
-      if (value && host.home) {
-        host.index = index;
-        console.log('Active change:', value, index, host.home, host.index);
-      }
-
-      // Dispatch the change up from the host.
-      dispatch(host, 'change', { detail: { name: host.children[index].name } });
-      return host.children[index].name;
-    },
-    connect: (host) => {
-      const activeItemIndex = host.items.findIndex(({ active }) => active) || 0;
-      host.activeItem = host.items[activeItemIndex].name;
-      host.index = activeItemIndex;
-    },
-    value: '',
-  };
-}
+import { html, children } from 'hybrids';
 
 export const NinjaSlides = {
   tag: 'ninja-slides',
   items: children(({ tag }) => tag == 'ninja-slide'),
   height: 100,
   width: 100,
-  initialized: false,
   unit: '%', // Any CSS unit is allowed. Defaults here.
 
   // Sets and returns active item by name
-  activeItem: itemChangeFactory(),
+  index: {
+    connect: (host) => {
+      const activeItemIndex = host.items.findIndex(({ active }) => active) || 0;
+      host.index = activeItemIndex;
+    },
+    observe: (host, index) => {
+      // Set slide active states based on index.
+      host.items.forEach(
+        (slide, slideIndex) => (slide.active = slideIndex == index)
+      );
+    },
+    value: 0,
+  },
   home: '',
-  index: 0,
 
   render: ({ height, width, unit, items, index }) => html`
     <style>

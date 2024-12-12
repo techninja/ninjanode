@@ -18,6 +18,8 @@ export const NinjaSlide = {
         padding: 0.75em;
       }
     </style>
-    <div class=${{ active, item: true }}><slot></slot></div>
+    <div class=${{ active, item: true }}>
+      <slot></slot>
+    </div>
   `,
 };
