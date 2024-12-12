@@ -17,9 +17,10 @@ const selectShip = (ship) => (host) => {
 
 export const NinjaSlideShips = {
   tag: 'ninja-slide-ships',
+  active: ({ parentNode }) => parentNode.active,
   name: () => store.get(UserSettings).name,
 
-  render: () => html`
+  render: ({ active }) => html`
     <style>
       div.wrapper {
         display: grid;
@@ -66,8 +67,12 @@ export const NinjaSlideShips = {
     </style>
     <div class="wrapper">
       ${Object.entries(shipTypes).map(
-        ([type, config]) => html`
-          <ninja-button onclick=${selectShip(type)}>
+        ([type, config], index) => html`
+          <ninja-button
+            button-index=${index + 4}
+            disabled=${!active}
+            onclick=${selectShip(type)}
+          >
             <div>
               <ninja-icon
                 angle="45"

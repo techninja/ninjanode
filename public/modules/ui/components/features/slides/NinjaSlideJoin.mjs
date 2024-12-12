@@ -49,10 +49,11 @@ const swapShip =
 
 export const NinjaSlideJoin = {
   tag: 'ninja-slide-join',
+  active: ({ parentNode }) => parentNode.active,
   ship: () => store.get(UserSettings).ship,
   name: () => store.get(UserSettings).name,
   config: ({ ship }) => shipTypes[ship],
-  render: ({ ship, name, config }) =>
+  render: ({ ship, name, config, active }) =>
     ship
       ? html`
           <style>
@@ -149,6 +150,7 @@ export const NinjaSlideJoin = {
                 icon="arrow-alt-circle-left"
                 onclick=${back}
                 border-size="0"
+                disabled=${!active}
               ></ninja-button>
               <h2>${config.name}</h2>
               <ninja-icon
@@ -299,6 +301,7 @@ export const NinjaSlideJoin = {
                   icon="chevron-up"
                   title="Previous Ship"
                   onclick=${swapShip(-1)}
+                  disabled=${!active}
                 ></ninja-button>
                 <ninja-button
                   solid
@@ -306,6 +309,7 @@ export const NinjaSlideJoin = {
                   icon="chevron-down"
                   title="Next Ship"
                   onclick=${swapShip(1)}
+                  disabled=${!active}
                 ></ninja-button>
               </div>
             </div>
@@ -318,13 +322,21 @@ export const NinjaSlideJoin = {
                 onchange=${changeName}
                 size="10"
                 maxlength="20"
+                disabled=${!active}
+                tabindex="0"
               />
               <ninja-button
                 icon="face-thinking"
                 title="Random Name"
                 onclick=${randomName}
+                disabled=${!active}
               ></ninja-button>
-              <ninja-button solid class="join" onclick=${join}>
+              <ninja-button
+                solid
+                disabled=${!active}
+                class="join"
+                onclick=${join}
+              >
                 Join the Fun
                 <ninja-icon name="chevron-up" size="20" angle="90"></ninja-icon>
               </ninja-button>

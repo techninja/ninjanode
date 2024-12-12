@@ -7,12 +7,13 @@ const back = (host) => {
 
 export const NinjaSlideReset = {
   tag: 'ninja-slide-reset',
+  active: ({ parentNode }) => parentNode.active,
   settings: () => store.get(UserSettings),
-  render: ({ settings }) => html`
+  render: ({ settings, active }) => html`
     <style></style>
     <div>
       <h2>
-        <ninja-button onclick=${back} icon="refresh"
+        <ninja-button disabled=${!active} onclick=${back} icon="refresh"
           >Change your setup:</ninja-button
         >
       </h2>
