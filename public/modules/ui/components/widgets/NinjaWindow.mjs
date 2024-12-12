@@ -86,10 +86,8 @@ export const NinjaWindow = {
         position: absolute;
         left: 10px;
         top: 10px;
-        background-color: gray;
         padding: 0.3em;
         padding-bottom: 0.1em;
-        border-radius: 0.5em;
         opacity: ${!windowVisible ? 1 : 0};
         height: ${!windowVisible ? 'auto' : 0};
       }
@@ -100,6 +98,7 @@ export const NinjaWindow = {
         title="Open"
         icon="bars"
         onclick="${toggleVis(true)}"
+        background-color="grey"
       ></ninja-button>
       <section>
         <ninja-button
