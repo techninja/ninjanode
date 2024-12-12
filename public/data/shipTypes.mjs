@@ -89,7 +89,7 @@ export const shipTypes = {
     name: 'Mongoose',
     topSpeed: 300,
     accelRate: 6.25,
-    drag: 8.34,
+    drag: 2.34,
     rotationSpeed: 15,
     thrusterPositions: {
       front: [{ angle: -90, distance: 40 }],
