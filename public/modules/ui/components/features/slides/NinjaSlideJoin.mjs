@@ -17,6 +17,13 @@ const join = (host) => {
   store.set(AppState, { windowVisible: false, joined: true });
 };
 
+// Join on enter in input.
+const catchEnter = (host, e) => {
+  if (e.key === 'Enter') {
+    join(host);
+  }
+};
+
 const changeName = (host, { target }) => {
   store.set(UserSettings, { name: target.value.trim() || getRandomName() });
 };
@@ -320,6 +327,7 @@ export const NinjaSlideJoin = {
                 value=${name}
                 id="name"
                 onchange=${changeName}
+                onkeyup=${catchEnter}
                 size="10"
                 maxlength="20"
                 disabled=${!active}
