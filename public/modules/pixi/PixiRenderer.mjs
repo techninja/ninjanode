@@ -171,10 +171,14 @@ export class PixiRenderer {
 
       switch (update.status) {
         case 'create':
-          // Update but mostly ignore already created ships.
           if (ship) {
-            ship.update(update);
-            storeUser(id, update);
+            // Update a player if their name or style is different than existing.
+            if (ship.name != update.name || ship.style != update.style) {
+              ship.update(update);
+              storeUser(id, update);
+            }
+
+            // Ignore already created ships from here.
             continue;
           }
 

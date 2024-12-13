@@ -84,12 +84,12 @@ export class PixiShip {
     shield.position = { x: width / 2, y: height / 2 };
     this.shield = shield;
 
-    // Init ship sprite.
-    this.setSprite(style);
-
     // Everything goes in the container which is moved.
     this.container = new Container();
     this.container.addChild(shield);
+
+    // Init ship sprite.
+    await this.setSprite(style);
 
     // Add name to ship
     this.name = name;
