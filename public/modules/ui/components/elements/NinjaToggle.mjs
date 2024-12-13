@@ -35,5 +35,6 @@ export const NinjaToggle = {
         onclick=${click}
         icon=${isOn ? onIcon : offIcon}
         text=${isOn ? onTitle : offTitle}
+        active=${isOn}
       ></ninja-button>`,
 };
