@@ -3,6 +3,8 @@ import { html, store, dispatch } from 'hybrids';
 import { UserSettings, AppState } from 'models';
 import { getRandomName } from 'modules';
 
+const { sound } = window.PIXI;
+
 const join = (host) => {
   const settings = store.get(UserSettings);
   const sliderParent = host.parentElement.parentElement;
@@ -15,6 +17,8 @@ const join = (host) => {
 
   // Set window and joined app states.
   store.set(AppState, { windowVisible: false, joined: true });
+
+  sound.play('join');
 };
 
 // Join on enter in input.

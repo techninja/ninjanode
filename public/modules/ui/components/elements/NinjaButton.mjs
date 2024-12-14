@@ -3,6 +3,8 @@
  */
 import { html } from 'hybrids';
 
+const { sound } = window.PIXI;
+
 export const NinjaButton = {
   tag: 'ninja-button',
   text: '',
@@ -85,6 +87,7 @@ export const NinjaButton = {
         style=${buttonStyle}
         title="${desc}"
         tabindex="0"
+        onclick=${() => sound.play('beep')}
       >
         ${icon &&
         html`<ninja-icon name=${icon} solid=${solid} angle=${angle} />`}
