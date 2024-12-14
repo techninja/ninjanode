@@ -256,7 +256,7 @@ export class PixiRenderer {
 
     const layers = [
       new TilingSprite({
-        texture: await Assets.load('/resources/graphics/grid.png'),
+        texture: await Assets.load('/resources/graphics/stars-green.png'),
         width: worldWidth,
         height: worldHeight,
       }),
