@@ -131,6 +131,7 @@ export const NinjaSlideJoin = {
               font-size: 24px;
               background-color: var(--text-color);
               color: var(--text-background);
+              letter-spacing: -3px;
             }
             .breakdown {
               overflow-y: scroll;

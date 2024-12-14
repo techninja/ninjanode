@@ -91,16 +91,29 @@ export class PixiShip {
     // Init ship sprite.
     await this.setSprite(style);
 
-    // Add name to ship
+    // Add name label to ship
     this.name = name;
     this.nameLabel = new Container();
+
+    const back = new Graphics();
+    back.rect(-2, -5, 100, 25);
+    back.fill('#212121cc');
+
+    this.shieldIndicator = new Graphics();
+    this.updateShieldStatus({ amount: 100 });
+
     this.nameLabel.addChild(
+      back,
+      this.shieldIndicator,
       new Text({
         text: name,
         style: {
-          fontFamily: 'Arial',
+          fontFamily: 'Silkscreen',
           fontSize: 13,
-          fill: 0xff1010,
+          letterSpacing: -1,
+          fill: getComputedStyle(document.body).getPropertyValue(
+            '--text-color'
+          ),
           align: 'left',
         },
       })
@@ -151,10 +164,26 @@ export class PixiShip {
     }
   }
 
+  updateShieldStatus({ amount }) {
+    let color = 'green';
+
+    if (amount <= 60) {
+      color = 'orange';
+    }
+
+    if (amount <= 30) {
+      color = 'red';
+    }
+
+    this.shieldIndicator.clear();
+    this.shieldIndicator.rect(-2, -5, amount, 5);
+    this.shieldIndicator.fill(color);
+  }
+
   // Allow updating name and ship type.
   update({ name, style }) {
     this.name = name;
-    this.nameLabel.children[0].text = name;
+    this.nameLabel.children[2].text = name;
     this.style = style;
     this.config = shipTypes[style];
     this.setSprite(style);

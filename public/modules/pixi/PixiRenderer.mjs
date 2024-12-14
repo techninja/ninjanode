@@ -244,6 +244,10 @@ export class PixiRenderer {
           ship?.destroy();
           break;
 
+        case 'shield':
+          ship.updateShieldStatus(update);
+          break;
+
         default:
           break;
       }
