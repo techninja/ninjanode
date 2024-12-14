@@ -6,14 +6,11 @@
 import { projectileTypes } from 'data';
 
 const {
-  // Assets,
   Container,
   Graphics,
   FillGradient,
   filters: { GlowFilter },
-  // Assume PIXI global namespace.
-  // eslint-disable-next-line no-undef
-} = PIXI;
+} = window.PIXI;
 
 const degToRad = (degrees) => degrees * (Math.PI / 180);
 

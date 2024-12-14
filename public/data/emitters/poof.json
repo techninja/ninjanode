@@ -94,7 +94,7 @@
     {
       "type": "textureRandom",
       "config": {
-        "textures": ["/resources/graphics/explosions/smoke.png"]
+        "textures": ["smoke"]
       }
     },
     {
