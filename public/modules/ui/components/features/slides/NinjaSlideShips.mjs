@@ -53,7 +53,7 @@ export const NinjaSlideShips = {
 
       h4 {
         margin: 0;
-        font-family: 'Black Ops One', sans-serif;
+        font-family: var(--head-font);
       }
 
       b {

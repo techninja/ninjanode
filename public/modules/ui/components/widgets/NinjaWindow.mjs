@@ -29,24 +29,36 @@ export const NinjaWindow = {
         transition: 0.5s ease-in-out;
         min-height: ${!windowVisible ? 0 : '100vh'};
       }
-
       section {
         transition: 0.5s ease-in-out;
         overflow: hidden;
-        background-color: #a0a0a0;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06)
+          ),
+          var(--text-background);
+        background-size:
+          100% 2px,
+          3px 100%;
         max-width: 600px;
         padding-top: 30px;
-        box-shadow: 0 0 25px 17px rgba(200, 200, 200, 0.4);
         position: relative;
         opacity: ${!windowVisible ? 0 : 1};
         height: ${!windowVisible ? 0 : 'auto'};
         min-width: 525px;
         z-index: 5;
         box-shadow:
-          -3px 0 0 0 white,
-          3px 0 0 0 white,
-          0 -3px 0 0 white,
-          0 3px 0 0 white;
+          -3px 0 0 0 var(--border-color),
+          3px 0 0 0 var(--border-color),
+          0 -3px 0 0 var(--border-color),
+          0 3px 0 0 var(--border-color),
+          0px 0px 55px 25px var(--glow-color);
       }
 
       @media (max-width: 600px) {
@@ -56,9 +68,8 @@ export const NinjaWindow = {
       }
 
       h2 {
-        border-bottom: 0.1em solid var(--text-color);
         color: var(--text-color);
-        font-family: 'Black Ops One', sans-serif;
+        font-family: var(--head-font);
         text-transform: lowercase;
         padding-left: 0.2em;
         font-weight: 300;
@@ -86,8 +97,6 @@ export const NinjaWindow = {
         position: absolute;
         left: 10px;
         top: 10px;
-        padding: 0.3em;
-        padding-bottom: 0.1em;
         opacity: ${!windowVisible ? 1 : 0};
         height: ${!windowVisible ? 'auto' : 0};
       }
@@ -98,7 +107,6 @@ export const NinjaWindow = {
         title="Open"
         icon="bars"
         onclick="${toggleVis(true)}"
-        background-color="grey"
       ></ninja-button>
       <section>
         <ninja-button

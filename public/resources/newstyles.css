@@ -1,3 +1,36 @@
+/* Theme variables */
+:root {
+  --glow-color: rgba(56, 255, 46, 0.2);
+
+  --text-color: #aff291;
+  --text-color-secondary: #48c20f;
+  --text-background: #141e12;
+  --border-color: #6cc841;
+
+  --text-color-disabled: #888;
+  --text-background-disabled: #333;
+
+  --button-text: rgb(58, 217, 41);
+  --button-background: #16251c;
+
+  --button-text-hover: #16251c;
+  --button-background-hover: #6cc841;
+
+  --button-text-active: rgb(225, 39, 39);
+  --button-background-active: rgb(4, 122, 173);
+
+  /* Font Families */
+  --head-font: 'Black Ops One', sans-serif;
+  --body-font: 'Pixelify Sans', monospace;
+  --small-font: 'Silkscreen', monospace;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+   // TODO: Dark/light mode delineation?
+  }
+} */
+
 body {
   margin: 0;
   padding: 0;
@@ -6,7 +39,7 @@ body {
   overflow-y: scroll;
   width: 100%;
   height: 100%;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: var(--body-font);
 }
 
 #stage {
@@ -19,9 +52,10 @@ body {
 h2,
 h3,
 h4 {
-  font-family: 'Black Ops One', sans-serif;
+  font-family: var(--head-font);
   text-transform: lowercase;
   text-align: center;
+  color: var(--text-color);
 }
 
 h3.subhed {

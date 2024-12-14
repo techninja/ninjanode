@@ -71,8 +71,9 @@ export const NinjaSlideJoin = {
             }
             h2 {
               margin: 0;
-              font-family: 'Black Ops One', sans-serif;
+              font-family: var(--head-font);
               text-transform: lowercase;
+              color: var(--text-color);
             }
             div.wrapper {
               display: grid;
@@ -121,28 +122,32 @@ export const NinjaSlideJoin = {
             }
             input {
               box-shadow:
-                -2px 0 0 0 black,
-                2px 0 0 0 black,
-                0 -2px 0 0 black,
-                0 2px 0 0 black;
-              font-family: 'Pixelify Sans', sans-serif;
+                -3px 0 0 0 var(--border-color),
+                3px 0 0 0 var(--border-color),
+                0 -3px 0 0 var(--border-color),
+                0 3px 0 0 var(--border-color);
+              border: 0;
+              font-family: var(--small-font);
               font-size: 24px;
+              background-color: var(--text-color);
+              color: var(--text-background);
             }
             .breakdown {
               overflow-y: scroll;
               height: 122px;
             }
             table {
-              font-family: Arial, Helvetica, sans-serif;
+              font-family: var(--small-font);
+              color: var(--text-color);
               font-size: 11px;
+              line-height: 10px;
               border-collapse: collapse;
-              width: 85%;
             }
             table th {
-              border-bottom: 2px solid #aaa;
+              border-bottom: 2px solid var(--border-color);
             }
             table td {
-              border-bottom: 1px solid #aaa;
+              border-bottom: 1px solid var(--border-color);
             }
             table td.spacer {
               border: 0 none;

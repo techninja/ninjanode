@@ -9,8 +9,8 @@ export const NinjaIcon = {
   name: '',
   size: 32,
   angle: 0,
-  color: 'black',
-  hoverColor: 'white',
+  color: '',
+  hoverColor: '',
   solid: false,
   disabled: false,
   flash: false,
@@ -58,23 +58,7 @@ export const NinjaIcon = {
           width: ${pxSize};
           height: ${pxSize};
         }
-        @keyframes flash {
-          0% {
-            color: ${color};
-          }
-          10% {
-            color: #fff;
-          }
-          100% {
-            color: ${color};
-          }
-        }
-        .flash {
-          animation-name: flash;
-          animation-duration: 500ms;
-          animation-iteration-count: infinite;
-          animation-timing-function: ease-out;
-        }
+
         .icon {
           transform: ${`rotate(${angle}deg)`};
           transform-origin: ${origin};
@@ -82,18 +66,35 @@ export const NinjaIcon = {
           height: ${pxSize};
           transition: ${!noAnimation ? '0.5s ease-in-out' : 'none'};
         }
-        .icon i {
-          font-size: ${pxSize};
-          color: ${color};
-        }
-        .icon i:hover {
-          color: ${hoverColor};
-        }
       </style>
       <div class="icon">
         <i class=${iconClasses}></i>
       </div>
     `.style(iconfont).css`
+      @keyframes flash {
+        0% {
+          color: ${color};
+        }
+        10% {
+          color: #fff;
+        }
+        100% {
+          color: ${color};
+        }
+      }
+      .flash {
+        animation-name: flash;
+        animation-duration: 500ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-out;
+      }
+      .icon i {
+        font-size: ${pxSize};
+        // color: ${color ? color : 'var(--button-text)'} !important;
+      }
+      .icon i:hover {
+        //color: ${hoverColor ? hoverColor : 'var(--button-text-hover)'};
+      }
       .ship {
         background-image: url(${shipImage});
         width: ${pxSize};

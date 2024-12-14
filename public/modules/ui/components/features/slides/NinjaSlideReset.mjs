@@ -10,7 +10,11 @@ export const NinjaSlideReset = {
   active: ({ parentNode }) => parentNode.active,
   settings: () => store.get(UserSettings),
   render: ({ settings, active }) => html`
-    <style></style>
+    <style>
+      :host {
+        color: var(--text-color);
+      }
+    </style>
     <div>
       <h2>
         <ninja-button disabled=${!active} onclick=${back} icon="refresh"

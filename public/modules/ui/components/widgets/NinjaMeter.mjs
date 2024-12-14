@@ -26,6 +26,7 @@ export const NinjaMeter = {
         left: 22px;
         top: -4px;
         z-index: 1;
+        filter: invert(1);
       }
       span {
         font-size: 7px;

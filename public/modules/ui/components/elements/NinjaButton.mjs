@@ -13,8 +13,6 @@ export const NinjaButton = {
   active: false,
   disabled: false,
   borderSize: 2,
-  backgroundColor: 'grey',
-  hoverColor: 'white',
 
   // Icon prop drilled attributes.
   icon: '',
@@ -33,9 +31,6 @@ export const NinjaButton = {
     icon,
     solid,
     angle,
-    backgroundColor,
-    hoverColor,
-    buttonIndex,
   }) => {
     const buttonClasses = {
       button: true,
@@ -52,15 +47,17 @@ export const NinjaButton = {
           display: inline-block;
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           margin: ${borderSize}px;
-          background-color: ${backgroundColor};
+          background-color: var(--button-background);
           box-shadow:
-            -${borderSize}px 0 0 0 black,
-            ${borderSize}px 0 0 0 black,
-            0 -${borderSize}px 0 0 black,
-            0 ${borderSize}px 0 0 black;
+            -${borderSize}px 0 0 0 var(--border-color),
+            ${borderSize}px 0 0 0 var(--border-color),
+            0 -${borderSize}px 0 0 var(--border-color),
+            0 ${borderSize}px 0 0 var(--border-color),
+            0px 0px 15px 5px var(--glow-color);
         }
         :host button:hover {
-          background-color: ${hoverColor};
+          color: var(--button-text-hover);
+          background-color: var(--button-background-hover);
         }
         button {
           padding: 0.25em;
@@ -68,9 +65,18 @@ export const NinjaButton = {
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           width: 100%;
           height: 100%;
-          font-family: 'Pixelify Sans', monospace;
+          font-family: var(--small-font);
+          color: var(--button-text);
           overflow: hidden;
           background-color: transparent;
+        }
+        button.is-active {
+          color: var(--button-text-active);
+          background-color: var(--button-background-active);
+        }
+        button:disabled {
+          color: var(--text-color-disabled);
+          background-color: var(--text-background-disabled);
         }
       </style>
       <button

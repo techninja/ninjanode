@@ -16,12 +16,17 @@ export const NinjaRoster = {
       }
       .wrapper {
         background-color: rgba(22, 22, 22, 0.5);
-        border: 1px solid #444444;
-        border-radius: 1em 1em 1em 1em;
+        border: 1px solid var(--border-color);
+        box-shadow:
+          -2px 0 0 0 var(--border-color),
+          2px 0 0 0 var(--border-color),
+          0 -2px 0 0 var(--border-color),
+          0 2px 0 0 var(--border-color),
+          0px 0px 20px 10px var(--glow-color);
         color: #aaaaff;
         font-family: monospace;
         font-size: 14px;
-        padding: 1em;
+        padding: 8px;
         right: 1em;
         top: 1em;
         width: 250px;
@@ -29,11 +34,11 @@ export const NinjaRoster = {
       }
 
       h2 {
-        border-bottom: 1px solid #2d918b;
+        border-bottom: 1px solid var(--border-color);
         margin-top: 0;
-        color: #005bce;
+        color: var(--text-color);
         margin-bottom: 0.2em;
-        font-family: 'Pixelify Sans', sans-serif;
+        font-family: var(--body-font);
       }
     </style>
     <div class="wrapper">

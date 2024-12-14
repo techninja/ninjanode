@@ -5,11 +5,14 @@ import { html } from 'hybrids';
 
 export const NinjaTab = {
   tag: 'ninja-tab',
-  text: '',
+  active: false,
   caption: '',
+
+  // These are only read by the parent component!
+  // @see NinjaTabs.mjs
+  text: '',
   name: '',
   icon: '',
-  active: false,
 
   // Renders children (<slot/>) if active is set to true
   render: ({ active, caption }) => html`
@@ -22,6 +25,7 @@ export const NinjaTab = {
       h2 {
         margin: 0;
         padding-bottom: 5px;
+        color: var(--text-color);
       }
     </style>
     ${active &&

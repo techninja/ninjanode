@@ -146,7 +146,6 @@ export class PixiShip {
       this.sprite = ship;
       this.container.addChild(ship);
     } else {
-      console.log('Update sprite...');
       this.sprite.texture = await Assets.load(imgPath);
       this.sprite.alpha = 0;
     }

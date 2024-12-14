@@ -12,7 +12,11 @@ export const NinjaControls = {
   settings: () => store.get(UserSettings),
 
   render: ({ settings }) => html`
-    <style></style>
+    <style>
+      :host {
+        color: var(--button-text);
+      }
+    </style>
     <div>
       <span>
         Mouse Controls:

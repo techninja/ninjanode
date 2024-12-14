@@ -18,13 +18,20 @@ export const NinjaRosterUser = {
   self: '',
 
   render: ({ user, self }) => {
-    let compass = html`<ninja-icon
-      size="16"
-      name="home"
-      color="#00FF00"
-      solid
-      title="It's you!"
-    ></ninja-icon>`;
+    let compass = html`<style>
+        /** TODO: This is a hack */
+        .compass {
+          color: #0f0;
+        }
+      </style>
+      <ninja-icon
+        class="compass"
+        size="16"
+        name="home"
+        color="#00FF00"
+        solid
+        title="It's you!"
+      ></ninja-icon>`;
 
     const selfUser = getUser(self);
 
@@ -81,15 +88,22 @@ export const NinjaRosterUser = {
         }
 
         // We're connected!
-        compass = html`<ninja-icon
-          size="16"
-          name=${icon}
-          color=${color}
-          angle=${angle}
-          title=${title}
-          flash=${flash}
-          solid
-        ></ninja-icon>`;
+        compass = html`<style>
+            /** TODO: This is a hack */
+            .compass {
+              color: ${color};
+            }
+          </style>
+          <ninja-icon
+            class="compass"
+            size="16"
+            name=${icon}
+            angle=${angle}
+            title=${title}
+            flash=${flash}
+            solid
+            no-animation
+          ></ninja-icon>`;
       }
     }
 
@@ -103,6 +117,7 @@ export const NinjaRosterUser = {
           display: grid;
           grid-template-columns: 16px 35px auto 16px;
           grid-gap: 5px;
+          color: var(--text-color-secondary);
         }
       </style>
       <div class="wrapper" onclick=${userClick}>

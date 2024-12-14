@@ -36,10 +36,10 @@ export const NinjaSlides = {
       .slide-wrapper {
         width: ${`${width - 1}${unit}`};
         box-shadow:
-          -3px 0 0 0 gray,
-          3px 0 0 0 gray,
-          0 -3px 0 0 gray,
-          0 3px 0 0 gray;
+          -3px 0 0 0 var(--border-color),
+          3px 0 0 0 var(--border-color),
+          0 -3px 0 0 var(--border-color),
+          0 3px 0 0 var(--border-color);
         overflow: hidden;
         margin: 3px;
       }

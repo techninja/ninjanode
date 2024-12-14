@@ -124,10 +124,6 @@ export const NinjaChat = {
         position: absolute;
         left: 10px;
         top: ${windowVisible ? '10px' : '70px'};
-        background-color: gray;
-        padding: 0.3em;
-        padding-bottom: 0.1em;
-        border-radius: 0.5em;
         opacity: ${!visible ? 1 : 0};
         height: ${!visible ? 'auto' : 0};
       }

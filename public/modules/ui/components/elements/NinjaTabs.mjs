@@ -50,7 +50,7 @@ export const NinjaTabs = {
         overflow: hidden;
       }
       nav {
-        border-right: 3px solid black;
+        border-right: 3px solid var(--border-color);
         float: left;
         margin-right: 1em;
         margin-left: 3px;
@@ -58,12 +58,13 @@ export const NinjaTabs = {
       ul {
         list-style: none;
         padding: 0;
+        color: var(--text-color);
       }
       li {
         height: 60px;
       }
       li.is-active {
-        filter: invert(1);
+        color: var(--link-active);
       }
     </style>
     <nav class="tabs">
@@ -75,7 +76,12 @@ export const NinjaTabs = {
               class=${active ? 'is-active' : ''}
               onclick="${activate(name)}"
             >
-              <ninja-button icon=${icon} solid=${active} title=${text}>
+              <ninja-button
+                icon=${icon}
+                solid=${active}
+                active=${active}
+                title=${text}
+              >
                 ${text}
               </ninja-button>
             </li>
