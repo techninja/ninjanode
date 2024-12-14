@@ -38,6 +38,7 @@ const frontendNodeMaps = {
   'pixi.js/dist': 'pixi',
   'pixi-filters/dist': 'pixi-filters',
   'pixi-viewport/dist': 'pixi-viewport',
+  '@pixi/sound/dist': 'pixi-sound',
   'hybrids/src': 'hybrids',
   '@barvynkoa/particle-emitter': 'particle-emitter',
   '@hackernoon/pixel-icon-library': 'icons',
