@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ninjanode</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Black+Ops+One"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="resources/styles.css" />
+    <link rel="stylesheet" href="resources/forkme.css" />
+    <script src="libs/jquery.js"></script>
+    <script src="libs/jquery.spritely-0.6.js"></script>
+    <script src="/pixi/pixi.js"></script>
+    <script src="/pixi-filters/pixi-filters.js"></script>
+    <script src="/particle-emitter/dist/particle-emitter.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "pixi.js": "/pixi/pixi.mjs",
+          "pixi-viewport": "/pixi-viewport/pixi_viewport.js",
+          "data": "/data/index.mjs",
+          "emitters": "/data/emitters/index.mjs",
+          "pixirender": "/modules/pixi/index.mjs",
+          "models": "/data/stateModels/index.mjs",
+          "modules": "/modules/index.mjs",
+          "utils": "/modules/utils.mjs",
+          "ui": "/modules/ui/index.mjs",
+          "hybrids": "/hybrids/index.js"
+        }
+      }
+    </script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+  </head>
+  <body class="fixed space">
+    <div id="debug" class="hidden">
+      <div class="ups">Recvs per sec: <span>0</span></div>
+      <div class="pos">Position: (<span>0, 0</span>)</div>
+    </div>
+
+    <div id="players" class="window layer5">
+      <h3>Currently Online</h3>
+    </div>
+
+    <div id="map-controls">
+      <span>-</span>
+      <label>🔎 <em>4</em></label>
+      <span>+</span>
+    </div>
+    <div id="map-wrapper" class="window layer4">
+      <div id="map"></div>
+    </div>
+
+    <div id="chat-main" class="chat window layer5 hidden">
+      <ol></ol>
+      <input type="text" />
+    </div>
+
+    <div id="chat-notify" class="chat window layer5 hidden">
+      <ol></ol>
+    </div>
+
+    <div id="connection-window" class="window layer5 hidden">
+      <a
+        class="github-fork-ribbon"
+        href="https://github.com/techninja/ninjanode"
+        data-ribbon="Fork me on GitHub"
+        title="Fork ninjanode on GitHub"
+        >Fork me on GitHub</a
+      >
+      <h1>ninjanode</h1>
+      <aside>
+        A fuly open source web browser space ship game, for the hell of it.
+      </aside>
+      <fieldset>
+        <legend>Pick a name and a ship...</legend>
+        <form>
+          <button>Join the Fun &gt;&gt;</button>
+          <label for="name">Nickname:</label>
+          <input
+            type="text"
+            class="name"
+            value="NinjaNoob"
+            id="name"
+            maxlength="20"
+          />
+
+          <div class="ship-select"></div>
+        </form>
+      </fieldset>
+    </div>
+    <script type="module">
+      import { ShipRenderer, ShipSocket, BotController } from 'modules';
+
+      $(document).ready(() => {
+        const server = `${location.protocol}//${location.host}/`;
+
+        // Connect immediately...
+        const mainSocket = new ShipSocket(server);
+        const renderer = new ShipRenderer(mainSocket, $('body'));
+
+        // Setup the Bot
+        const botSocket = new ShipSocket(server);
+        const botController = new BotController(botSocket);
+
+        // const botSocket2 = new ShipSocket(server);
+        // const botController2 = new BotController(botSocket2);
+
+        window.game = { mainSocket, renderer };
+      });
+    </script>
+
+    <script type="text/javascript">
+      (function ($) {
+        $.fn.rotate = function (degree) {
+          this.css({
+            WebkitTransform: 'rotate(' + degree + 'deg)',
+            transform: 'rotate(' + degree + 'deg)',
+          });
+        };
+      })(jQuery);
+    </script>
+  </body>
+</html>

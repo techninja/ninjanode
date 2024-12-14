@@ -7,13 +7,51 @@
       rel="stylesheet"
       type="text/css"
     />
-    <link rel="stylesheet" href="resources/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Pixelify+Sans"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Silkscreen"
+      rel="stylesheet"
+      type="text/css"
+    />
     <link rel="stylesheet" href="resources/forkme.css" />
-    <script src="libs/jquery.js"></script>
-    <script src="libs/jquery.spritely-0.6.js"></script>
+    <link rel="stylesheet" href="resources/newstyles.css" />
+    <link rel="stylesheet" href="icons/fonts/iconfont.css" />
     <script src="/pixi/pixi.js"></script>
     <script src="/pixi-filters/pixi-filters.js"></script>
     <script src="/particle-emitter/dist/particle-emitter.js"></script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+  </head>
+  <body>
+    <ninja-roster></ninja-roster>
+    <ninja-window id="main-window" head="ninjanode">
+      <h3 class="subhed">
+        A fully open source web browser space ship game, for the hell of it.
+      </h3>
+      <ninja-tabs activeItem="play">
+        <ninja-tab caption="Pick a name and a ship" icon="play" name="play">
+          <ninja-ship-select></ninja-ship-select>
+        </ninja-tab>
+        <ninja-tab caption="Controls" icon="edit" name="controls">
+          <ninja-controls></ninja-controls>
+        </ninja-tab>
+        <ninja-tab caption="Bots" icon="robot" name="bots">
+          <ninja-bots></ninja-bots>
+        </ninja-tab>
+        <ninja-tab caption="Settings" icon="cog" name="settings">
+          <ninja-settings></ninja-settings>
+        </ninja-tab>
+      </ninja-tabs>
+    </ninja-window>
+    <ninja-chat></ninja-chat>
+    <div id="framerate"></div>
+    <canvas id="stage" width="400" height="400"></canvas>
     <script type="importmap">
       {
         "imports": {
@@ -30,98 +68,57 @@
         }
       }
     </script>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-  </head>
-  <body class="fixed space">
-    <div id="debug" class="hidden">
-      <div class="ups">Recvs per sec: <span>0</span></div>
-      <div class="pos">Position: (<span>0, 0</span>)</div>
-    </div>
-
-    <div id="players" class="window layer5">
-      <h3>Currently Online</h3>
-    </div>
-
-    <div id="map-controls">
-      <span>-</span>
-      <label>🔎 <em>4</em></label>
-      <span>+</span>
-    </div>
-    <div id="map-wrapper" class="window layer4">
-      <div id="map"></div>
-    </div>
-
-    <div id="chat-main" class="chat window layer5 hidden">
-      <ol></ol>
-      <input type="text" />
-    </div>
-
-    <div id="chat-notify" class="chat window layer5 hidden">
-      <ol></ol>
-    </div>
-
-    <div id="connection-window" class="window layer5 hidden">
-      <a
-        class="github-fork-ribbon"
-        href="https://github.com/techninja/ninjanode"
-        data-ribbon="Fork me on GitHub"
-        title="Fork ninjanode on GitHub"
-        >Fork me on GitHub</a
-      >
-      <h1>ninjanode</h1>
-      <aside>
-        A fuly open source web browser space ship game, for the hell of it.
-      </aside>
-      <fieldset>
-        <legend>Pick a name and a ship...</legend>
-        <form>
-          <button>Join the Fun &gt;&gt;</button>
-          <label for="name">Nickname:</label>
-          <input
-            type="text"
-            class="name"
-            value="NinjaNoob"
-            id="name"
-            maxlength="20"
-          />
-
-          <div class="ship-select"></div>
-        </form>
-      </fieldset>
-    </div>
     <script type="module">
-      import { ShipRenderer, ShipSocket, BotController } from 'modules';
+      import gameConfig from '/game' with { type: 'json' };
+      import {
+        ShipSocket,
+        PixiRenderer,
+        PixiInput,
+        BotController,
+      } from 'modules';
+      import { store } from 'hybrids';
+      import { AppState } from 'models';
 
-      $(document).ready(() => {
-        const server = `${location.protocol}//${location.host}/`;
+      // Import and register all web components via side-effects.
+      import 'ui';
 
-        // Connect immediately...
-        const mainSocket = new ShipSocket(server);
-        const renderer = new ShipRenderer(mainSocket, $('body'));
+      const server = `${location.protocol}//${location.host}/`;
 
-        // Setup the Bot
-        const botSocket = new ShipSocket(server);
-        const botController = new BotController(botSocket);
+      // Connect immediately...
+      const socket = new ShipSocket(server);
 
-        // const botSocket2 = new ShipSocket(server);
-        // const botController2 = new BotController(botSocket2);
-
-        window.game = { mainSocket, renderer };
+      // Store Id in global state.
+      socket.socket.on('connect', () => {
+        store.set(AppState, { socketId: socket.socket.id });
       });
-    </script>
 
-    <script type="text/javascript">
-      (function ($) {
-        $.fn.rotate = function (degree) {
-          this.css({
-            WebkitTransform: 'rotate(' + degree + 'deg)',
-            transform: 'rotate(' + degree + 'deg)',
-          });
-        };
-      })(jQuery);
+      const renderer = new PixiRenderer({
+        socket,
+        stageId: 'stage',
+        framerateId: 'framerate',
+        gameConfig,
+      });
+      window.renderer = renderer;
+
+      const input = new PixiInput({
+        renderer,
+        socket,
+      });
+
+      // Bind the join event from ship selection.
+      document
+        .getElementsByTagName('ninja-ship-select')[0]
+        .addEventListener('join', ({ detail: { ship: style, name } }) => {
+          socket.join({ style, name });
+        });
+
+      // Setup the Bots
+      const bots = [
+        // new BotController(new ShipSocket(server)),
+        // new BotController(new ShipSocket(server)),
+        // new BotController(new ShipSocket(server)),
+        // new BotController(new ShipSocket(server)),
+      ];
     </script>
   </body>
 </html>
