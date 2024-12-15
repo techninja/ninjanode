@@ -4,10 +4,10 @@
  */
 
 import { store } from 'hybrids';
-import { shipTypes } from 'data';
+import { projectileTypes, shipTypes } from 'data';
 import { PixiEffect, PixiProjectile } from 'pixirender';
 import { AppState, UserSettings } from 'models';
-import { lineDistance } from 'utils';
+import { lineDistance, getRando } from 'utils';
 
 // Assume PIXI global namespace.
 const {
@@ -18,6 +18,7 @@ const {
   DEG_TO_RAD,
   Graphics,
   Texture,
+  sound,
 } = window.PIXI;
 
 const degToRad = (degrees) => degrees * DEG_TO_RAD;
@@ -38,6 +39,7 @@ export class PixiShip {
   projectiles = {};
   emitters = {};
   filters = {};
+  sounds = {};
   parent;
   globalCamera;
   isMirror;
@@ -119,6 +121,15 @@ export class PixiShip {
     );
 
     camera.getStage('labels').addChild(this.nameLabel);
+
+    // Add looping sounds.
+    const thrust = sound.find('rumbleThrust');
+    //thrust.volume = 0.1;
+    thrust.loop = true;
+
+    const warning = sound.find('warning');
+    warning.loop = true;
+    this.sounds = { thrust, warning };
 
     // Rotate around the center
     this.container.pivot.x = width / 2;
@@ -428,17 +439,19 @@ export class PixiShip {
         // No thrust.
         thrusters.rear.forEach((thruster) => thruster.deactivate());
         thrusters.front.forEach((thruster) => thruster.deactivate());
+        this.sounds.thrust.pause();
         break;
 
       case 1:
         // Forward thrust from back.
         thrusters.rear.forEach((thruster) => thruster.activate());
-
+        this.sounds.thrust.play();
         break;
 
       case 2:
         // Reverse thrust from front.
         thrusters.front.forEach((thruster) => thruster.activate());
+        this.sounds.thrust.play();
         break;
       default:
         break;
@@ -451,6 +464,11 @@ export class PixiShip {
     switch (status) {
       case 'create':
         if (!this.projectiles[id]) {
+          // Optionally play projectile sound.
+          if (!update.noSound) {
+            const config = projectileTypes[update.type];
+            this.playSound(getRando(config.sounds.emission));
+          }
           this.projectiles[id] = new PixiProjectile({
             ...update,
             app: this.app,
@@ -476,6 +494,8 @@ export class PixiShip {
   }
 
   explode() {
+    this.playSound('boom');
+
     new PixiEffect({
       app: this.app,
       type: 'explosion',
@@ -487,10 +507,25 @@ export class PixiShip {
     this.shockwave();
   }
 
+  playSound(alias) {
+    // TODO: Offset for sound world positon in relation to the viewport camera.
+    // this.pos
+    sound.play(alias);
+  }
+
   // Play sound, show shield.
   hit({ weapon }) {
     const timeout = 300;
     this.shield.alpha = 1;
+
+    const config = projectileTypes[weapon];
+    if (config) {
+      // Weapon specific hit sounds.
+      this.playSound(getRando(config.sounds.reception));
+    } else {
+      // Default hit sounds.
+      this.playSound(getRando(['hit1', 'hit2']));
+    }
 
     // Add ticker for animation.
     const ticker = () => {

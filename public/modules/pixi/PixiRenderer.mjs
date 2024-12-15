@@ -15,9 +15,7 @@ import {
 import { PixiShip, PixiCamera } from 'pixirender';
 import { manifest } from 'manifest';
 
-// Assume PIXI global namespace.
-// eslint-disable-next-line no-undef
-const { Application, TilingSprite, Texture, Assets } = PIXI;
+const { Application, TilingSprite, Texture, Assets, sound } = window.PIXI;
 
 export class PixiRenderer {
   app;
@@ -62,15 +60,12 @@ export class PixiRenderer {
         layers: ['labels', 'ships', 'projectiles', 'background'],
       });
 
-      // TODO: Where should this live?
-      // Bind to freelook user setting to set viewport state.
-      new UserSettingsObserver('freelook', ({ freelook }) => {
-        if (!freelook) {
-          this.setFollow(true);
-        } else {
-          store.set(AppState, { followShip: '' });
-        }
-      });
+      // Bind to global settings state changes.
+      new UserSettingsObserver('', this.onUserSettingsChange);
+
+      // Set initial mute state from user settings
+      const { mute } = store.get(UserSettings);
+      if (mute) sound.muteAll();
 
       this.stage = { ...this.camera.layers, base: this.camera.viewport };
 
@@ -92,6 +87,17 @@ export class PixiRenderer {
       //   pos: { x: 150, y: 150, d: 0, t: 1 },
       // });
     });
+  }
+
+  onUserSettingsChange({ mute }, changedKey) {
+    switch (changedKey) {
+      case 'mute':
+        mute ? sound.muteAll() : sound.unmuteAll();
+        break;
+
+      default:
+        break;
+    }
   }
 
   initChat() {
@@ -296,8 +302,10 @@ export class PixiRenderer {
 
   onUpdateShipPos(posUpdates) {
     Object.entries(posUpdates).forEach(([id, pos]) => {
-      storeUser(id, { pos: { x: pos.x, y: pos.y, d: pos.d } });
-      this.ships[id].onServerUpdatePos(pos);
+      if (this.ships[id]) {
+        storeUser(id, { pos: { x: pos.x, y: pos.y, d: pos.d } });
+        this.ships[id].onServerUpdatePos(pos);
+      }
     });
   }
 

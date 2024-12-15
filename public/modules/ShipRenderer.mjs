@@ -4,7 +4,7 @@
  */
 import { ShipInput } from 'modules';
 import { shipTypes, projectileTypes } from 'data';
-import audio from '../resources/audio/audio.json' with { type: 'json' };
+import { audio } from '../resources/audio/audio.mjs';
 
 const spanWrap = (msg) => `<span>${msg}</span>`;
 const gcd = (a, b) => (b == 0 ? a : gcd(b, a % b));
@@ -239,7 +239,6 @@ export class ShipRenderer {
   }
 
   setDummyShip(d, id) {
-    const root = audio.rootPath;
     const fireSounds = [
       projectileTypes[shipTypes[d.style].weapons[0].type].sound,
       projectileTypes[shipTypes[d.style].weapons[1].type].sound,
@@ -250,21 +249,18 @@ export class ShipRenderer {
       beacon: $('#beacon_' + id),
       name: d.name,
       sound: {
-        boom: new Audio(`${root}/${audio.boom}`),
-        thrust: new Audio(`${root}/${audio.thrust}`),
+        boom: new Audio(audio.boom),
+        thrust: new Audio(audio.thrust),
         fire: [
-          new Audio(`${root}/${audio['fire' + fireSounds[0]]}`),
-          new Audio(`${root}/${audio['fire' + fireSounds[1]]}`),
+          new Audio(audio['fire' + fireSounds[0]]),
+          new Audio(audio['fire' + fireSounds[1]]),
         ],
-        hit: [
-          new Audio(`${root}/${audio.hit1}`),
-          new Audio(`${root}/${audio.hit2}`),
-        ],
-        minehit: new Audio(`${root}/${audio.mine}`),
-        warning: new Audio(`${root}/${audio.warning}`),
+        hit: [new Audio(audio.hit1), new Audio(audio.hit2)],
+        minehit: new Audio(audio.mine),
+        warning: new Audio(audio.warning),
         beacon: {
-          set: new Audio(`${root}/${audio.spawnSet}`),
-          unset: new Audio(`${root}/${audio.spawnUnset}`),
+          set: new Audio(audio.spawnSet),
+          unset: new Audio(audio.spawnUnset),
         },
       },
       height: 64,

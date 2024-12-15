@@ -4,7 +4,7 @@
  */
 
 const graphics = '/resources/graphics';
-const graphicBundleAssets = {
+export const graphicBundleAssets = {
   'ship-a': `${graphics}/ships/ship_a.png`,
   'ship-b': `${graphics}/ships/ship_b.png`,
   'ship-c': `${graphics}/ships/ship_c.png`,
@@ -29,25 +29,33 @@ const graphicBundleAssets = {
 };
 
 const audio = '/resources/audio';
-const soundBundleAssets = {
-  boom: `${audio}/explosion.wav`,
-  beep: `${audio}/button-beep.wav`,
-  join: `${audio}/confirm.wav`,
-  thrust: `${audio}/thrust.wav`,
-  fire1: `${audio}/fire1.wav`,
-  fire2: `${audio}/fire2.wav`,
-  fire3: `${audio}/fire3.wav`,
-  fire4: `${audio}/fire4.wav`,
-  fire5: `${audio}/fire5.wav`,
-  hit1: `${audio}/hit1.wav`,
-  hit2: `${audio}/hit2.wav`,
-  spawnSet: `${audio}/spawn_set.wav`,
-  spawnUnset: `${audio}/spawn_unset.wav`,
-  mine: `${audio}/mine_boom.wav`,
-  warning: `${audio}/warning.wav`,
+export const soundBundleAssets = {
+  // Weapon activate sounds.
+  energy: `${audio}/weapons/energy.wav`,
+  laser1: `${audio}/weapons/laser1.wav`,
+  laser2: `${audio}/weapons/laser2.wav`,
+  mine: `${audio}/weapons/mine.wav`,
+  flame: `${audio}/weapons/flame.wav`,
+
+  // Damage-y type sounds.
+  boom: `${audio}/damage/explosion.wav`,
+  hit1: `${audio}/damage/hit1.wav`,
+  hit2: `${audio}/damage/hit2.wav`,
+  mineBoom: `${audio}/damage/mine_boom.wav`,
+
+  // User notification/interface sounds.
+  beep: `${audio}/interface/button-beep.wav`,
+  join: `${audio}/interface/confirm.wav`,
+  spawnSet: `${audio}/interface/spawn_set.wav`,
+  spawnUnset: `${audio}/interface/spawn_unset.wav`,
+
+  // Ship emission specific sounds.
+  thrust: `${audio}/ship/thrust.wav`,
+  rumbleThrust: `${audio}/ship/rumble-thrust.wav`,
+  warning: `${audio}/ship/warning.wav`,
 };
 
-// COnvert our shorthand format above to the PIXI Manifest format.
+// Convert our shorthand format above to the PIXI Manifest format.
 const renderManifestAssets = (assets) =>
   Object.entries(assets).map(([alias, src]) => ({ alias, src }));
 

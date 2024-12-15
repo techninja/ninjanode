@@ -22,6 +22,14 @@ export const NinjaSettings = {
         off-icon="eye-cross"
         onchange=${setVal('freelook')}
       ></ninja-toggle>
+      <ninja-toggle
+        is-on=${settings.mute}
+        on-title="Sound Off"
+        off-title="Sound On"
+        on-icon="sound-mute"
+        off-icon="sound-on"
+        onchange=${setVal('mute')}
+      ></ninja-toggle>
     </div>
   `,
 };
