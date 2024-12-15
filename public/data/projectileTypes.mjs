@@ -8,6 +8,10 @@ export const projectileTypes = {
     speed: 1125,
     life: 2500, // How many ms till it dies?
     sound: 3,
+    sounds: {
+      emission: ['laser1'],
+      reception: ['hit1', 'hit2'],
+    },
     damage: 50,
     size: {
       hitRadius: 20,
@@ -24,6 +28,10 @@ export const projectileTypes = {
     speed: 1000,
     life: 5000,
     sound: 1,
+    sounds: {
+      emission: ['laser2'],
+      reception: ['hit1', 'hit2'],
+    },
     size: {
       hitRadius: 20,
       width: 8,
@@ -39,6 +47,10 @@ export const projectileTypes = {
     speed: 883.4,
     life: 2500,
     sound: 3,
+    sounds: {
+      emission: ['laser2'],
+      reception: ['hit1', 'hit2'],
+    },
     size: {
       hitRadius: 25,
       width: 25,
@@ -54,6 +66,10 @@ export const projectileTypes = {
     speed: 333,
     life: 5500,
     sound: 2,
+    sounds: {
+      emission: ['energy'],
+      reception: ['hit1', 'hit2'],
+    },
     size: {
       hitRadius: 21,
       width: 64,
@@ -69,6 +85,10 @@ export const projectileTypes = {
     speed: 0,
     life: 30 * 60 * 1000, // 30 Minutes
     sound: 4,
+    sounds: {
+      emission: ['mine'],
+      reception: ['mineBoom'],
+    },
     size: {
       hitRadius: 20,
       width: 40,
@@ -84,6 +104,10 @@ export const projectileTypes = {
     speed: 583,
     life: 1000,
     sound: 5,
+    sounds: {
+      emission: ['flame'],
+      reception: ['hit1', 'hit2'],
+    },
     size: {
       hitRadius: 21,
       width: 64,
