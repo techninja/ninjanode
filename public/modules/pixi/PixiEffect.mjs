@@ -7,7 +7,6 @@
 import { emitters } from 'emitters';
 
 const {
-  Assets,
   Container,
   particles: { Emitter },
   // Assume PIXI global namespace.
@@ -34,12 +33,10 @@ export class PixiEffect {
     this.container = new Container();
     parent.addChild(this.container);
 
-    this.loadAssets().then(() => {
-      this.setActive(active);
+    this.setActive(active);
 
-      // Manage ticker updates.
-      this.initTicker();
-    });
+    // Manage ticker updates.
+    this.initTicker();
   }
 
   initTicker() {
@@ -87,12 +84,6 @@ export class PixiEffect {
       default:
         break;
     }
-  }
-
-  async loadAssets() {
-    // TODO: Do this better.
-    await Assets.load('/resources/graphics/explosions/smoke.png');
-    await Assets.load('/resources/graphics/spark.png');
   }
 
   setPos({ x = 0, y = 0, d = 0 } = {}) {

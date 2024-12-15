@@ -1,5 +1,5 @@
 /**
- * @file NinjaNode Render Library
+ * @file NinjaNode jQuery legacy render library
  * Clientside abstraction to separate networking response logic from game rendering.
  */
 import { ShipInput } from 'modules';

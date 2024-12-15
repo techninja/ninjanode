@@ -12,14 +12,13 @@ import { lineDistance } from 'utils';
 // Assume PIXI global namespace.
 const {
   Sprite,
-  Assets,
   Container,
   Text,
   filters: { MotionBlurFilter, PixelateFilter, ShockwaveFilter },
   DEG_TO_RAD,
   Graphics,
-  // eslint-disable-next-line no-undef
-} = PIXI;
+  Texture,
+} = window.PIXI;
 
 const degToRad = (degrees) => degrees * DEG_TO_RAD;
 
@@ -73,10 +72,10 @@ export class PixiShip {
     this.pos = { x: pos.x, y: pos.y, d: pos.d };
     this.width = width;
     this.height = height;
-    const shieldPath = `../resources/graphics/shields/shield_${this.config.shield.style}.png`;
+    const shieldAlias = `shield_${this.config.shield.style}`;
 
     // Init shield sprite.
-    const shield = new Sprite(await Assets.load(shieldPath));
+    const shield = new Sprite(shieldAlias);
     shield.anchor = 0.5;
     shield.width = 150;
     shield.height = 150;
@@ -89,18 +88,31 @@ export class PixiShip {
     this.container.addChild(shield);
 
     // Init ship sprite.
-    await this.setSprite(style);
+    this.setSprite(style);
 
-    // Add name to ship
+    // Add name label to ship
     this.name = name;
     this.nameLabel = new Container();
+
+    const back = new Graphics();
+    back.rect(-2, -5, 100, 25);
+    back.fill('#212121cc');
+
+    this.shieldIndicator = new Graphics();
+    this.updateShieldStatus({ amount: 100 });
+
     this.nameLabel.addChild(
+      back,
+      this.shieldIndicator,
       new Text({
         text: name,
         style: {
-          fontFamily: 'Arial',
+          fontFamily: 'Silkscreen',
           fontSize: 13,
-          fill: 0xff1010,
+          letterSpacing: -1,
+          fill: getComputedStyle(document.body).getPropertyValue(
+            '--text-color'
+          ),
           align: 'left',
         },
       })
@@ -136,25 +148,43 @@ export class PixiShip {
     if (options.onInit) options.onInit();
   }
 
-  async setSprite(style) {
-    const imgPath = `../resources/graphics/ships/ship_${style}.png`;
+  setSprite(style) {
+    const alias = `ship-${style}`;
 
     if (!this.sprite) {
-      const ship = new Sprite(await Assets.load(imgPath));
+      const ship = new Sprite(Texture.from(alias));
       ship.width = this.width;
       ship.height = this.height;
       this.sprite = ship;
       this.container.addChild(ship);
     } else {
-      this.sprite.texture = await Assets.load(imgPath);
+      this.sprite.texture = Texture.from(alias);
       this.sprite.alpha = 0;
+    }
+  }
+
+  updateShieldStatus({ amount }) {
+    let color = 'green';
+
+    if (amount <= 60) {
+      color = 'orange';
+    }
+
+    if (amount <= 30) {
+      color = 'red';
+    }
+
+    if (this.shieldIndicator) {
+      this.shieldIndicator.clear();
+      this.shieldIndicator.rect(-2, -5, amount, 5);
+      this.shieldIndicator.fill(color);
     }
   }
 
   // Allow updating name and ship type.
   update({ name, style }) {
     this.name = name;
-    this.nameLabel.children[0].text = name;
+    this.nameLabel.children[2].text = name;
     this.style = style;
     this.config = shipTypes[style];
     this.setSprite(style);
@@ -209,11 +239,11 @@ export class PixiShip {
     this.actuallyUpdatePos();
   }
 
-  async chunkParts() {
+  chunkParts() {
     const parts = 8;
     const timeout = 5000;
-    const imgPath = `../resources/graphics/ships/ship_${this.style}.png`;
-    const texture = await Assets.load(imgPath);
+    const alias = `ship-${this.style}`;
+    const texture = Texture.from(alias);
     let chunks = [];
 
     const arcWidth = 360 / parts;

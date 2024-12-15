@@ -20,3 +20,13 @@ export const lineDistance = (point1, point2) => {
 
   return Math.sqrt(xs + ys);
 };
+
+/**
+ * Pick and return a random item from an array.
+ *
+ * @param {array} items
+ *   Items to choose from.
+ * @returns
+ */
+export const getRando = (items) =>
+  items[Math.floor(items.length * Math.random())];

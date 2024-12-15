@@ -13,10 +13,11 @@ import {
   removeUser,
 } from 'models';
 import { PixiShip, PixiCamera } from 'pixirender';
+import { manifest } from 'manifest';
 
 // Assume PIXI global namespace.
 // eslint-disable-next-line no-undef
-const { Application, Assets, TilingSprite } = PIXI;
+const { Application, TilingSprite, Texture, Assets } = PIXI;
 
 export class PixiRenderer {
   app;
@@ -48,6 +49,11 @@ export class PixiRenderer {
     this.app.init(pixiOpts).then(async () => {
       // DEBUG: Lock framerate.
       // this.app.ticker.maxFPS = 30;
+
+      // Load all manifest assets in background.
+      // TODO: Add visual loader for slow connections.
+      await Assets.init({ manifest });
+      await Assets.loadBundle(['graphics', 'sounds']);
 
       // Setup camera and stage where layer containers are held and then added to.
       this.camera = new PixiCamera({
@@ -244,6 +250,10 @@ export class PixiRenderer {
           ship?.destroy();
           break;
 
+        case 'shield':
+          ship.updateShieldStatus(update);
+          break;
+
         default:
           break;
       }
@@ -256,12 +266,12 @@ export class PixiRenderer {
 
     const layers = [
       new TilingSprite({
-        texture: await Assets.load('/resources/graphics/stars-green.png'),
+        texture: Texture.from('stars'),
         width: worldWidth,
         height: worldHeight,
       }),
       new TilingSprite({
-        texture: await Assets.load('/resources/graphics/starfield.png'),
+        texture: Texture.from('starfield'),
         width: worldWidth,
         height: worldHeight,
         scale: 2,
