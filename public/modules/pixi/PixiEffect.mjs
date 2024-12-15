@@ -79,6 +79,7 @@ export class PixiEffect {
         break;
       case 'thruster':
         this.emitter = new Emitter(this.container, emitters.thrust);
+        this.emitter.rotation = degToRad(this.pos.d || 0);
         break;
 
       default:
@@ -89,6 +90,7 @@ export class PixiEffect {
   setPos({ x = 0, y = 0, d = 0 } = {}) {
     this.pos.x = x;
     this.pos.y = y;
+    this.pos.d = d;
 
     if (!this.container || !this.emitter) return;
 
