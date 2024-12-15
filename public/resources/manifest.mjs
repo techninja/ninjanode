@@ -51,6 +51,7 @@ export const soundBundleAssets = {
 
   // Ship emission specific sounds.
   thrust: `${audio}/ship/thrust.wav`,
+  rumbleThrust: `${audio}/ship/rumble-thrust.wav`,
   warning: `${audio}/ship/warning.wav`,
 };
 
