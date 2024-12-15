@@ -87,10 +87,10 @@ export class PixiEffect {
   }
 
   setPos({ x = 0, y = 0, d = 0 } = {}) {
-    if (!this.container || !this.emitter) return;
-
     this.pos.x = x;
     this.pos.y = y;
+
+    if (!this.container || !this.emitter) return;
 
     // console.log({ x, y });
     this.emitter.updateSpawnPos(x, y);
