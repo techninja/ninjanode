@@ -16,7 +16,7 @@ const join = (host) => {
   dispatch(sliderParent, 'join', { detail: settings });
 
   // Set window and joined app states.
-  store.set(AppState, { windowVisible: false, joined: true });
+  store.set(AppState, { windowVisible: false, joining: true });
 
   sound.play('join');
 };

@@ -14,7 +14,9 @@ let memoryStore = {};
 
 export const AppState = {
   windowVisible: true,
+  fullscreen: false,
   joined: false,
+  joining: false,
   chatVisible: false,
   socketId: '',
   followShip: '',

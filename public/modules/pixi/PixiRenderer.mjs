@@ -69,10 +69,11 @@ export class PixiRenderer {
       // Bind to global settings state changes.
       new UserSettingsObserver('', this.onUserSettingsChange);
 
-      // Set initial mute state from user settings
+      // Set initial states from user settings
       const { mute } = store.get(UserSettings);
       if (mute) sound.muteAll();
 
+      // Mirror layers and viewport to stage.
       this.stage = { ...this.camera.layers, base: this.camera.viewport };
 
       // Add ship getter helper
