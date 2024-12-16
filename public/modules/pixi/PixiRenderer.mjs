@@ -43,7 +43,13 @@ export class PixiRenderer {
     const canvas = document.getElementById(options.stageId);
     this.app = new Application();
 
-    const pixiOpts = { canvas, resizeTo: window };
+    const pixiOpts = {
+      canvas,
+      resizeTo: window,
+      antialias: false,
+      autoDensity: true,
+      resolution: 2,
+    };
     this.app.init(pixiOpts).then(async () => {
       // DEBUG: Lock framerate.
       // this.app.ticker.maxFPS = 30;
