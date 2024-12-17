@@ -29,6 +29,7 @@ export const NinjaWindowMain = {
       div.title {
         position: absolute;
         top: -115px;
+        width: 100%;
       }
       h2,
       h3 {
