@@ -44,7 +44,7 @@ export const NinjaSlides = {
         margin: 3px;
       }
       .slides {
-        height: ${height}px;
+        height: 100%;
         display: grid;
         width: ${`${items.length * width}${unit}`};
         grid-template-columns: repeat(${items.length}, 1fr);

@@ -26,39 +26,61 @@ export const NinjaWindowMain = {
 
   render: ({ fullscreen }) => html`
     <style>
-      h3.subhed {
+      div.title {
         position: absolute;
-        top: 0;
-        right: 60px;
-        width: 250px;
+        top: -115px;
+      }
+      h2,
+      h3 {
+        margin: 0;
+        width: 100%;
+        text-transform: lowercase;
+        text-align: center;
+      }
+      h2 {
+        color: var(--text-color);
+        font-family: var(--head-font);
+        font-weight: 300;
+        font-size: 50px;
+        text-shadow: var(--glow-color) 0px 0px 35px;
+      }
+      h3.subhed {
         line-height: 17px;
         font-size: 13px;
         font-family: var(--head-font);
-        text-transform: lowercase;
-        text-align: right;
         color: var(--text-color);
-      }
-
-      @media (max-width: 600px) {
-        h3.subhed {
-          font-size: 10px;
-          width: 136px;
-          line-height: 10px;
-          text-align: right;
-          padding-right: 6px;
-          top: 0;
-        }
       }
       ninja-button.fullscreen {
         position: absolute;
-        right: 8px;
-        top: 8px;
+        left: 8px;
+        bottom: 8px;
+      }
+
+      ninja-tabs {
+        margin-top: -25px;
+      }
+
+      /* Portrait Phone */
+      @media (max-height: 500px) {
+        div.title {
+          top: 155px;
+          transform: scale(0.7) rotate(-90deg);
+          left: -310px;
+        }
+      }
+
+      /* Landscape Phone */
+      @media (max-width: 600px) {
+        /* TODO */
       }
     </style>
-    <ninja-window id="main-window" head="ninjanode">
-      <h3 class="subhed">
-        A fully open source web browser space ship game, for the hell of it.
-      </h3>
+    <ninja-window id="main-window">
+      <div class="title">
+        <h2>ninjanode</h2>
+        <h3 class="subhed">
+          A fully open source web browser space ship game, for the hell of it.
+        </h3>
+      </div>
       <ninja-button
         class="fullscreen"
         icon="external-link"

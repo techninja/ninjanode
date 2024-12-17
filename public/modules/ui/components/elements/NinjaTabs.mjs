@@ -54,6 +54,7 @@ export const NinjaTabs = {
         float: left;
         margin-right: 1em;
         margin-left: 3px;
+        margin-top: 50px;
       }
       ul {
         list-style: none;
