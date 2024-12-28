@@ -28,10 +28,12 @@ export const NinjaWindow = {
         justify-content: center;
         transition: 0.5s ease-in-out;
         min-height: ${!windowVisible ? 0 : '100vh'};
+        max-width: 100%;
+        margin: 1em;
+        max-height: 100%;
       }
       section {
         transition: 0.5s ease-in-out;
-        overflow: hidden;
         background: linear-gradient(
             rgba(18, 16, 16, 0) 50%,
             rgba(0, 0, 0, 0.25) 50%
@@ -46,12 +48,11 @@ export const NinjaWindow = {
         background-size:
           100% 2px,
           3px 100%;
-        max-width: 600px;
-        padding-top: 30px;
+        width: 600px;
         position: relative;
         opacity: ${!windowVisible ? 0 : 1};
         height: ${!windowVisible ? 0 : 'auto'};
-        min-width: 525px;
+        overflow: ${!windowVisible ? 'hidden' : 'visible'};
         z-index: 5;
         box-shadow:
           -3px 0 0 0 var(--border-color),
@@ -63,22 +64,15 @@ export const NinjaWindow = {
 
       @media (max-width: 600px) {
         section {
-          min-width: 380px;
+          /* width: 300px; */
         }
       }
 
-      h2 {
-        color: var(--text-color);
-        font-family: var(--head-font);
-        text-transform: lowercase;
-        padding-left: 0.2em;
-        font-weight: 300;
-        position: absolute;
-        top: -15px;
-        left: 57px;
-        font-size: 30px;
+      @media (max-height: 500px) {
+        section {
+          height: ${!windowVisible ? 0 : 'auto'};
+        }
       }
-
       slot {
         padding: 2em;
         padding: 2em 1em;
@@ -90,6 +84,7 @@ export const NinjaWindow = {
         left: 0;
         top: 0;
         margin: 10px;
+        z-index: 2;
       }
 
       ninja-button#open {

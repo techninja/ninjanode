@@ -40,6 +40,7 @@ body {
   width: 100%;
   height: 100%;
   font-family: var(--body-font);
+  overflow: hidden;
 }
 
 #stage {
@@ -49,35 +50,7 @@ body {
   z-index: -1;
 }
 
-h2,
-h3,
-h4 {
-  font-family: var(--head-font);
-  text-transform: lowercase;
-  text-align: center;
-  color: var(--text-color);
-}
-
-h3.subhed {
-  position: absolute;
-  top: -9px;
-  right: 0;
-  width: 300px;
-  line-height: 17px;
-  font-size: 15px;
-}
-
-@media (max-width: 600px) {
-  h3.subhed {
-    font-size: 10px;
-    width: 136px;
-    line-height: 10px;
-    text-align: right;
-    padding-right: 6px;
-    top: 0;
-  }
-}
-
+/* Chat overlay position */
 ninja-chat {
   z-index: 1;
   width: 70%;

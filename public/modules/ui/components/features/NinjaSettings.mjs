@@ -12,7 +12,14 @@ export const NinjaSettings = {
   settings: () => store.get(UserSettings),
 
   render: ({ settings }) => html`
-    <style></style>
+    <style>
+      div {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+    </style>
     <div>
       <ninja-toggle
         is-on=${settings.freelook}

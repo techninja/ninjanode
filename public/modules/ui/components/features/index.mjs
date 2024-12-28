@@ -5,3 +5,5 @@ export * from './NinjaShipSelect.mjs';
 export * from './slides/index.mjs';
 export * from './NinjaChat.mjs';
 export * from './NinjaRoster.mjs';
+export * from './NinjaWindowMain.mjs';
+export * from './NinjaShipInfo.mjs';

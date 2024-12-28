@@ -31,25 +31,7 @@
   </head>
   <body>
     <ninja-roster></ninja-roster>
-    <ninja-window id="main-window" head="ninjanode">
-      <h3 class="subhed">
-        A fully open source web browser space ship game, for the hell of it.
-      </h3>
-      <ninja-tabs activeItem="play">
-        <ninja-tab caption="Pick a name and a ship" icon="play" name="play">
-          <ninja-ship-select></ninja-ship-select>
-        </ninja-tab>
-        <ninja-tab caption="Controls" icon="edit" name="controls">
-          <ninja-controls></ninja-controls>
-        </ninja-tab>
-        <ninja-tab caption="Bots" icon="robot" name="bots">
-          <ninja-bots></ninja-bots>
-        </ninja-tab>
-        <ninja-tab caption="Settings" icon="cog" name="settings">
-          <ninja-settings></ninja-settings>
-        </ninja-tab>
-      </ninja-tabs>
-    </ninja-window>
+    <ninja-window-main></ninja-window-main>
     <ninja-chat></ninja-chat>
     <div id="framerate"></div>
     <canvas id="stage" width="400" height="400"></canvas>
@@ -79,7 +61,7 @@
         BotController,
       } from 'modules';
       import { store } from 'hybrids';
-      import { AppState } from 'models';
+      import { AppState, AppStateObserver, UserSettings } from 'models';
 
       // Import and register all web components via side-effects.
       import 'ui';
@@ -107,12 +89,17 @@
         socket,
       });
 
-      // Bind the join event from ship selection.
-      document
-        .getElementsByTagName('ninja-ship-select')[0]
-        .addEventListener('join', ({ detail: { ship: style, name } }) => {
-          socket.join({ style, name });
-        });
+      // AppState joining state change observer, pull data from settings.
+      new AppStateObserver('joining', ({ joining }) => {
+        if (joining) {
+          // Actually attempt to join.
+          const { ship, name } = store.get(UserSettings);
+          socket.join({ style: ship, name });
+
+          // Completed joining request, reset status.
+          store.set(AppState, { joining: false, joined: true });
+        }
+      });
 
       // Setup the Bots
       const bots = [
