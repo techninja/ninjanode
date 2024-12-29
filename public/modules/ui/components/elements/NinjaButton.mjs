@@ -20,6 +20,7 @@ export const NinjaButton = {
   icon: '',
   solid: false,
   angle: 0,
+  size: 32,
 
   render: ({
     text,
@@ -33,6 +34,7 @@ export const NinjaButton = {
     icon,
     solid,
     angle,
+    size,
   }) => {
     const buttonClasses = {
       button: true,
@@ -90,7 +92,12 @@ export const NinjaButton = {
         onclick=${() => sound.play('beep')}
       >
         ${icon &&
-        html`<ninja-icon name=${icon} solid=${solid} angle=${angle} />`}
+        html`<ninja-icon
+          name=${icon}
+          solid=${solid}
+          angle=${angle}
+          size=${size}
+        />`}
         ${text && html`<span>${text}</span>`}
         <slot></slot>
       </button>
