@@ -61,10 +61,8 @@
       // Import and register all web components via side-effects.
       import 'ui';
 
-      const server = `${location.protocol}//${location.host}/`;
-
       // Connect immediately...
-      const socket = new ShipSocket(server);
+      const socket = new ShipSocket();
 
       // Store Id in global state.
       socket.socket.on('connect', () => {
