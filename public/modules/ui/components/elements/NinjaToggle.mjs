@@ -25,10 +25,23 @@ export const NinjaToggle = {
   offTitle: 'Off',
   offIcon: 'octagon-times',
 
-  // Passthrough attributes for buttons.
+  // Passthrough attributes for button.
+  disabled: false,
   size: 25,
+  fontSize: 16,
+  fullWidth: false,
 
-  render: ({ isOn, onIcon, offIcon, onTitle, offTitle, size }) =>
+  render: ({
+    isOn,
+    onIcon,
+    offIcon,
+    onTitle,
+    offTitle,
+    size,
+    fullWidth,
+    fontSize,
+    disabled,
+  }) =>
     html` <style>
         :host {
           display: inline-block;
@@ -36,6 +49,9 @@ export const NinjaToggle = {
       </style>
       <ninja-button
         onclick=${click}
+        fullWidth=${fullWidth}
+        fontSize=${fontSize}
+        disabled=${disabled}
         size=${size}
         icon=${isOn ? onIcon : offIcon}
         text=${isOn ? onTitle : offTitle}
