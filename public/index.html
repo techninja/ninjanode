@@ -54,12 +54,7 @@
     </script>
     <script type="module">
       import gameConfig from '/game' with { type: 'json' };
-      import {
-        ShipSocket,
-        PixiRenderer,
-        PixiInput,
-        BotController,
-      } from 'modules';
+      import { ShipSocket, PixiRenderer, PixiInput } from 'modules';
       import { store } from 'hybrids';
       import { AppState, AppStateObserver, UserSettings } from 'models';
 
@@ -100,14 +95,6 @@
           store.set(AppState, { joining: false, joined: true });
         }
       });
-
-      // Setup the Bots
-      const bots = [
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-      ];
     </script>
   </body>
 </html>
