@@ -97,7 +97,7 @@ export const NinjaWindowMain = {
         <ninja-tab caption="Controls" icon="edit" name="controls">
           <ninja-controls></ninja-controls>
         </ninja-tab>
-        <ninja-tab caption="Bots" icon="robot" name="bots">
+        <ninja-tab caption="Bot Builder" icon="robot" name="bots">
           <ninja-bots></ninja-bots>
         </ninja-tab>
         <ninja-tab caption="Settings" icon="cog" name="settings">
