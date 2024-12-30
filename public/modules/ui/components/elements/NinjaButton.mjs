@@ -15,6 +15,7 @@ export const NinjaButton = {
   active: false,
   disabled: false,
   borderSize: 2,
+  fontSize: 13,
 
   // Icon prop drilled attributes.
   icon: '',
@@ -31,6 +32,7 @@ export const NinjaButton = {
     loading,
     type,
     borderSize,
+    fontSize,
     icon,
     solid,
     angle,
@@ -48,7 +50,7 @@ export const NinjaButton = {
     return html`
       <style>
         :host {
-          display: inline-block;
+          display: ${buttonStyle.display};
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           margin: ${borderSize}px;
           background-color: var(--button-background);
@@ -81,6 +83,12 @@ export const NinjaButton = {
         button:disabled {
           color: var(--text-color-disabled);
           background-color: var(--text-background-disabled);
+        }
+        span {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+          font-size: ${`${fontSize}px`};
         }
       </style>
       <button
