@@ -1,6 +1,5 @@
 import { store } from 'hybrids';
-
-// const storageKey = 'BotConfig';
+import { connectLocalStorage } from 'models';
 
 export const BotConfig = {
   id: true,
@@ -10,36 +9,7 @@ export const BotConfig = {
   attitude: 3,
   difficulty: 0.5,
 
-  // TODO: This doesn't work, but should.
-  // [store.connect]: {
-  //   list: () => {
-  //     const vals = Object.values(
-  //       JSON.parse(localStorage.getItem(storageKey) || '{}')
-  //     );
-  //     console.log('Listing...', vals);
-  //     return vals;
-  //   },
-  //   get: (id) => {
-  //     const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
-  //     return data[id];
-  //   },
-  //   set: (id, values) => {
-  //     const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
-  //     // Null means delete the entry.
-  //     if (!values) {
-  //       delete data[id];
-  //     } else if (data[values.id]) {
-  //       // Existing entry, fold in new values.
-  //       data[values.id] = { ...data[values.id], ...values };
-  //     } else {
-  //       // Set new value entry.
-  //       data[values.id] = values;
-  //     }
-  //     localStorage.setItem(storageKey, JSON.stringify(data));
-  //     console.log('Setting', { values });
-  //     return values;
-  //   },
-  // },
+  [store.connect]: connectLocalStorage('BotConfig'),
 };
 
 // Externalize for debugging.
