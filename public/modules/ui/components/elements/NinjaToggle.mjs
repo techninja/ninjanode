@@ -24,6 +24,8 @@ export const NinjaToggle = {
   onIcon: 'octagon-check',
   offTitle: 'Off',
   offIcon: 'octagon-times',
+  onSound: 'beep',
+  offSound: 'cancel',
 
   // Passthrough attributes for button.
   disabled: false,
@@ -37,6 +39,8 @@ export const NinjaToggle = {
     offIcon,
     onTitle,
     offTitle,
+    onSound,
+    offSound,
     size,
     fullWidth,
     fontSize,
@@ -52,6 +56,7 @@ export const NinjaToggle = {
         fullWidth=${fullWidth}
         fontSize=${fontSize}
         disabled=${disabled}
+        soundKey=${!isOn ? onSound : offSound}
         size=${size}
         icon=${isOn ? onIcon : offIcon}
         text=${isOn ? onTitle : offTitle}
