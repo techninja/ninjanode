@@ -42,6 +42,7 @@ const frontendNodeMaps = {
   'hybrids/src': 'hybrids',
   '@barvynkoa/particle-emitter': 'particle-emitter',
   '@hackernoon/pixel-icon-library': 'icons',
+  jsfxr: 'jsfxr',
 };
 
 for (const sourcePath in frontendNodeMaps) {
