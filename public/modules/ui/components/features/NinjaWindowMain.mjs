@@ -61,16 +61,16 @@ export const NinjaWindowMain = {
         margin-top: -25px;
       }
 
-      /* Portrait Phone */
+      /* Landscape Phone */
       @media (max-height: 500px) {
         div.title {
           top: 155px;
           transform: scale(0.7) rotate(-90deg);
-          left: -310px;
+          left: -335px;
         }
       }
 
-      /* Landscape Phone */
+      /* Portrait Phone */
       @media (max-width: 600px) {
         /* TODO */
       }
