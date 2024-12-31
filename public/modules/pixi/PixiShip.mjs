@@ -123,8 +123,8 @@ export class PixiShip {
     camera.getStage('labels').addChild(this.nameLabel);
 
     // Add looping sounds.
-    const thrust = sound.find('rumbleThrust');
-    //thrust.volume = 0.1;
+    const thrust = sound.find('thrustGen');
+    thrust.volume = 0.4;
     thrust.loop = true;
 
     const warning = sound.find('warning');
