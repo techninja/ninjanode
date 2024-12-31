@@ -23,6 +23,11 @@
   --head-font: 'Black Ops One', sans-serif;
   --body-font: 'Pixelify Sans', monospace;
   --small-font: 'Silkscreen', monospace;
+
+  /* Scrollbars! */
+  --sb-track-color: #566d77;
+  --sb-thumb-color: #1eb936;
+  --sb-size: 10px;
 }
 
 /* @media (prefers-color-scheme: dark) {

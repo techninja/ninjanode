@@ -42,10 +42,41 @@ export const NinjaBots = {
       .wrapper {
         display: grid;
         grid-template-columns: 1fr 50px;
-        height: 280px;
+        height: 310px;
       }
       .bots {
+        display: flex;
         overflow-x: scroll;
+        overflow-y: hidden;
+      }
+
+      .bots::-webkit-scrollbar {
+        width: var(--sb-size);
+      }
+
+      .bots::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 3px;
+      }
+
+      .bots::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 3px;
+      }
+
+      @supports not selector(::-webkit-scrollbar) {
+        .bots {
+          scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+        }
+      }
+
+      .bots ninja-bot {
+        margin: 2px 4px 2px 2px;
+        box-shadow:
+          -2px 0 0 0 var(--border-color),
+          2px 0 0 0 var(--border-color),
+          0 -2px 0 0 var(--border-color),
+          0 2px 0 0 var(--border-color);
       }
     </style>
     <div class="wrapper">

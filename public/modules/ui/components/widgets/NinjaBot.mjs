@@ -116,9 +116,8 @@ export const NinjaBot = {
               display: inline-block;
             }
             .bot {
-              border: 1px solid green;
               padding: 10px;
-              max-width: 200px;
+              min-width: 205px;
               display: grid;
               grid-template-columns: 1fr;
               grid-gap: 7px;
