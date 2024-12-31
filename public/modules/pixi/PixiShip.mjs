@@ -74,23 +74,12 @@ export class PixiShip {
     this.pos = { x: pos.x, y: pos.y, d: pos.d };
     this.width = width;
     this.height = height;
-    const shieldAlias = `shield_${this.config.shield.style}`;
-
-    // Init shield sprite.
-    const shield = new Sprite(shieldAlias);
-    shield.anchor = 0.5;
-    shield.width = 150;
-    shield.height = 150;
-    shield.alpha = 0;
-    shield.position = { x: width / 2, y: height / 2 };
-    this.shield = shield;
 
     // Everything goes in the container which is moved.
     this.container = new Container();
-    this.container.addChild(shield);
 
-    // Init ship sprite.
-    this.setSprite(style);
+    // Init ship and shield sprites.
+    this.setSprites();
 
     // Add name label to ship
     this.name = name;
@@ -159,7 +148,8 @@ export class PixiShip {
     if (options.onInit) options.onInit();
   }
 
-  setSprite(style) {
+  setSprites() {
+    const style = this.style;
     const alias = `ship-${style}`;
 
     if (!this.sprite) {
@@ -171,6 +161,26 @@ export class PixiShip {
     } else {
       this.sprite.texture = Texture.from(alias);
       this.sprite.alpha = 0;
+    }
+
+    this.setShieldSprite();
+  }
+
+  setShieldSprite() {
+    const texture = Texture.from(`shield_${this.config.shield.style}`);
+
+    if (!this.shield) {
+      const shield = new Sprite(texture);
+      shield.anchor = 0.5;
+      shield.width = 150;
+      shield.height = 150;
+      shield.alpha = 0;
+      shield.position = { x: this.width / 2, y: this.height / 2 };
+      this.shield = shield;
+      this.container.addChild(shield);
+    } else {
+      this.shield.texture = texture;
+      this.shield.alpha = 0;
     }
   }
 
@@ -198,7 +208,7 @@ export class PixiShip {
     this.nameLabel.children[2].text = name;
     this.style = style;
     this.config = shipTypes[style];
-    this.setSprite(style);
+    this.setSprites();
     this.initThrusters();
   }
 

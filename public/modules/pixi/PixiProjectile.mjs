@@ -62,6 +62,7 @@ export class PixiProjectile {
 
     laser.fill(gradientFill);
 
+    // Add glow.
     this.container.filters = [
       new GlowFilter({ distance: 20, outerStrength: 5, color }),
     ];
