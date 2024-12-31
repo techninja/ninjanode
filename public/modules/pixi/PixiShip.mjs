@@ -439,19 +439,19 @@ export class PixiShip {
         // No thrust.
         thrusters.rear.forEach((thruster) => thruster.deactivate());
         thrusters.front.forEach((thruster) => thruster.deactivate());
-        this.sounds.thrust.pause();
+        if (this.sounds.thrust.isPlaying) this.sounds.thrust.pause();
         break;
 
       case 1:
         // Forward thrust from back.
         thrusters.rear.forEach((thruster) => thruster.activate());
-        this.sounds.thrust.play();
+        if (!this.sounds.thrust.isPlaying) this.sounds.thrust.play();
         break;
 
       case 2:
         // Reverse thrust from front.
         thrusters.front.forEach((thruster) => thruster.activate());
-        this.sounds.thrust.play();
+        if (!this.sounds.thrust.isPlaying) this.sounds.thrust.play();
         break;
       default:
         break;
