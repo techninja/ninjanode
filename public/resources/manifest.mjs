@@ -3,6 +3,17 @@
  * before we play the game. Don't add too much!
  */
 
+import { sfxrSounds } from 'data';
+
+// Import SFXR generated sounds as dataURIs to Pixi Sound.
+const {
+  sfxr,
+  PIXI: { sound },
+} = window;
+Object.entries(sfxrSounds).forEach(([alias, definition]) => {
+  sound.add(alias, sfxr.toWave(definition).dataURI);
+});
+
 const graphics = '/resources/graphics';
 export const graphicBundleAssets = {
   'ship-a': `${graphics}/ships/ship_a.png`,
