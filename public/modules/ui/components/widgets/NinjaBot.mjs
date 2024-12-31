@@ -170,6 +170,7 @@ export const NinjaBot = {
               <ninja-button
                 icon="trash"
                 size="20"
+                sound-key="blocked"
                 desc="Remove Bot"
                 onclick=${trashBot}
                 disabled=${isLaunched}

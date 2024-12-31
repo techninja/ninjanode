@@ -169,7 +169,9 @@ export const NinjaSlideJoin = {
         <div class="ship-info">
           <ninja-button
             class="back"
-            size="45"
+            sound-key="back"
+            size="35"
+            desc="Back"
             icon="arrow-alt-circle-left"
             onclick=${back}
             border-size="0"
