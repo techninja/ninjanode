@@ -12,7 +12,7 @@ import {
   storeUser,
   removeUser,
 } from 'models';
-import { PixiShip, PixiCamera } from 'pixirender';
+import { PixiShip, PixiCamera, PixiMap } from 'pixirender';
 import { manifest } from 'manifest';
 
 const { Application, TilingSprite, Texture, Assets, sound } = window.PIXI;
@@ -63,6 +63,7 @@ export class PixiRenderer {
       this.camera = new PixiCamera({
         app: this.app,
         playArea: this.gameConfig.playArea,
+        // Order defines stack layering Top -> Bottom.
         layers: ['labels', 'ships', 'projectiles', 'background'],
       });
 
@@ -75,6 +76,13 @@ export class PixiRenderer {
 
       // Mirror layers and viewport to stage.
       this.stage = { ...this.camera.layers, base: this.camera.viewport };
+
+      // Setup Map.
+      new PixiMap({
+        socket: this.socket,
+        gameConfig: this.gameConfig,
+        app: this.app,
+      });
 
       // Add ship getter helper
       this.ships.get = (index = 0) => Object.values(this.ships)[index + 1];

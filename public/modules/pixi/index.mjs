@@ -4,3 +4,4 @@ export * from './PixiProjectile.mjs';
 export * from './PixiRenderer.mjs';
 export * from './PixiCamera.mjs';
 export * from './PixiInput.mjs';
+export * from './PixiMap.mjs';

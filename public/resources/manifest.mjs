@@ -25,6 +25,7 @@ export const graphicBundleAssets = {
   'ship-g': `${graphics}/ships/ship_g.png`,
 
   spark: `${graphics}/spark.png`,
+  grid: `${graphics}/grid.png`,
   starfield: `${graphics}/starfield.png`,
   stars: `${graphics}/stars-green.png`,
   smoke: `${graphics}/explosions/smoke.png`,
