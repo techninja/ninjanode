@@ -7,7 +7,7 @@ import { store } from 'hybrids';
 import { projectileTypes, shipTypes } from 'data';
 import { PixiEffect, PixiProjectile } from 'pixirender';
 import { AppState, UserSettings } from 'models';
-import { lineDistance, getRando } from 'utils';
+import { lineDistance, lineAngle, valueMap, getRando } from 'utils';
 
 // Assume PIXI global namespace.
 const {
@@ -113,6 +113,7 @@ export class PixiShip {
 
     // Add looping sounds.
     const thrust = sound.find('thrustGen');
+    thrust.filters = [new sound.filters.StereoFilter()];
     thrust.volume = 0.4;
     thrust.loop = true;
 
@@ -229,6 +230,12 @@ export class PixiShip {
     if (this.container && !this.container.destroyed) {
       this.tickerUpdatePosition(this.app.ticker.deltaMS);
       this.manageMirror();
+
+      // Change thruster volume
+      if (this.thrust) {
+        this.sounds.thrust.volume = this.getDistVolume();
+        this.sounds.thrust.filters[0].pan = this.getAudioPan();
+      }
     }
   }
 
@@ -517,10 +524,70 @@ export class PixiShip {
     this.shockwave();
   }
 
+  /**
+   * Utility function to return a volume from 0 to 1 as a factor
+   * of distance away from the camera instance.
+   * @returns
+   */
+  getDistVolume() {
+    // The distance past which nothing can be heard
+    const maxDistance = 2500;
+
+    // The distance at which there is no volume drop
+    const minDistance = 500;
+
+    const dist = lineDistance(this.pos, this.globalCamera.getPos());
+
+    // Short circuit for min/max.
+    if (dist < minDistance) {
+      return 1;
+    } else if (dist > maxDistance) {
+      return 0;
+    }
+
+    const range = maxDistance - minDistance;
+
+    // Remove the min from the bottom of the distance
+    // Straight linear scale for now... though it should be log
+    return 1 - (dist - minDistance) / range;
+  }
+
+  // Split distant audio away from 0 towards -1 or +1
+  getAudioPan() {
+    // Min distance to do anything other than
+    const minSplit = 500;
+    const maxRange = 2500;
+    const camPos = this.globalCamera.getPos();
+    const dist = lineDistance(this.pos, camPos);
+    const angle = lineAngle(this.pos, camPos, false);
+
+    if (dist < minSplit || dist > maxRange) {
+      return 0;
+    }
+
+    let factor = 0;
+
+    // 180 to 0.
+    if (angle < 180) {
+      factor = valueMap(angle, 180, 0, -1, 1);
+    } else {
+      factor = valueMap(angle, 180, 360, -1, 1);
+    }
+
+    return factor / valueMap(dist, 0, maxRange, 10, 1);
+  }
+
+  /**
+   * Play a sound from the ship's position.
+   *
+   * @param {string} alias
+   *   Manifest alias name for the sound asset.
+   */
   playSound(alias) {
-    // TODO: Offset for sound world positon in relation to the viewport camera.
-    // this.pos
-    sound.play(alias);
+    const volume = this.getDistVolume();
+    const s = sound.find(alias);
+    const filters = [new sound.filters.StereoFilter(this.getAudioPan())];
+    s.play({ volume, filters });
   }
 
   // Play sound, show shield.
