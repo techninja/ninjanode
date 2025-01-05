@@ -2,7 +2,7 @@
  * @file Ninjanode player roster.
  */
 import { html, store } from 'hybrids';
-import { getUser, AppState, UserSettings } from 'models';
+import { getUser, AppState, UserSettings, ConnectedUsers } from 'models';
 
 const userClick = ({ user }) => {
   // Set follow on click.
@@ -14,7 +14,7 @@ const userClick = ({ user }) => {
 
 export const NinjaRosterUser = {
   tag: 'ninja-roster-user',
-  user: { value: {} },
+  user: store(ConnectedUsers),
   self: '',
 
   render: ({ user, self }) => {
@@ -36,7 +36,7 @@ export const NinjaRosterUser = {
     const selfUser = getUser(self);
 
     // Calculate distance and angle from "our" position
-    if (user.socketId !== self) {
+    if (store.ready(user) && user.socketId !== self) {
       // Not connected, compass is empty.
       if (!selfUser) {
         compass = html`<ninja-icon
@@ -121,17 +121,20 @@ export const NinjaRosterUser = {
         }
       </style>
       <div class="wrapper" onclick=${userClick}>
-        <span>
-          <ninja-icon
-            no-animation
-            size="16"
-            angle=${user.pos.d}
-            name=${`ship-${user.style}`}
-          ></ninja-icon>
-        </span>
-        <span>${user.score.kills}/${user.score.deaths}</span>
-        <span>${user.name}</span>
-        <span>${compass}</span>
+        ${store.ready(user) &&
+        html`
+          <span>
+            <ninja-icon
+              no-animation
+              size="16"
+              angle=${user.pos.d}
+              name=${`ship-${user.style}`}
+            ></ninja-icon>
+          </span>
+          <span>${user.score.kills}/${user.score.deaths}</span>
+          <span>${user.name}</span>
+          <span>${compass}</span>
+        `}
       </div>
     `;
   },

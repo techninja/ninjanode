@@ -61,16 +61,16 @@ export const NinjaWindowMain = {
         margin-top: -25px;
       }
 
-      /* Portrait Phone */
+      /* Landscape Phone */
       @media (max-height: 500px) {
         div.title {
           top: 155px;
           transform: scale(0.7) rotate(-90deg);
-          left: -310px;
+          left: -335px;
         }
       }
 
-      /* Landscape Phone */
+      /* Portrait Phone */
       @media (max-width: 600px) {
         /* TODO */
       }
@@ -97,7 +97,7 @@ export const NinjaWindowMain = {
         <ninja-tab caption="Controls" icon="edit" name="controls">
           <ninja-controls></ninja-controls>
         </ninja-tab>
-        <ninja-tab caption="Bots" icon="robot" name="bots">
+        <ninja-tab caption="Bot Builder" icon="robot" name="bots">
           <ninja-bots></ninja-bots>
         </ninja-tab>
         <ninja-tab caption="Settings" icon="cog" name="settings">

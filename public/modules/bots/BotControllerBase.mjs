@@ -204,5 +204,3 @@ export class BotControllerBase {
     );
   }
 }
-
-export default BotControllerBase;

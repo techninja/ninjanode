@@ -13,10 +13,12 @@ export class ShipSocket {
   hasConnected = false;
 
   constructor(socketURL) {
-    this.socket = io(socketURL, {
+    const uri = socketURL ?? `${location.protocol}//${location.host}/`;
+    this.socket = io(uri, {
       reconnect: false,
       transports: ['websocket'],
     });
+
     this.socket.on('connect', () => {
       // Shortcut to our session id
       this.id = this.socket.id;
@@ -25,7 +27,7 @@ export class ShipSocket {
 
     // Bind disconnect.
     this.socket.on('disconnect', (reason, details) => {
-      console.error(`Connection failed: ${reason}`, details);
+      console.log(`Disconnected: ${reason}`, details);
     });
   }
 
@@ -34,6 +36,10 @@ export class ShipSocket {
     // Send the ship data! User will have to wait for server to relay the
     // new ship back to them before the ship will exist locally
     this.socket.emit('shipstat', { ...shipData, status: 'create' });
+  }
+
+  disconnect() {
+    return this.socket.disconnect();
   }
 
   // Sends chat messages

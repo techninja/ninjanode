@@ -56,15 +56,15 @@
         "scale": {
           "list": [
             {
-              "time": 0,
+              "time": 1,
               "value": 0.25
             },
             {
-              "time": 0.5,
+              "time": 1.5,
               "value": 1
             },
             {
-              "time": 1,
+              "time": 2,
               "value": 0.5
             }
           ]

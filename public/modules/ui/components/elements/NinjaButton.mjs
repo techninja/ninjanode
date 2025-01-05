@@ -15,11 +15,14 @@ export const NinjaButton = {
   active: false,
   disabled: false,
   borderSize: 2,
+  fontSize: 13,
+  soundKey: 'beep',
 
   // Icon prop drilled attributes.
   icon: '',
   solid: false,
   angle: 0,
+  size: 32,
 
   render: ({
     text,
@@ -30,9 +33,12 @@ export const NinjaButton = {
     loading,
     type,
     borderSize,
+    fontSize,
+    soundKey,
     icon,
     solid,
     angle,
+    size,
   }) => {
     const buttonClasses = {
       button: true,
@@ -46,7 +52,7 @@ export const NinjaButton = {
     return html`
       <style>
         :host {
-          display: inline-block;
+          display: ${buttonStyle.display};
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           margin: ${borderSize}px;
           background-color: var(--button-background);
@@ -80,6 +86,12 @@ export const NinjaButton = {
           color: var(--text-color-disabled);
           background-color: var(--text-background-disabled);
         }
+        span {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+          font-size: ${`${fontSize}px`};
+        }
       </style>
       <button
         class="${buttonClasses}"
@@ -87,10 +99,15 @@ export const NinjaButton = {
         style=${buttonStyle}
         title="${desc}"
         tabindex="0"
-        onclick=${() => sound.play('beep')}
+        onclick=${() => sound.play(soundKey)}
       >
         ${icon &&
-        html`<ninja-icon name=${icon} solid=${solid} angle=${angle} />`}
+        html`<ninja-icon
+          name=${icon}
+          solid=${solid}
+          angle=${angle}
+          size=${size}
+        />`}
         ${text && html`<span>${text}</span>`}
         <slot></slot>
       </button>

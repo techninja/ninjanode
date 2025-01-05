@@ -6,3 +6,4 @@ export * from './projectileTypes.mjs';
 export * from './shipTypes.mjs';
 export * from './powerupTypes.mjs';
 export * from './pnbitsTypes.mjs';
+export * from './sfxrSounds/index.mjs';

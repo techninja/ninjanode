@@ -11,8 +11,16 @@ export const ConnectedUsers = {
   exploding: false,
 };
 
-export const getUser = (socketId) =>
-  store.get([ConnectedUsers]).find((u) => u.socketId == socketId);
+export const getUser = (socketId) => {
+  const users = store.get([ConnectedUsers]);
+
+  try {
+    return users.find((u) => u.socketId == socketId);
+  } catch (error) {
+    // Ignore.
+  }
+  return null;
+};
 
 export const removeUser = (socketId) => {
   const user = getUser(socketId);

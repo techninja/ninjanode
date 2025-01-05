@@ -24,6 +24,9 @@
     <script src="/pixi-filters/pixi-filters.js"></script>
     <script src="/particle-emitter/dist/particle-emitter.js"></script>
     <script src="/pixi-sound/pixi-sound.js"></script>
+    <script src="/jsfxr/riffwave.js"></script>
+    <script src="/jsfxr/sfxr.js"></script>
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
@@ -45,6 +48,7 @@
           "pixirender": "/modules/pixi/index.mjs",
           "models": "/data/stateModels/index.mjs",
           "modules": "/modules/index.mjs",
+          "bots": "/modules/bots/index.mjs",
           "utils": "/modules/utils.mjs",
           "manifest": "/resources/manifest.mjs",
           "ui": "/modules/ui/index.mjs",
@@ -54,22 +58,15 @@
     </script>
     <script type="module">
       import gameConfig from '/game' with { type: 'json' };
-      import {
-        ShipSocket,
-        PixiRenderer,
-        PixiInput,
-        BotController,
-      } from 'modules';
+      import { ShipSocket, PixiRenderer, PixiInput } from 'modules';
       import { store } from 'hybrids';
       import { AppState, AppStateObserver, UserSettings } from 'models';
 
       // Import and register all web components via side-effects.
       import 'ui';
 
-      const server = `${location.protocol}//${location.host}/`;
-
       // Connect immediately...
-      const socket = new ShipSocket(server);
+      const socket = new ShipSocket();
 
       // Store Id in global state.
       socket.socket.on('connect', () => {
@@ -100,14 +97,6 @@
           store.set(AppState, { joining: false, joined: true });
         }
       });
-
-      // Setup the Bots
-      const bots = [
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-        // new BotController(new ShipSocket(server)),
-      ];
     </script>
   </body>
 </html>

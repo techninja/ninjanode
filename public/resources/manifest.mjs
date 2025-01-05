@@ -3,6 +3,17 @@
  * before we play the game. Don't add too much!
  */
 
+import { sfxrSounds } from 'data';
+
+// Import SFXR generated sounds as dataURIs to Pixi Sound.
+const {
+  sfxr,
+  PIXI: { sound },
+} = window;
+Object.entries(sfxrSounds).forEach(([alias, definition]) => {
+  sound.add(alias, sfxr.toWave(definition).dataURI);
+});
+
 const graphics = '/resources/graphics';
 export const graphicBundleAssets = {
   'ship-a': `${graphics}/ships/ship_a.png`,
@@ -48,6 +59,9 @@ export const soundBundleAssets = {
   join: `${audio}/interface/confirm.wav`,
   spawnSet: `${audio}/interface/spawn_set.wav`,
   spawnUnset: `${audio}/interface/spawn_unset.wav`,
+  back: `${audio}/interface/back.wav`,
+  blocked: `${audio}/interface/blocked.wav`,
+  cancel: `${audio}/interface/cancel.wav`,
 
   // Ship emission specific sounds.
   thrust: `${audio}/ship/thrust.wav`,

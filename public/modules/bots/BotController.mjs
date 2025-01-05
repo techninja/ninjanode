@@ -2,10 +2,7 @@
  * @file NinjaNode Bot controller library
  * Logic and behavior for bots.
  */
-import getChat from './getChat.mjs';
-import getName from './getName.mjs';
-import BotControllerBase from './BotControllerBase.mjs';
-import { shipTypes } from '../../data/shipTypes.mjs';
+import { BotControllerBase, getBotChat } from 'bots';
 
 /**
  * Plane Flight Notes: Nov 2023
@@ -31,24 +28,26 @@ import { shipTypes } from '../../data/shipTypes.mjs';
 
 export class BotController extends BotControllerBase {
   tickRate = 150;
+  tickInterval = null;
 
-  constructor(socket, name = null) {
+  constructor({ socket, name, style }) {
     super(socket);
 
-    // Bot joins immediately for now.
-    const types = Object.keys(shipTypes);
-    const style = types[Math.floor(Math.random() * types.length)];
+    // Join on init.
     this.socket.socket.on('connect', () => {
-      this.socket.join({
-        name: name ?? getName(),
-        style,
-      });
+      this.socket.join({ name, style });
     });
 
     // Start the brain cycle!
-    setInterval(() => {
+    this.tickInterval = setInterval(() => {
       this.thoughtTick();
     }, this.tickRate);
+  }
+
+  disconnect() {
+    this.socket.disconnect();
+    clearInterval(this.tickInterval);
+    this.tickInterval = null;
   }
 
   mine() {
@@ -97,7 +96,7 @@ export class BotController extends BotControllerBase {
 
   actionChat(action) {
     const targetName = this.ships[this.target]?.name ?? 'Nobody';
-    this.sendChat(getChat(action, targetName));
+    this.sendChat(getBotChat(action, targetName));
   }
 
   onTargetHit({ source }) {
@@ -152,5 +151,3 @@ export class BotController extends BotControllerBase {
     }
   }
 }
-
-export default BotController;

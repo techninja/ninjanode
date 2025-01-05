@@ -1,6 +1,6 @@
 import chatData from './data/chats.json' with { type: 'json' };
 
-const getChat = (action, target) => {
+export const getBotChat = (action, target) => {
   const msgs = chatData[action];
   let msg = `Henlo ${target}, I don't know what to say!`;
 
@@ -11,5 +11,3 @@ const getChat = (action, target) => {
 
   return msg;
 };
-
-export default getChat;
