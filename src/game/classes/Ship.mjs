@@ -154,13 +154,28 @@ export class Ship extends DynamicObject {
     switch (fireCount) {
       case 1:
         this.addProjectile(this.pos.d, weaponId, callbacks);
+        this.applyRecoil(weaponId); // NEW! Apply recoil on fire
         break;
       case 3:
         this.addProjectile(this.pos.d - 10, weaponId, callbacks);
         this.addProjectile(this.pos.d, weaponId, callbacks);
         this.addProjectile(this.pos.d + 10, weaponId, callbacks);
+        this.applyRecoil(weaponId); // NEW! Apply recoil on fire
         break;
     }
+  }
+
+  applyRecoil(weaponId) {
+    if (this.exploding) return;
+
+    const { knockBackForce, speed } = this.config.weapons[weaponId].data;
+    const recoilForce = (knockBackForce * speed) / (1000 * 1000);
+    const recoilDirection = this.pos.d + 180; // Opposite to firing direction
+
+    this.knockBack = {
+      angle: recoilDirection,
+      amount: recoilForce * 0.5, // 0.5 dampening factor
+    };
   }
 
   // FUNCTION projectile hit/collision callback
