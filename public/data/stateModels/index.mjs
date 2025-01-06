@@ -5,3 +5,4 @@ export * from './ChatState.mjs';
 export * from './ConnectedUsers.mjs';
 export * from './BotConfig.mjs';
 export * from './ConnectedBots.mjs';
+export * from './InputBind.mjs';

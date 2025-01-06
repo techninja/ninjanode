@@ -4,18 +4,18 @@
  */
 
 import { store } from 'hybrids';
-import { AppState, UserSettings } from 'models';
+import { AppState, UserSettings, InputBind } from 'models';
 
 const defaultKeyBindings = {
-  l: 37, // Left
-  u: 38, // Up
-  r: 39, // Right
-  d: 40, // Down
-  f: 32, // Primary Fire (space)
-  s: 77, // Secondary Fire (m)
-  b: 83, // Set Spawn Beacon (s)
-  w: 27, // Open/Close main window
-  c: 84, // Open Chat (t)
+  u: ['w', 'ArrowUp'], // Up
+  d: ['s', 'ArrowDown'], // Down
+  l: ['a', 'ArrowLeft'], // Left
+  r: ['d', 'ArrowRight'], // Right
+  f: [' '], // Primary Fire (space)
+  s: ['m'], // Secondary Fire (m)
+  b: ['s'], // Set Spawn Beacon (s)
+  w: ['Escape'], // Open/Close main window
+  c: ['t'], // Open Chat (t)
 };
 
 export class PixiInput {
@@ -28,19 +28,36 @@ export class PixiInput {
   constructor({ renderer, socket }) {
     this.renderer = renderer;
     this.socket = socket;
+    this.initializeDefaults();
     this.initializeKeyBindings();
     this.initializeMouseBindings();
     this.initializeTouchBindings();
   }
 
+  initializeDefaults() {
+    const binds = store.get([InputBind]);
+    if (!binds.length) {
+      // Move through all default keybindings and add base stored editable entries.
+      Object.entries(defaultKeyBindings).forEach(([command, keys]) => {
+        keys.forEach((key) => {
+          store.set(InputBind, {
+            device: 'keyboard',
+            trigger: key,
+            command,
+          });
+        });
+      });
+    }
+  }
+
   initializeKeyBindings() {
     // Bind to the global keyup & keydown events.
     this.docBind('keyup keydown', (e) => {
-      const { type, which } = e;
+      const { type, key } = e;
       const state = store.get(AppState);
 
       // Escape keypress.
-      if (type == 'keyup' && which == this.keys.w) {
+      if (type == 'keyup' && key == this.keys.w[0]) {
         // Chat visible? Close it.
         if (state.chatVisible) {
           store.set(AppState, { chatVisible: false });
@@ -55,7 +72,7 @@ export class PixiInput {
       // Show chat.
       if (
         type == 'keyup' &&
-        which == this.keys.c &&
+        key == this.keys.c[0] &&
         state.joined &&
         !state.chatVisible &&
         !state.windowVisible
@@ -66,10 +83,9 @@ export class PixiInput {
 
       // If not chatting or in window, move through keybindings.
       if (!state.chatVisible && !state.windowVisible) {
-        const actionCode = this.getKey(which);
+        const actionCode = this.getCommandAction(key);
         if (actionCode) {
           const action = `${actionCode}${type}`;
-
           // Filter out held down key repeats
           if (this.lastKey != action) {
             this.lastKey = action;
@@ -246,14 +262,21 @@ export class PixiInput {
   }
 
   /**
-   * Return the action code for a given char code if any.
-   * @param {*} charCode
+   * Return the command action code for a given key string, or null.
+   *
+   * @param {string} trigger
+   *   The keyboard event "key" string, or other input base.
+   * @param {string} deviceFilter
+   *   The specific device to filter to, defaults to keyboard.
    */
-  getKey(charCode) {
-    const index = Object.values(this.keys).findIndex(
-      (ascii) => ascii === charCode
-    );
-    return Object.keys(this.keys)?.[index];
+  getCommandAction(key, deviceFilter = 'keyboard') {
+    const binds = store.get([InputBind]);
+
+    const { command } =
+      binds.find(
+        ({ device, trigger }) => trigger === key && deviceFilter === device
+      ) || {};
+    return command;
   }
 
   /**
