@@ -43,6 +43,7 @@ const frontendNodeMaps = {
   '@barvynkoa/particle-emitter': 'particle-emitter',
   '@hackernoon/pixel-icon-library': 'icons',
   jsfxr: 'jsfxr',
+  'joypad.js/dist': 'joypad',
 };
 
 for (const sourcePath in frontendNodeMaps) {
