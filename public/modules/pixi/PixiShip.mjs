@@ -445,6 +445,11 @@ export class PixiShip {
   }
 
   setThrust(t = 0) {
+    const changed = this.thrust !== t;
+
+    // Early exit if there's no change.
+    if (!changed) return;
+
     this.thrust = t;
     const { thrusters } = this.emitters;
 
@@ -455,19 +460,28 @@ export class PixiShip {
         // No thrust.
         thrusters.rear.forEach((thruster) => thruster.deactivate());
         thrusters.front.forEach((thruster) => thruster.deactivate());
+
         if (this.sounds.thrust.isPlaying) this.sounds.thrust.pause();
         break;
 
       case 1:
         // Forward thrust from back.
         thrusters.rear.forEach((thruster) => thruster.activate());
-        if (!this.sounds.thrust.isPlaying) this.sounds.thrust.play();
+        thrusters.front.forEach((thruster) => thruster.deactivate());
+
+        if (!this.sounds.thrust.isPlaying) {
+          this.sounds.thrust.play();
+        }
         break;
 
       case 2:
         // Reverse thrust from front.
         thrusters.front.forEach((thruster) => thruster.activate());
-        if (!this.sounds.thrust.isPlaying) this.sounds.thrust.play();
+        thrusters.rear.forEach((thruster) => thruster.deactivate());
+
+        if (!this.sounds.thrust.isPlaying) {
+          this.sounds.thrust.play();
+        }
         break;
       default:
         break;
