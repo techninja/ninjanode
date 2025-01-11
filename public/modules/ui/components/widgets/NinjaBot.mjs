@@ -263,6 +263,7 @@ export const NinjaBot = {
               on-title="Disconnect Bot"
               off-icon="external-link"
               on-icon="times-circle"
+              on-sound="join"
               full-width
               onchange=${toggleLaunch}
             ></ninja-toggle>
