@@ -52,11 +52,14 @@
           "utils": "/modules/utils.mjs",
           "manifest": "/resources/manifest.mjs",
           "ui": "/modules/ui/index.mjs",
-          "hybrids": "/hybrids/index.js"
+          "hybrids": "/hybrids/index.js",
+          "joypad": "/joypad/joypad.min.js"
         }
       }
     </script>
     <script type="module">
+      // Joypad side effects window import 🙄
+      import 'joypad';
       import gameConfig from '/game' with { type: 'json' };
       import { ShipSocket, PixiRenderer, PixiInput } from 'modules';
       import { store } from 'hybrids';

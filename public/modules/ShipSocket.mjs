@@ -48,15 +48,15 @@ export class ShipSocket {
   }
 
   // Sends key commands to the server for the user
-  key(e, commandName) {
+  key({ type, angle }, commandName) {
     const out = {
-      s: e.type == 'keyup' ? 0 : 1, // Status
+      s: type == 'keyup' ? 0 : 1, // Status
       c: commandName, // Command
     };
 
     // If mouse / touch event, send the x/y pos
-    if (e.type == 'mousetouch') {
-      out.d = e.angle;
+    if (type == 'mousetouch') {
+      out.d = angle;
     }
 
     this.socket.emit('key', out);

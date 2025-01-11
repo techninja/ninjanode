@@ -4,7 +4,10 @@
  */
 
 import { store } from 'hybrids';
+import { gamepadMappings } from 'data';
 import { AppState, UserSettings, InputBind } from 'models';
+
+const { joypad } = window;
 
 const defaultKeyBindings = {
   u: ['w', 'ArrowUp'], // Up
@@ -18,12 +21,25 @@ const defaultKeyBindings = {
   c: ['t'], // Open Chat (t)
 };
 
+const defaultGamepadBindings = {
+  u: ['Up'], // Up
+  d: ['Down'], // Down
+  l: ['Left'], // Left
+  r: ['Right'], // Right
+  f: ['A'], // Primary Fire (space)
+  s: ['B'], // Secondary Fire (m)
+  b: ['X'], // Set Spawn Beacon (s)
+  w: ['Select', 'Y'], // Open/Close main window
+  // c: ['t'], // Open Chat (t)
+};
+
 export class PixiInput {
   renderer;
   socket;
   keys = defaultKeyBindings;
   mousedown = 0; // Mouse button
   lastKey = '';
+  stick = { x: 0, y: 0 };
 
   constructor({ renderer, socket }) {
     this.renderer = renderer;
@@ -32,6 +48,7 @@ export class PixiInput {
     this.initializeKeyBindings();
     this.initializeMouseBindings();
     this.initializeTouchBindings();
+    this.initializeGamepadBindings();
   }
 
   initializeDefaults() {
@@ -47,54 +64,66 @@ export class PixiInput {
           });
         });
       });
+
+      // Move through all default gamepad bindings and add base stored editable entries.
+      Object.entries(defaultGamepadBindings).forEach(([command, keys]) => {
+        keys.forEach((key) => {
+          store.set(InputBind, {
+            device: 'gamepad',
+            trigger: key,
+            command,
+          });
+        });
+      });
     }
   }
 
   initializeKeyBindings() {
     // Bind to the global keyup & keydown events.
-    this.docBind('keyup keydown', (e) => {
-      const { type, key } = e;
-      const state = store.get(AppState);
-
-      // Escape keypress.
-      if (type == 'keyup' && key == this.keys.w[0]) {
-        // Chat visible? Close it.
-        if (state.chatVisible) {
-          store.set(AppState, { chatVisible: false });
-          return;
-        }
-
-        // Toggle main window visibility via global state.
-        store.set(AppState, { windowVisible: !state.windowVisible });
-        return;
-      }
-
-      // Show chat.
-      if (
-        type == 'keyup' &&
-        key == this.keys.c[0] &&
-        state.joined &&
-        !state.chatVisible &&
-        !state.windowVisible
-      ) {
-        store.set(AppState, { chatVisible: true });
-        return;
-      }
-
-      // If not chatting or in window, move through keybindings.
-      if (!state.chatVisible && !state.windowVisible) {
-        const actionCode = this.getCommandAction(key);
-        if (actionCode) {
-          const action = `${actionCode}${type}`;
-          // Filter out held down key repeats
-          if (this.lastKey != action) {
-            this.lastKey = action;
-            this.socket.key(e, actionCode);
-          }
-          return false;
-        }
-      }
+    this.docBind('keyup keydown', ({ key, type }) => {
+      return this.onButtonCallback({ key, type, device: 'keyboard' });
     });
+  }
+
+  onButtonCallback({ key, device, type }) {
+    const state = store.get(AppState);
+    const actionCode = this.getCommandAction(key, device);
+
+    // Escape keypress.
+    if (type == 'keyup' && actionCode == 'w') {
+      // Chat visible? Close it.
+      if (state.chatVisible) {
+        store.set(AppState, { chatVisible: false });
+        return;
+      }
+
+      // Toggle main window visibility via global state.
+      store.set(AppState, { windowVisible: !state.windowVisible });
+      return;
+    }
+
+    // Show chat.
+    if (
+      type == 'keyup' &&
+      actionCode == 'c' &&
+      state.joined &&
+      !state.chatVisible &&
+      !state.windowVisible
+    ) {
+      store.set(AppState, { chatVisible: true });
+      return;
+    }
+
+    // If not chatting or in window, move through keybindings.
+    if (!state.chatVisible && !state.windowVisible && actionCode) {
+      const action = `${actionCode}${type}`;
+      // Filter out held down key repeats
+      if (this.lastKey != action) {
+        this.lastKey = action;
+        this.socket.key({ type }, actionCode);
+      }
+      return false;
+    }
   }
 
   // Touch/Mouse Start & movement binding callback.
@@ -261,6 +290,87 @@ export class PixiInput {
     );
   }
 
+  initializeGamepadBindings() {
+    joypad.set({
+      axisMovementThreshold: 0.4,
+    });
+
+    // Debug log connected controller
+    joypad.on('connect', (e) => {
+      const { id } = e.gamepad;
+      console.log(`${id} connected!`);
+    });
+
+    // Bind button press down.
+    joypad.on('button_press', (e) => {
+      const { buttonName } = e.detail;
+      const key = gamepadMappings[buttonName];
+
+      if (key) {
+        return this.onButtonCallback({
+          key,
+          type: 'keydown',
+          device: 'gamepad',
+        });
+      } else {
+        console.log('Unknown', e.detail);
+      }
+    });
+
+    // Bind button release.
+    joypad.on('button_release', (e) => {
+      const { buttonName } = e.detail;
+      const key = gamepadMappings[buttonName];
+
+      if (key) {
+        return this.onButtonCallback({ key, type: 'keyup', device: 'gamepad' });
+      }
+    });
+
+    // Stick doesn't return without new info, so we have to
+    // reset with a timout.
+    let stickTimeout = { x: 0, y: 0 };
+
+    // Bind axis movement.
+    joypad.on('axis_move', (e) => {
+      const { stickMoved, axis, axisMovementValue, directionOfMovement } =
+        e.detail;
+      // Ignore secondary sticks for now.
+      if (axis > 1) return;
+      const stickAxis = axis % 2 ? 'y' : 'x';
+
+      // Lock back to 0 after 500 ms without any update.
+      clearTimeout(stickTimeout[stickAxis]);
+      stickTimeout[stickAxis] = setTimeout(() => {
+        this.stick[stickAxis] = 0;
+        if (!this.stick.x && !this.stick.y) {
+          // End movement.
+          this.socket.key({ type: 'keyup' }, 'm');
+        }
+      }, 200);
+
+      // Only on state value change.
+      if (this.stick[stickAxis] !== axisMovementValue) {
+        this.stick[stickAxis] = axisMovementValue;
+
+        let axisAngle =
+          Math.atan2(this.stick.y, this.stick.x) * (180 / Math.PI) + 90;
+
+        // Fix quandrant offset
+        if (axisAngle < 0) {
+          axisAngle = axisAngle + 360;
+        }
+
+        // Trigger angle move.
+        this.socket.key(
+          { type: 'mousetouch', angle: Math.round(axisAngle) },
+          'm'
+        );
+        // console.log({ stickAxis, axisMovementValue, axisAngle });
+      }
+    });
+  }
+
   /**
    * Return the command action code for a given key string, or null.
    *
@@ -289,7 +399,7 @@ export class PixiInput {
    * @param {DOMElement} element
    *   The element to base the event binding on.
    */
-  docBind(binds, cb, element = document) {
+  docBind(binds, cb, element = window) {
     binds.split(' ').forEach((bind) => {
       element.addEventListener(bind, cb, { passive: false });
     });
