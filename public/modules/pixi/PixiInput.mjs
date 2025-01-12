@@ -6,13 +6,14 @@
 import { store } from 'hybrids';
 import { gamepadMappings } from 'data';
 import { AppState, UserSettings, InputBind } from 'models';
+import { coordAngle } from 'utils';
 
 const { joypad } = window;
 
 const defaultKeyBindings = {
-  u: ['w', 'ArrowUp'], // Up
-  d: ['s', 'ArrowDown'], // Down
-  l: ['a', 'ArrowLeft'], // Left
+  u: ['w', 'ArrowUp'], // Forward thrust
+  d: ['s', 'ArrowDown'], // Reverse Thrust
+  l: ['a', 'ArrowLeft'], // TurnLeft
   r: ['d', 'ArrowRight'], // Right
   f: [' '], // Primary Fire (space)
   s: ['m'], // Secondary Fire (m)
@@ -22,14 +23,14 @@ const defaultKeyBindings = {
 };
 
 const defaultGamepadBindings = {
-  u: ['Up'], // Up
-  d: ['Down'], // Down
+  u: ['Up', 'X'], // Up
+  d: ['Down', 'Y'], // Down
   l: ['Left'], // Left
   r: ['Right'], // Right
   f: ['A'], // Primary Fire (space)
   s: ['B'], // Secondary Fire (m)
-  b: ['X'], // Set Spawn Beacon (s)
-  w: ['Select', 'Y'], // Open/Close main window
+  b: ['LeftFrontShoulder'], // Set Spawn Beacon (s)
+  w: ['Select'], // Open/Close main window
   // c: ['t'], // Open Chat (t)
 };
 
@@ -137,19 +138,11 @@ export class PixiInput {
       y: window.innerHeight / 2,
     };
 
-    let touchAngle =
-      Math.atan2(e.y - center.y, e.x - center.x) * (180 / Math.PI) + 90;
-
-    // Fix quandrant offset
-    if (touchAngle < 0) {
-      touchAngle = touchAngle + 360;
-    }
-
     // Trigger the binding on the server.
     this.socket.key(
       {
         type: 'mousetouch',
-        angle: Math.round(touchAngle),
+        angle: coordAngle({ x: e.x - center.x, y: e.y - center.y }),
       },
       'm'
     );
@@ -313,7 +306,7 @@ export class PixiInput {
           device: 'gamepad',
         });
       } else {
-        console.log('Unknown', e.detail);
+        console.log('Unknown button', e.detail);
       }
     });
 
@@ -329,12 +322,12 @@ export class PixiInput {
 
     // Stick doesn't return without new info, so we have to
     // reset with a timout.
+    const stickResetTime = 200;
     let stickTimeout = { x: 0, y: 0 };
 
     // Bind axis movement.
     joypad.on('axis_move', (e) => {
-      const { stickMoved, axis, axisMovementValue, directionOfMovement } =
-        e.detail;
+      const { axis, axisMovementValue } = e.detail;
       // Ignore secondary sticks for now.
       if (axis > 1) return;
       const stickAxis = axis % 2 ? 'y' : 'x';
@@ -345,28 +338,18 @@ export class PixiInput {
         this.stick[stickAxis] = 0;
         if (!this.stick.x && !this.stick.y) {
           // End movement.
-          this.socket.key({ type: 'keyup' }, 'm');
+          this.touchEndCallback();
         }
-      }, 200);
+      }, stickResetTime);
 
       // Only on state value change.
       if (this.stick[stickAxis] !== axisMovementValue) {
         this.stick[stickAxis] = axisMovementValue;
 
-        let axisAngle =
-          Math.atan2(this.stick.y, this.stick.x) * (180 / Math.PI) + 90;
-
-        // Fix quandrant offset
-        if (axisAngle < 0) {
-          axisAngle = axisAngle + 360;
-        }
+        const angle = coordAngle(this.stick);
 
         // Trigger angle move.
-        this.socket.key(
-          { type: 'mousetouch', angle: Math.round(axisAngle) },
-          'm'
-        );
-        // console.log({ stickAxis, axisMovementValue, axisAngle });
+        this.socket.key({ type: 'mousetouch', angle }, 'm');
       }
     });
   }

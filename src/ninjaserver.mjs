@@ -196,6 +196,7 @@ io.sockets.on('connection', function (clientSocket) {
         break;
       case 'm': // Mouse / touch control
         ship.setTouch(data.s ? data.d : false);
+        break;
     }
   });
 
