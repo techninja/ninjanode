@@ -238,7 +238,15 @@ export class PixiCamera {
     this.viewport.scale = scale;
   }
 
+  getZoom() {
+    return this.viewport.scale;
+  }
+
   setPos({ x, y }) {
     this.viewport.moveCenter(x, y);
+  }
+
+  getPos() {
+    return { ...this.viewport.center };
   }
 }
