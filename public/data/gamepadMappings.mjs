@@ -1,0 +1,18 @@
+export const gamepadMappings = {
+  button_0: 'B',
+  button_1: 'A',
+  button_2: 'Y',
+  button_3: 'X',
+  button_4: 'LeftFrontShoulder',
+  button_5: 'RightFrontShoulder',
+  button_6: 'LeftBackShoulder',
+  button_7: 'RightBackShoulder',
+  button_8: 'Select',
+  button_9: 'Start',
+  button_10: 'LeftStick',
+  button_11: 'RightStick',
+  button_12: 'Up',
+  button_13: 'Down',
+  button_14: 'Left',
+  button_15: 'Right',
+};

@@ -40,6 +40,21 @@ export const lineAngle = (point1, point2, useRads = true) => {
 };
 
 /**
+ * Turn a coordinate around the center into rotated angle.
+ * @param {Object} coordinate
+ *  x & y around 0
+ *
+ * @returns {number}
+ *   Rounded angle in adjusted degrees.
+ */
+export const coordAngle = ({ x, y }) => {
+  let angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+  // Fix quandrant offset
+  if (angle < 0) angle = angle + 360;
+  return Math.round(angle);
+};
+
+/**
  * Map a value from a given range to a given range.
  *
  * @param {number} value

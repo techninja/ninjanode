@@ -43,6 +43,7 @@ const frontendNodeMaps = {
   '@barvynkoa/particle-emitter': 'particle-emitter',
   '@hackernoon/pixel-icon-library': 'icons',
   jsfxr: 'jsfxr',
+  'joypad.js/dist': 'joypad',
 };
 
 for (const sourcePath in frontendNodeMaps) {
@@ -195,6 +196,7 @@ io.sockets.on('connection', function (clientSocket) {
         break;
       case 'm': // Mouse / touch control
         ship.setTouch(data.s ? data.d : false);
+        break;
     }
   });
 
