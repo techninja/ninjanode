@@ -8,3 +8,5 @@ export * from './powerupTypes.mjs';
 export * from './pnbitsTypes.mjs';
 export * from './sfxrSounds/index.mjs';
 export * from './gamepadMappings.mjs';
+export * from './bindableGameActions.mjs';
+export * from './bindableInterfaceDevices.mjs';
