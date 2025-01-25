@@ -1,29 +1,56 @@
 import { html, store } from 'hybrids';
-import { UserSettings, InputBind } from 'models';
+import { InputBind, ActiveBindingState } from 'models';
 import { bindableGameActions, bindableInterfaceDevices } from 'data';
 
-const setVal =
-  (key) =>
-  (host, { detail }) => {
-    store.set(UserSettings, { [key]: detail.isOn });
+const deleteBind = (id) => () => {
+  const bind = store.get(InputBind, id);
+  store.set(bind, null);
+};
+
+// Depending on bindState, set the icon and label for the button for a specific command.
+const getAddBind = (
+  command,
+  { listenCommand, heardTrigger, heardDevice, error }
+) => {
+  const addBind = {
+    icon: 'plus',
+    label: 'Add Binding',
+    error,
   };
 
-const getCommandBindings = (binds) => {
+  // If we're listening for the current command, swap it out.
+  if (listenCommand === command) {
+    addBind.label = 'Press a Button!';
+    addBind.icon = 'question';
+
+    // Did something get pressed?
+    if (heardTrigger) {
+      addBind.label = `Pressed: [${heardDevice}: ${heardTrigger}] ${!error ? 'Confirm?' : ''}`;
+      addBind.icon = !error ? 'check-circle' : 'octagon-times';
+    }
+  }
+
+  return addBind;
+};
+
+const getCommandBindings = (binds, bindState) => {
   const commands = {};
 
-  binds.forEach(({ id, device, trigger, command }) => {
-    // Setup base storage for the command
-    if (!commands[command]) {
-      const action = bindableGameActions[command];
+  // Move through all bindable commands and set them up (allows for unbound commands).
+  Object.entries(bindableGameActions).forEach(
+    ([command, { name: label, icon }]) => {
       commands[command] = {
-        label: action.name,
-        icon: action.icon.name,
+        label,
+        addBind: getAddBind(command, bindState),
+        icon: icon.name,
         command,
-        foo: true,
         bindList: [],
       };
     }
+  );
 
+  // Add stored binds to each command.
+  binds.forEach(({ id, device, trigger, command }) => {
     // Is this the only one? This feels dumb.
     const triggerLabel = trigger === ' ' ? 'Space bar' : trigger;
 
@@ -45,12 +72,35 @@ const getCommandBindings = (binds) => {
   return Object.values(commands);
 };
 
+const handleAddBinding = (command) => () => {
+  const bindState = store.get(ActiveBindingState);
+
+  // Not listening, start!
+  if (!bindState.listenCommand) {
+    store.set(ActiveBindingState, { listenCommand: command });
+  } else {
+    // If we have device and trigger without an error, save the bind!
+    if (!bindState.error) {
+      store.set(InputBind, {
+        device: bindState.heardDevice,
+        trigger: bindState.heardTrigger,
+        command,
+      });
+    }
+
+    // Stop listening, clear all state.
+    store.set(ActiveBindingState, null);
+  }
+};
+
 export const NinjaControls = {
   tag: 'ninja-controls',
-  settings: () => store.get(UserSettings),
+  // controlCallback: controlInputBind,
+  // settings: () => store.get(UserSettings),
   binds: () => store.get([InputBind]),
+  bindState: () => store.get(ActiveBindingState),
 
-  render: ({ settings, binds }) => html`
+  render: ({ binds, bindState }) => html`
     <style>
       :host {
         color: var(--button-text);
@@ -101,16 +151,9 @@ export const NinjaControls = {
       }
     </style>
     <div>
-      <!-- <span>
-        Mouse Controls:
-        <ninja-toggle
-          is-on=${settings.mouseControls}
-          onchange=${setVal('mouseControls')}
-        ></ninja-toggle>
-      </span> -->
       <div class="commands">
-        ${getCommandBindings(binds).map(
-          ({ command, icon, label, bindList }) => html`
+        ${getCommandBindings(binds, bindState).map(
+          ({ command, icon, label, addBind, bindList }) => html`
             <div class="command">
               <header>
                 <ninja-icon
@@ -134,15 +177,19 @@ export const NinjaControls = {
                         size="20"
                         icon="trash"
                         desc="Remove"
+                        onclick=${deleteBind(id)}
                       ></ninja-button>
                     </div>`
                 )}
                 <ninja-button
-                  icon="plus"
-                  text="Add Binding"
+                  icon=${addBind.icon}
+                  text=${addBind.label}
                   full-width
                   solid
-                ></ninja-button>
+                  font-size="17"
+                  onclick=${handleAddBinding(command)}
+                  >${addBind.error}</ninja-button
+                >
               </div>
             </div>
           `

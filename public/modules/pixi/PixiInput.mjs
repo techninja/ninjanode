@@ -4,8 +4,8 @@
  */
 
 import { store } from 'hybrids';
-import { gamepadMappings } from 'data';
-import { AppState, UserSettings, InputBind } from 'models';
+import { gamepadMappings, bindableGameActions } from 'data';
+import { AppState, UserSettings, InputBind, ActiveBindingState } from 'models';
 import { coordAngle } from 'utils';
 
 const { joypad } = window;
@@ -88,7 +88,27 @@ export class PixiInput {
 
   onButtonCallback({ key, device, type }) {
     const state = store.get(AppState);
+    const bindState = store.get(ActiveBindingState);
     const actionCode = this.getCommandAction(key, device);
+
+    // Override actual bindings to allow for new bindings.
+    if (bindState.listenCommand && type == 'keyup') {
+      let error = '';
+
+      // Set error string if there's already a bound action.
+      if (actionCode) {
+        const { name } = bindableGameActions[actionCode];
+        error = `Already bound to ${name}`;
+      }
+
+      // Set device and what triggered.
+      store.set(ActiveBindingState, {
+        error,
+        heardTrigger: key,
+        heardDevice: device,
+      });
+      return;
+    }
 
     // Escape keypress.
     if (type == 'keyup' && actionCode == 'w') {
@@ -165,7 +185,7 @@ export class PixiInput {
       this.socket.key({ type: 'keydown' }, 's');
     }
 
-    if (touchCount == 3) {
+    if (touchCount == 4) {
       // 4 touch set spawn
       this.socket.key({ type: 'keydown' }, 'b');
     }
