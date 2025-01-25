@@ -31,22 +31,28 @@ export const NinjaIcon = {
   }) => {
     const icon = `hn-${name}${solid ? '-solid' : ''}`;
     const pxSize = `${size}px`;
-    let shipImage =
+    const shipImage =
       name.substr(0, 4) == 'ship'
         ? `resources/graphics/ships/ship_${name.substr(-1)}.png`
         : false;
 
-    const customImage =
+    const iconImage =
       name.substr(0, 4) == 'cust'
         ? `resources/graphics/icons/${name.substr(5)}.png`
         : false;
 
-    if (customImage) shipImage = customImage;
+    const transparentImage =
+      name.substr(0, 5) == 'trans'
+        ? `resources/graphics/icons/${name.substr(6)}.png`
+        : false;
+
+    const customImage = shipImage || iconImage || transparentImage;
 
     const iconClasses = {
-      hn: !shipImage,
-      ship: !!shipImage,
-      [icon]: !shipImage,
+      hn: !customImage,
+      custom: !!customImage,
+      [icon]: !customImage,
+      transparent: !!transparentImage,
       flash,
       disabled,
     };
@@ -95,14 +101,22 @@ export const NinjaIcon = {
       .icon i:hover {
         //color: ${hoverColor ? hoverColor : 'var(--button-text-hover)'};
       }
-      .ship {
-        background-image: url(${shipImage});
+
+      .custom {
+        background-image: url(${customImage});
+        display: block;
         width: ${pxSize};
         height: ${pxSize};
-        display: block;
         content: ' ';
         background-repeat: no-repeat;
         background-size: contain;
+      }
+
+      .transparent {
+        background-image: none;
+        background-color: ${color};
+        mask-image: url(${customImage});
+        mask-size: 100%;
       }
     `;
   },
