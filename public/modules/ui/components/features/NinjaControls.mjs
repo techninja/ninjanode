@@ -10,8 +10,9 @@ const deleteBind = (id) => () => {
 // Depending on bindState, set the icon and label for the button for a specific command.
 const getAddBind = (
   command,
-  { listenCommand, heardTrigger, heardDevice, error }
+  { listenCommand, heardTrigger, heardDevice, error, lastHeard }
 ) => {
+  const justHeard = `${heardDevice}-${heardTrigger}`;
   const addBind = {
     icon: 'plus',
     label: 'Add Binding',
@@ -27,6 +28,11 @@ const getAddBind = (
     if (heardTrigger) {
       addBind.label = `Pressed: [${heardDevice}: ${heardTrigger}] ${!error ? 'Confirm?' : ''}`;
       addBind.icon = !error ? 'check-circle' : 'octagon-times';
+
+      // Double press to confirm without error.
+      if (!error && justHeard === lastHeard) {
+        handleAddBinding(command)();
+      }
     }
   }
 

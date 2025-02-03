@@ -94,6 +94,8 @@ export class PixiInput {
     // Override actual bindings to allow for new bindings.
     if (bindState.listenCommand && type == 'keyup') {
       let error = '';
+      const { heardTrigger, heardDevice } = bindState;
+      const lastHeard = `${heardDevice}-${heardTrigger}`;
 
       // Set error string if there's already a bound action.
       if (actionCode) {
@@ -104,6 +106,7 @@ export class PixiInput {
       // Set device and what triggered.
       store.set(ActiveBindingState, {
         error,
+        lastHeard,
         heardTrigger: key,
         heardDevice: device,
       });
