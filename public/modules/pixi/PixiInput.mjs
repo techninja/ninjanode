@@ -10,6 +10,43 @@ import { coordAngle } from 'utils';
 
 const { joypad } = window;
 
+function getAllFocusableElements(root = document) {
+  // Allow starting at a specific root
+  const focusableElements = [];
+
+  const focusablesInRoot = root.querySelectorAll('[tabindex="0"]');
+  focusableElements.push(...focusablesInRoot);
+
+  const allElements = root.querySelectorAll('*');
+  allElements.forEach((element) => {
+    if (element.shadowRoot) {
+      const shadowFocusables = getAllFocusableElements(element.shadowRoot); // Recursive call
+      focusableElements.push(...shadowFocusables);
+    }
+  });
+
+  return focusableElements;
+}
+
+let gamepadFocusIndex = 0;
+
+function getFocusableElement(increment = 1) {
+  const focusableElements = getAllFocusableElements();
+
+  gamepadFocusIndex = gamepadFocusIndex + increment;
+
+  // Wrap top.
+  if (gamepadFocusIndex > focusableElements.length - 1) {
+    gamepadFocusIndex = 0;
+  }
+
+  // Wrap bottom.
+  if (gamepadFocusIndex < 0) {
+    gamepadFocusIndex = focusableElements.length - 1;
+  }
+
+  return focusableElements[gamepadFocusIndex];
+}
 const defaultKeyBindings = {
   u: ['w', 'ArrowUp'], // Forward thrust
   d: ['s', 'ArrowDown'], // Reverse Thrust
@@ -126,6 +163,17 @@ export class PixiInput {
       return;
     }
 
+    // Window focus navigation with gamepad.
+    if (
+      state.windowVisible &&
+      device === 'keyboard' &&
+      type == 'keyup' &&
+      ['u', 'd', 'l', 'r'].includes(actionCode)
+    ) {
+      console.log(actionCode);
+      this.gamepadFocus(actionCode);
+    }
+
     // Show chat.
     if (
       type == 'keyup' &&
@@ -148,6 +196,22 @@ export class PixiInput {
       }
       return false;
     }
+  }
+
+  gamepadFocus(command) {
+    let increment = 1;
+
+    // Move previous for up and left.
+    if (['d', 'r'].includes(command)) {
+      increment = -1;
+    }
+
+    const e = getFocusableElement(increment);
+    e?.focus();
+    console.log(e);
+
+    // focusElement.focus();
+    // console.log('focus', focusElement);
   }
 
   // Touch/Mouse Start & movement binding callback.
@@ -350,6 +414,7 @@ export class PixiInput {
 
     // Bind axis movement.
     joypad.on('axis_move', (e) => {
+      const state = store.get(AppState);
       const { axis, axisMovementValue } = e.detail;
       // Ignore secondary sticks for now.
       if (axis > 1) return;
@@ -368,6 +433,13 @@ export class PixiInput {
       // Only on state value change.
       if (this.stick[stickAxis] !== axisMovementValue) {
         this.stick[stickAxis] = axisMovementValue;
+        console.log({ stickAxis, axisMovementValue });
+
+        if (axisMovementValue < 0) {
+          this.gamepadFocus('u');
+        } else if (axisMovementValue > 0) {
+          this.gamepadFocus('d');
+        }
 
         const angle = coordAngle(this.stick);
 
