@@ -19,6 +19,9 @@
   --button-text-active: rgb(225, 39, 39);
   --button-background-active: rgb(164, 214, 183);
 
+  --button-text-error: #f00;
+  --button-background-error: #333;
+
   /* Font Families */
   --head-font: 'Black Ops One', sans-serif;
   --body-font: 'Pixelify Sans', monospace;

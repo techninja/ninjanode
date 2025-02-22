@@ -67,8 +67,12 @@ export const NinjaButton = {
           color: var(--button-text-hover);
           background-color: var(--button-background-hover);
         }
+        :host button.is-error:hover {
+          color: var(--button-background-error);
+          background-color: var(--button-text-error);
+        }
         button {
-          padding: 0.25em;
+          padding: 5px;
           border: none;
           cursor: ${disabled ? 'not-allowed' : 'pointer'};
           width: 100%;
@@ -82,12 +86,18 @@ export const NinjaButton = {
           color: var(--button-text-active);
           background-color: var(--button-background-active);
         }
+        button.is-error {
+          color: var(--button-text-error);
+          background-color: var(--button-background-error);
+        }
         button:disabled {
           color: var(--text-color-disabled);
           background-color: var(--text-background-disabled);
         }
-        span {
+        pre {
           display: inline-block;
+          font-family: var(--small-font);
+          margin: 5px;
           width: 100%;
           text-align: center;
           font-size: ${`${fontSize}px`};
@@ -108,7 +118,7 @@ export const NinjaButton = {
           angle=${angle}
           size=${size}
         />`}
-        ${text && html`<span>${text}</span>`}
+        ${text && html`<pre>${text}</pre>`}
         <slot></slot>
       </button>
     `;
