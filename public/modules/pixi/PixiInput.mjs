@@ -81,12 +81,18 @@ export class PixiInput {
 
   initializeKeyBindings() {
     // Bind to the global keyup & keydown events.
-    this.docBind('keyup keydown', ({ key, type }) => {
-      return this.onButtonCallback({ key, type, device: 'keyboard' });
+    this.docBind('keyup keydown', (event) => {
+      const { key, type } = event;
+      return this.onButtonCallback({
+        key,
+        type,
+        device: 'keyboard',
+        event,
+      });
     });
   }
 
-  onButtonCallback({ key, device, type }) {
+  onButtonCallback({ key, device, type, event }) {
     const state = store.get(AppState);
     const bindState = store.get(ActiveBindingState);
     const actionCode = this.getCommandAction(key, device);
@@ -110,6 +116,13 @@ export class PixiInput {
         heardTrigger: key,
         heardDevice: device,
       });
+
+      return;
+    }
+
+    // Ignore all key defaults when listening.
+    if (bindState.listenCommand) {
+      event.preventDefault();
       return;
     }
 
@@ -141,6 +154,10 @@ export class PixiInput {
     // If not chatting or in window, move through keybindings.
     if (!state.chatVisible && !state.windowVisible && actionCode) {
       const action = `${actionCode}${type}`;
+
+      // Prevent default key action for any bound keys.
+      event.preventDefault();
+
       // Filter out held down key repeats
       if (this.lastKey != action) {
         this.lastKey = action;
@@ -318,28 +335,34 @@ export class PixiInput {
     });
 
     // Bind button press down.
-    joypad.on('button_press', (e) => {
-      const { buttonName } = e.detail;
+    joypad.on('button_press', (event) => {
+      const { buttonName } = event.detail;
       const key = gamepadMappings[buttonName];
 
       if (key) {
         return this.onButtonCallback({
+          event,
           key,
           type: 'keydown',
           device: 'gamepad',
         });
       } else {
-        console.log('Unknown button', e.detail);
+        console.log('Unknown button', event.detail);
       }
     });
 
     // Bind button release.
-    joypad.on('button_release', (e) => {
-      const { buttonName } = e.detail;
+    joypad.on('button_release', (event) => {
+      const { buttonName } = event.detail;
       const key = gamepadMappings[buttonName];
 
       if (key) {
-        return this.onButtonCallback({ key, type: 'keyup', device: 'gamepad' });
+        return this.onButtonCallback({
+          event,
+          key,
+          type: 'keyup',
+          device: 'gamepad',
+        });
       }
     });
 
