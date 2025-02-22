@@ -26,7 +26,7 @@ const getAddBind = (
 
     // Did something get pressed?
     if (heardTrigger) {
-      addBind.label = `Pressed: [${heardDevice}: ${heardTrigger}] ${!error ? 'Confirm?' : ''}`;
+      addBind.label = `Pressed: \n[${heardDevice}: ${heardTrigger}] ${!error ? 'Confirm?' : ''}`;
       addBind.icon = !error ? 'check-circle' : 'octagon-times';
 
       // Double press to confirm without error.
@@ -155,6 +155,12 @@ export const NinjaControls = {
         align-items: center;
         grid-template-columns: 60px 100px 1fr 40px;
       }
+
+      ninja-button b {
+        height: 51px;
+        display: flex;
+        align-items: center;
+      }
     </style>
     <div>
       <div class="commands">
@@ -190,12 +196,14 @@ export const NinjaControls = {
                 <ninja-button
                   icon=${addBind.icon}
                   text=${addBind.label}
+                  type=${addBind.error ? 'error' : 'primary'}
                   full-width
                   solid
                   font-size="17"
                   onclick=${handleAddBinding(command)}
-                  >${addBind.error}</ninja-button
                 >
+                  ${addBind.error && html`<b>${addBind.error}</b>`}
+                </ninja-button>
               </div>
             </div>
           `
