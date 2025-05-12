@@ -5,8 +5,8 @@
 export const projectileTypes = {
   laser: {
     name: 'Death Laser',
-    speed: 1125,
-    life: 2500, // How many ms till it dies?
+    speed: 1850, // Reduced by 400
+    life: 2500, // Original
     sound: 3,
     sounds: {
       emission: ['laser1'],
@@ -25,8 +25,8 @@ export const projectileTypes = {
   biglaser: {
     name: 'Super Laser',
     damage: 40,
-    speed: 1000,
-    life: 5000,
+    speed: 1600, // Reduced by 400
+    life: 5000, // Original
     sound: 1,
     sounds: {
       emission: ['laser2'],
@@ -44,8 +44,8 @@ export const projectileTypes = {
   duallaser: {
     name: 'Dual Laser',
     damage: 30,
-    speed: 883.4,
-    life: 2500,
+    speed: 1366.8, // Reduced by 400
+    life: 2500, // Original
     sound: 3,
     sounds: {
       emission: ['laser2'],
@@ -63,8 +63,8 @@ export const projectileTypes = {
   energy: {
     name: 'Energy Orb',
     damage: 30,
-    speed: 333,
-    life: 5500,
+    speed: 1000, // Unchanged
+    life: 5500, // Original
     sound: 2,
     sounds: {
       emission: ['energy'],
@@ -82,8 +82,8 @@ export const projectileTypes = {
   mine: {
     name: 'Mine',
     damage: 100,
-    speed: 0,
-    life: 30 * 60 * 1000, // 30 Minutes
+    speed: 0, // Unchanged
+    life: 30 * 60 * 1000, // Original
     sound: 4,
     sounds: {
       emission: ['mine'],
@@ -99,13 +99,13 @@ export const projectileTypes = {
   },
 
   fire: {
-    name: 'Fire',
-    damage: 40,
-    speed: 583,
-    life: 1000,
+    name: 'Mini Laser',
+    damage: 15,
+    speed: 1166, // Unchanged
+    life: 1000, // Original
     sound: 5,
     sounds: {
-      emission: ['flame'],
+      emission: ['minilaser'],
       reception: ['hit1', 'hit2'],
     },
     size: {

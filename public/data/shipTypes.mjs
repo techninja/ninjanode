@@ -6,8 +6,8 @@ import { projectileTypes } from './projectileTypes.mjs';
 export const shipTypes = {
   a: {
     name: 'Legionnaire',
-    topSpeed: 350,
-    accelRate: 6.25, // PX Per sec(2)
+    topSpeed: 525,
+    accelRate: 9, // PX Per sec(2)
     drag: 1.5,
     rotationSpeed: 9,
     thrusterPositions: {
@@ -19,8 +19,8 @@ export const shipTypes = {
       height: 64,
     },
     shield: {
-      max: 100,
-      regenRate: 0.3,
+      max: 120,
+      regenRate: 0.4,
       style: 'yellow',
     },
     weapons: [
@@ -31,8 +31,8 @@ export const shipTypes = {
 
   b: {
     name: 'Cygnuss',
-    topSpeed: 500,
-    accelRate: 5.83,
+    topSpeed: 750,
+    accelRate: 10,
     drag: 0.5,
     rotationSpeed: 8,
     thrusterPositions: {
@@ -56,8 +56,8 @@ export const shipTypes = {
 
   c: {
     name: 'Scimitar',
-    topSpeed: 375,
-    accelRate: 15,
+    topSpeed: 562.5,
+    accelRate: 19,
     drag: 1.34,
     rotationSpeed: 15,
     thrusterPositions: {
@@ -87,8 +87,8 @@ export const shipTypes = {
 
   d: {
     name: 'Mongoose',
-    topSpeed: 300,
-    accelRate: 6.25,
+    topSpeed: 450,
+    accelRate: 10,
     drag: 2.34,
     rotationSpeed: 15,
     thrusterPositions: {
@@ -112,8 +112,8 @@ export const shipTypes = {
 
   e: {
     name: 'Sulaco',
-    topSpeed: 300,
-    accelRate: 7.25,
+    topSpeed: 450,
+    accelRate: 13,
     drag: 0.5,
     rotationSpeed: 18,
     thrusterPositions: {
@@ -137,8 +137,8 @@ export const shipTypes = {
 
   f: {
     name: 'Excalibur',
-    topSpeed: 200,
-    accelRate: 20,
+    topSpeed: 300,
+    accelRate: 25,
     drag: 0.5,
     rotationSpeed: 13,
     thrusterPositions: {
@@ -162,8 +162,8 @@ export const shipTypes = {
 
   g: {
     name: 'Falcon',
-    topSpeed: 833.4,
-    accelRate: 18.3,
+    topSpeed: 500,
+    accelRate: 23,
     drag: 1,
     rotationSpeed: 10,
     thrusterPositions: {
